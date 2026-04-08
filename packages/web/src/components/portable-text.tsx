@@ -227,42 +227,46 @@ const components: PortableTextComponents = {
       </div>
     ),
 
-    tableBlock: ({ value }) => (
-      <div className="my-6 overflow-x-auto rounded-xl border border-border">
-        <table className="w-full text-sm">
-          {value.rows?.map(
-            (
-              row: { cells: string[] },
-              rowIndex: number,
-            ) => {
-              const isHeader = rowIndex === 0 && value.hasHeaderRow;
-              const Tag = isHeader ? "th" : "td";
-              return (
-                <tr
-                  key={rowIndex}
-                  className={
-                    isHeader
-                      ? "bg-cream-dark font-bold"
-                      : rowIndex % 2 === 0
-                        ? "bg-background"
-                        : "bg-cream-dark/30"
-                  }
-                >
-                  {row.cells?.map((cell: string, cellIndex: number) => (
-                    <Tag
-                      key={cellIndex}
-                      className="border-b border-border px-4 py-2 text-left"
-                    >
-                      {cell}
-                    </Tag>
-                  ))}
-                </tr>
-              );
-            },
-          )}
-        </table>
-      </div>
-    ),
+    tableBlock: ({ value }) => {
+      // Sanity stores table data as { rows: { rows: [...] } }
+      const rows: { cells: string[] }[] = Array.isArray(value.rows)
+        ? value.rows
+        : value.rows?.rows ?? [];
+
+      return (
+        <div className="my-6 overflow-x-auto rounded-xl border border-border">
+          <table className="w-full text-sm">
+            <tbody>
+              {rows.map((row, rowIndex) => {
+                const isHeader = rowIndex === 0 && value.hasHeaderRow;
+                const Tag = isHeader ? "th" : "td";
+                return (
+                  <tr
+                    key={rowIndex}
+                    className={
+                      isHeader
+                        ? "bg-cream-dark font-bold"
+                        : rowIndex % 2 === 0
+                          ? "bg-background"
+                          : "bg-cream-dark/30"
+                    }
+                  >
+                    {row.cells?.map((cell: string, cellIndex: number) => (
+                      <Tag
+                        key={cellIndex}
+                        className="border-b border-border px-4 py-2 text-left"
+                      >
+                        {cell}
+                      </Tag>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      );
+    },
 
     youtubeEmbed: ({ value }) => {
       const videoId = value.url?.match(

@@ -7,13 +7,10 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
-import { ClerkProvider, useAuth } from "@clerk/tanstack-react-start";
 import {
-  ClerkLoaded,
-  ClerkLoading,
-  Show,
-  UserButton,
-} from "@clerk/react";
+  ClerkProvider,
+  useAuth,
+} from "@clerk/tanstack-react-start";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { convexClient } from "@/lib/convex";
 import { Toaster } from "sonner";
@@ -99,68 +96,52 @@ function RootComponent() {
 }
 
 function AuthButtons() {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <Link
+        to="/sign-in"
+        className="ml-2 rounded-full bg-blackberry px-5 py-2 font-heading text-sm font-bold text-cream transition-colors hover:bg-blackberry-light"
+      >
+        Sign In
+      </Link>
+    );
+  }
+
   return (
-    <>
-      <ClerkLoading>
-        <Link
-          to="/sign-in"
-          className="ml-2 rounded-full bg-blackberry px-5 py-2 font-heading text-sm font-bold text-cream transition-colors hover:bg-blackberry-light"
-        >
-          Sign In
-        </Link>
-      </ClerkLoading>
-      <ClerkLoaded>
-        <Show when="signed-in">
-          <UserButton
-            appearance={{ elements: { avatarBox: "h-8 w-8" } }}
-          />
-        </Show>
-        <Show when="signed-out">
-          <Link
-            to="/sign-in"
-            className="ml-2 rounded-full bg-blackberry px-5 py-2 font-heading text-sm font-bold text-cream transition-colors hover:bg-blackberry-light"
-          >
-            Sign In
-          </Link>
-        </Show>
-      </ClerkLoaded>
-    </>
+    <Link
+      to="/community"
+      className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange font-heading text-sm font-bold text-white"
+    >
+      A
+    </Link>
   );
 }
 
 function MobileAuthButtons({ onNavigate }: { onNavigate: () => void }) {
+  const { isSignedIn, isLoaded } = useAuth();
+
+  if (!isLoaded || !isSignedIn) {
+    return (
+      <Link
+        to="/sign-in"
+        className="mt-2 rounded-full bg-blackberry px-5 py-2 text-center font-heading text-sm font-bold text-cream"
+        onClick={onNavigate}
+      >
+        Sign In
+      </Link>
+    );
+  }
+
   return (
-    <>
-      <ClerkLoading>
-        <Link
-          to="/sign-in"
-          className="mt-2 rounded-full bg-blackberry px-5 py-2 text-center font-heading text-sm font-bold text-cream"
-          onClick={onNavigate}
-        >
-          Sign In
-        </Link>
-      </ClerkLoading>
-      <ClerkLoaded>
-        <Show when="signed-in">
-          <Link
-            to="/community"
-            className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
-            onClick={onNavigate}
-          >
-            My Account
-          </Link>
-        </Show>
-        <Show when="signed-out">
-          <Link
-            to="/sign-in"
-            className="mt-2 rounded-full bg-blackberry px-5 py-2 text-center font-heading text-sm font-bold text-cream"
-            onClick={onNavigate}
-          >
-            Sign In
-          </Link>
-        </Show>
-      </ClerkLoaded>
-    </>
+    <Link
+      to="/community"
+      className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
+      onClick={onNavigate}
+    >
+      My Account
+    </Link>
   );
 }
 

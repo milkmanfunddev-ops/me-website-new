@@ -1,16 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Sansita:ital,wght@0,400;0,700;0,800;0,900;1,400;1,700;1,800;1,900&display=swap");
+
 @import "tailwindcss" source("../");
 
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-/* Google Fonts: Sansita */
-@import url("https://fonts.googleapis.com/css2?family=Sansita:ital,wght@0,400;0,700;0,800;0,900;1,400;1,700;1,800;1,900&display=swap");
-
 /* Apercu Font Family */
 @font-face {
   font-family: "Apercu";
-  src: url("/fonts/Apercu-Regular.woff2") format("woff2"),
-    url("/fonts/Apercu-Regular.woff") format("woff");
+  src: url("/fonts/Apercu-Regular.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -18,8 +16,7 @@
 
 @font-face {
   font-family: "Apercu";
-  src: url("/fonts/Apercu-Medium.woff2") format("woff2"),
-    url("/fonts/Apercu-Medium.woff") format("woff");
+  src: url("/fonts/Apercu-Medium.otf") format("opentype");
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -27,8 +24,7 @@
 
 @font-face {
   font-family: "Apercu";
-  src: url("/fonts/Apercu-Bold.woff2") format("woff2"),
-    url("/fonts/Apercu-Bold.woff") format("woff");
+  src: url("/fonts/Apercu-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
@@ -36,8 +32,7 @@
 
 @font-face {
   font-family: "Apercu Mono";
-  src: url("/fonts/Apercu-Mono.woff2") format("woff2"),
-    url("/fonts/Apercu-Mono.woff") format("woff");
+  src: url("/fonts/Apercu-Mono.otf") format("opentype");
   font-weight: 400;
   font-style: normal;
   font-display: swap;

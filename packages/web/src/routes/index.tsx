@@ -122,8 +122,8 @@ const TESTIMONIALS = [
 /* ------------------------------------------------------------------ */
 
 const PARTNER_LOGOS = [
-  { name: "Strava", src: "/images/integrations/strava.png", height: "h-8" },
-  { name: "Garmin", src: "/images/integrations/garmin.png", height: "h-7" },
+  { name: "Strava", src: "/images/integrations/strava.svg", height: "h-7" },
+  { name: "Garmin", src: "/images/integrations/garmin.svg", height: "h-7" },
   {
     name: "Final Surge",
     src: "/images/integrations/final-surge.svg",
@@ -131,8 +131,8 @@ const PARTNER_LOGOS = [
   },
   {
     name: "TrainingPeaks",
-    src: "/images/integrations/training-peaks.jpg",
-    height: "h-7",
+    src: "/images/integrations/training-peaks.svg",
+    height: "h-6",
   },
 ];
 
