@@ -7,15 +7,13 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import { ClerkProvider, useAuth } from "@clerk/tanstack-react-start";
 import {
-  ClerkProvider,
   ClerkLoaded,
   ClerkLoading,
-  SignedIn,
-  SignedOut,
+  Show,
   UserButton,
-  useAuth,
-} from "@clerk/tanstack-react-start";
+} from "@clerk/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { convexClient } from "@/lib/convex";
 import { Toaster } from "sonner";
@@ -112,19 +110,19 @@ function AuthButtons() {
         </Link>
       </ClerkLoading>
       <ClerkLoaded>
-        <SignedIn>
+        <Show when="signed-in">
           <UserButton
             appearance={{ elements: { avatarBox: "h-8 w-8" } }}
           />
-        </SignedIn>
-        <SignedOut>
+        </Show>
+        <Show when="signed-out">
           <Link
             to="/sign-in"
             className="ml-2 rounded-full bg-blackberry px-5 py-2 font-heading text-sm font-bold text-cream transition-colors hover:bg-blackberry-light"
           >
             Sign In
           </Link>
-        </SignedOut>
+        </Show>
       </ClerkLoaded>
     </>
   );
@@ -143,7 +141,7 @@ function MobileAuthButtons({ onNavigate }: { onNavigate: () => void }) {
         </Link>
       </ClerkLoading>
       <ClerkLoaded>
-        <SignedIn>
+        <Show when="signed-in">
           <Link
             to="/community"
             className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
@@ -151,8 +149,8 @@ function MobileAuthButtons({ onNavigate }: { onNavigate: () => void }) {
           >
             My Account
           </Link>
-        </SignedIn>
-        <SignedOut>
+        </Show>
+        <Show when="signed-out">
           <Link
             to="/sign-in"
             className="mt-2 rounded-full bg-blackberry px-5 py-2 text-center font-heading text-sm font-bold text-cream"
@@ -160,7 +158,7 @@ function MobileAuthButtons({ onNavigate }: { onNavigate: () => void }) {
           >
             Sign In
           </Link>
-        </SignedOut>
+        </Show>
       </ClerkLoaded>
     </>
   );
