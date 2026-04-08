@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
-import { Route as StudioRouteImport } from './routes/studio'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DemoRouteImport } from './routes/demo'
@@ -39,11 +38,6 @@ const TermsRoute = TermsRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const StudioRoute = StudioRouteImport.update({
-  id: '/studio',
-  path: '/studio',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -144,7 +138,6 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
-  '/studio': typeof StudioRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/sign-in': typeof authSignInRoute
@@ -167,7 +160,6 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
-  '/studio': typeof StudioRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/sign-in': typeof authSignInRoute
@@ -191,7 +183,6 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
-  '/studio': typeof StudioRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/(auth)/sign-in': typeof authSignInRoute
@@ -216,7 +207,6 @@ export interface FileRouteTypes {
     | '/demo'
     | '/faq'
     | '/privacy'
-    | '/studio'
     | '/support'
     | '/terms'
     | '/sign-in'
@@ -239,7 +229,6 @@ export interface FileRouteTypes {
     | '/demo'
     | '/faq'
     | '/privacy'
-    | '/studio'
     | '/support'
     | '/terms'
     | '/sign-in'
@@ -262,7 +251,6 @@ export interface FileRouteTypes {
     | '/demo'
     | '/faq'
     | '/privacy'
-    | '/studio'
     | '/support'
     | '/terms'
     | '/(auth)/sign-in'
@@ -286,7 +274,6 @@ export interface RootRouteChildren {
   DemoRoute: typeof DemoRoute
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
-  StudioRoute: typeof StudioRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   authSignInRoute: typeof authSignInRoute
@@ -317,13 +304,6 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/studio': {
-      id: '/studio'
-      path: '/studio'
-      fullPath: '/studio'
-      preLoaderRoute: typeof StudioRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -462,7 +442,6 @@ const rootRouteChildren: RootRouteChildren = {
   DemoRoute: DemoRoute,
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
-  StudioRoute: StudioRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   authSignInRoute: authSignInRoute,
