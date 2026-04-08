@@ -1,20 +1,22 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ViewportFade } from "@/components/viewport-fade";
 
-// Mock motion/react to avoid animation complexities in tests
-vi.mock("motion/react", () => ({
-  motion: {
-    div: ({
-      children,
-      ...props
-    }: {
-      children: React.ReactNode;
-      [key: string]: unknown;
-    }) => <div {...props}>{children}</div>,
-  },
-  useInView: vi.fn().mockReturnValue(true),
-}));
+// Mock IntersectionObserver for jsdom
+beforeAll(() => {
+  class MockIntersectionObserver {
+    callback: (entries: Array<{ isIntersecting: boolean }>) => void;
+    constructor(callback: (entries: Array<{ isIntersecting: boolean }>) => void) {
+      this.callback = callback;
+    }
+    observe() {
+      this.callback([{ isIntersecting: true }]);
+    }
+    disconnect() {}
+    unobserve() {}
+  }
+  vi.stubGlobal("IntersectionObserver", MockIntersectionObserver);
+});
 
 describe("ViewportFade", () => {
   it("renders children", () => {
@@ -36,7 +38,6 @@ describe("ViewportFade", () => {
   });
 
   it("accepts delay prop", () => {
-    // ViewportFade should accept delay without error
     render(
       <ViewportFade delay={0.2}>
         <p>Delayed</p>

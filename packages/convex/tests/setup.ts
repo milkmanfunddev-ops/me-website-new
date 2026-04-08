@@ -1,10 +1,10 @@
 import { vi } from "vitest";
 
 // Re-export all Convex modules for convex-test
-// convex-test needs access to the compiled modules
-export const modules = import.meta.glob("../convex/**/*.ts", {
-  eager: true,
-}) as Record<string, Record<string, unknown>>;
+// Include _generated stubs but exclude "use node" modules (email, stripe) that can't run in test
+export const modules = import.meta.glob(
+  ["../convex/**/*.ts", "!../convex/email.ts", "!../convex/stripe.ts"],
+) as Record<string, () => Promise<Record<string, unknown>>>;
 
 // Mock external services
 vi.mock("resend", () => ({

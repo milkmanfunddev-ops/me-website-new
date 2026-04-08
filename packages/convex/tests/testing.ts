@@ -1,6 +1,6 @@
 import { convexTest } from "convex-test";
 import schema from "../convex/schema";
-import { modules } from "./setup.test";
+import { modules } from "./setup";
 
 export function createTestContext() {
   return convexTest(schema, modules);

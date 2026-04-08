@@ -14,8 +14,9 @@ test.describe("Homepage", () => {
   });
 
   test("should have navigation links", async ({ page }) => {
-    await expect(page.getByRole("link", { name: /blog/i })).toBeVisible();
-    await expect(page.getByRole("link", { name: /community/i })).toBeVisible();
+    const nav = page.getByRole("navigation");
+    await expect(nav.getByRole("link", { name: "Blog" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Community" })).toBeVisible();
   });
 
   test("should have download CTAs", async ({ page }) => {

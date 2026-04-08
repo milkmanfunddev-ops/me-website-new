@@ -48,15 +48,19 @@ describe("utils", () => {
 
   describe("pluralize", () => {
     it("returns singular for count of 1", () => {
-      expect(pluralize(1, "reply", "replies")).toBe("1 reply");
+      expect(pluralize(1, "reply", "replies")).toBe("reply");
     });
 
     it("returns plural for count > 1", () => {
-      expect(pluralize(5, "reply", "replies")).toBe("5 replies");
+      expect(pluralize(5, "reply", "replies")).toBe("replies");
     });
 
     it("returns plural for count of 0", () => {
-      expect(pluralize(0, "reply", "replies")).toBe("0 replies");
+      expect(pluralize(0, "reply", "replies")).toBe("replies");
+    });
+
+    it("auto-pluralizes with s when no plural given", () => {
+      expect(pluralize(3, "item")).toBe("items");
     });
   });
 });

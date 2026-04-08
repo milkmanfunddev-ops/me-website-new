@@ -2,7 +2,8 @@ import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    environment: "edge-runtime",
+    environment: "node",
     server: { deps: { inline: ["convex-test"] } },
+    setupFiles: ["./tests/vitest-setup.ts"],
   },
 });

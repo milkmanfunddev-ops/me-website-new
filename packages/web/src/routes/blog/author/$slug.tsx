@@ -6,7 +6,7 @@ import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
 
 const getAuthor = createServerFn({ method: "GET" })
-  .validator((slug: string) => slug)
+  .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     const author = await sanityClient.fetch(
       `*[_type == "author" && slug.current == $slug][0] {

@@ -1,6 +1,34 @@
 import "@testing-library/jest-dom/vitest";
 import { vi } from "vitest";
 
+// Mock Convex generated API
+vi.mock("@convex/_generated/api", () => ({
+  api: {
+    newsletter: { subscribe: "newsletter:subscribe" },
+    contact: { submit: "contact:submit" },
+    discussions: {
+      list: "discussions:list",
+      get: "discussions:get",
+      create: "discussions:create",
+      reply: "discussions:reply",
+      listReplies: "discussions:listReplies",
+      incrementViewCount: "discussions:incrementViewCount",
+    },
+    comments: {
+      create: "comments:create",
+      listByPost: "comments:listByPost",
+      remove: "comments:remove",
+    },
+    users: { getCurrent: "users:getCurrent" },
+    orders: { getBySessionId: "orders:getBySessionId" },
+  },
+}));
+
+// Mock Convex generated dataModel
+vi.mock("@convex/_generated/dataModel", () => ({
+  Id: String,
+}));
+
 // Mock sanity client
 vi.mock("@/lib/sanity", () => ({
   sanityClient: {

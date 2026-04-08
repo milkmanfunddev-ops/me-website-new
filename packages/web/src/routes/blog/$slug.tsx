@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 import { articleJsonLd } from "@/lib/structured-data";
 
 const getPost = createServerFn({ method: "GET" })
-  .validator((slug: string) => slug)
+  .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     return sanityClient.fetch(
       `

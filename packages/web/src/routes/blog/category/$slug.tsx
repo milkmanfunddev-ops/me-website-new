@@ -5,7 +5,7 @@ import { formatDate } from "@/lib/utils";
 import { ViewportFade } from "@/components/viewport-fade";
 
 const getCategoryWithPosts = createServerFn({ method: "GET" })
-  .validator((slug: string) => slug)
+  .inputValidator((slug: string) => slug)
   .handler(async ({ data: slug }) => {
     const category = await sanityClient.fetch(
       `*[_type == "blogCategory" && slug.current == $slug][0] {
