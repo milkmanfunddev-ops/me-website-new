@@ -1,6 +1,5 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { internal } from "./_generated/api";
 
 export const submit = mutation({
   args: {
@@ -17,13 +16,6 @@ export const submit = mutation({
       message: args.message,
       status: "new",
       createdAt: Date.now(),
-    });
-
-    await ctx.scheduler.runAfter(0, internal.email.sendContactNotification, {
-      name: args.name,
-      email: args.email,
-      subject: args.subject,
-      message: args.message,
     });
 
     return id;
