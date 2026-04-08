@@ -1,0 +1,27 @@
+{
+  "name": "mealvana-endurance",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Mealvana Endurance - Science-based nutrition for endurance athletes",
+  "scripts": {
+    "dev": "pnpm --filter @mealvana/web dev",
+    "build": "pnpm --filter @mealvana/web build",
+    "dev:convex": "pnpm --filter @mealvana/convex dev",
+    "dev:sanity": "pnpm --filter @mealvana/sanity dev",
+    "typecheck": "pnpm -r typecheck",
+    "test": "pnpm -r test",
+    "test:unit": "pnpm --filter @mealvana/convex test",
+    "test:web": "pnpm --filter @mealvana/web test",
+    "test:e2e": "pnpm --filter @mealvana/web test:e2e",
+    "test:watch": "pnpm -r test:watch",
+    "test:all": "pnpm -r test && pnpm --filter @mealvana/web test:e2e"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.3"
+  }
+}

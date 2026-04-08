@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://endurance.mealvana.io/sitemap.xml
+
+Disallow: /studio
+Disallow: /checkout/
+Disallow: /community/new
