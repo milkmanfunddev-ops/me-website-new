@@ -18,7 +18,7 @@ import { markdownSchema } from "sanity-plugin-markdown";
 
 import { schemaTypes } from "./schemaTypes";
 
-const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "YOUR_PROJECT_ID";
+const projectId = process.env.SANITY_STUDIO_PROJECT_ID || "sigrvh1t";
 const dataset = process.env.SANITY_STUDIO_DATASET || "production";
 
 export default defineConfig({

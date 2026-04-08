@@ -1,0 +1,37 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: Web",
+      "type": "shell",
+      "command": "pnpm --filter @mealvana/web dev --port 3001",
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Convex",
+      "type": "shell",
+      "command": "npx convex dev",
+      "options": { "cwd": "${workspaceFolder}/packages/convex" },
+      "group": "build",
+      "isBackground": true,
+      "problemMatcher": []
+    },
+    {
+      "label": "Test: All",
+      "type": "shell",
+      "command": "pnpm -r test",
+      "group": "test",
+      "problemMatcher": []
+    },
+    {
+      "label": "Test: E2E",
+      "type": "shell",
+      "command": "pnpm exec playwright test --project=chromium",
+      "options": { "cwd": "${workspaceFolder}/packages/web" },
+      "group": "test",
+      "problemMatcher": []
+    }
+  ]
+}
