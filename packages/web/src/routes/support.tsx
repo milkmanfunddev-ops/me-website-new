@@ -9,13 +9,23 @@ import { toast } from "sonner";
 import { CONTACT_EMAIL } from "@mealvana/shared";
 import { Mail, MessageSquare, ChevronDown } from "lucide-react";
 
-const getTopFaqs = createServerFn({ method: "GET" }).handler(async () => {
-  return sanityClient.fetch(`
-    *[_type == "faq" && isPublished == true && category == "General"] | order(orderRank asc) [0...5] {
-      _id, question, answer
-    }
-  `);
-});
+import type { PortableTextValue } from "@/lib/sanity-types";
+
+type TopFaq = {
+  _id: string;
+  question: string;
+  answer: PortableTextValue;
+};
+
+const getTopFaqs = createServerFn({ method: "GET" }).handler(
+  async (): Promise<TopFaq[]> => {
+    return sanityClient.fetch<TopFaq[]>(`
+      *[_type == "faq" && isPublished == true && category == "General"] | order(orderRank asc) [0...5] {
+        _id, question, answer
+      }
+    `);
+  },
+);
 
 export const Route = createFileRoute("/support")({
   head: () => ({

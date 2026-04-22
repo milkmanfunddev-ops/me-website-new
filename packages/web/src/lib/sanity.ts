@@ -1,6 +1,5 @@
-import { createClient } from "@sanity/client";
-import imageUrlBuilder from "@sanity/image-url";
-import type { SanityImageSource } from "@sanity/image-url/lib/types/types";
+import { createClient, type QueryParams } from "@sanity/client";
+import imageUrlBuilder, { type SanityImageSource } from "@sanity/image-url";
 
 const rawClient = createClient({
   projectId: import.meta.env.VITE_SANITY_PROJECT_ID,
@@ -14,10 +13,13 @@ export const sanityClient = {
   ...rawClient,
   async fetch<T = unknown>(
     query: string,
-    params?: Record<string, unknown>,
+    params?: QueryParams,
   ): Promise<T> {
     try {
-      return await rawClient.fetch<T>(query, params);
+      if (params) {
+        return await rawClient.fetch<T>(query, params);
+      }
+      return await rawClient.fetch<T>(query);
     } catch (err) {
       console.warn("[sanity] fetch failed:", (err as Error).message);
       // Return null for single-doc queries, empty array for list queries

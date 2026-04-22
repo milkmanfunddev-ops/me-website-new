@@ -4,14 +4,27 @@ import { sanityClient, urlFor } from "@/lib/sanity";
 import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
 import { APP_NAME } from "@mealvana/shared";
+import type { SanityImage, PortableTextValue } from "@/lib/sanity-types";
 
-const getTeam = createServerFn({ method: "GET" }).handler(async () => {
-  return sanityClient.fetch(`
-    *[_type == "teamMember"] | order(orderRank asc) {
-      _id, name, slug, role, image, bio, socialLinks
-    }
-  `);
-});
+type TeamMember = {
+  _id: string;
+  name: string;
+  slug: { current: string };
+  role: string;
+  image?: SanityImage;
+  bio?: PortableTextValue;
+  socialLinks?: Array<{ platform: string; url: string }>;
+};
+
+const getTeam = createServerFn({ method: "GET" }).handler(
+  async (): Promise<TeamMember[]> => {
+    return sanityClient.fetch<TeamMember[]>(`
+      *[_type == "teamMember"] | order(orderRank asc) {
+        _id, name, slug, role, image, bio, socialLinks
+      }
+    `);
+  },
+);
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -29,15 +42,7 @@ export const Route = createFileRoute("/about")({
 });
 
 function AboutPage() {
-  const team = Route.useLoaderData() as Array<{
-    _id: string;
-    name: string;
-    slug: { current: string };
-    role: string;
-    image?: { asset: unknown };
-    bio?: unknown[];
-    socialLinks?: Array<{ platform: string; url: string }>;
-  }>;
+  const team = Route.useLoaderData() as TeamMember[];
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">

@@ -3,26 +3,58 @@ import { createServerFn } from "@tanstack/react-start";
 import { sanityClient, urlFor } from "@/lib/sanity";
 import { formatDate } from "@/lib/utils";
 import { ViewportFade } from "@/components/viewport-fade";
+import type { SanityImage } from "@/lib/sanity-types";
+
+type PostCard = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  readingTimeMinutes?: number;
+  publishedAt: string;
+  heroImage?: SanityImage;
+  author?: { name: string };
+};
+
+type CategoryDoc = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  description?: string;
+  color?: { hex: string };
+};
+
+type CategoryRef = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+};
+
+type CategoryLoaderData = {
+  category: CategoryDoc | null;
+  posts: PostCard[];
+  allCategories: CategoryRef[];
+};
 
 const getCategoryWithPosts = createServerFn({ method: "GET" })
   .inputValidator((slug: string) => slug)
-  .handler(async ({ data: slug }) => {
-    const category = await sanityClient.fetch(
+  .handler(async ({ data: slug }): Promise<CategoryLoaderData> => {
+    const category = await sanityClient.fetch<CategoryDoc | null>(
       `*[_type == "blogCategory" && slug.current == $slug][0] {
         _id, title, slug, description, color
       }`,
       { slug },
     );
 
-    const posts = await sanityClient.fetch(
+    const posts = await sanityClient.fetch<PostCard[]>(
       `*[_type == "blogPost" && $slug in categories[]->slug.current && status == "published"] | order(publishedAt desc) {
-        _id, title, slug, excerpt, readTime, publishedAt, featuredImage,
+        _id, title, slug, excerpt, readingTimeMinutes, publishedAt, heroImage,
         "author": author->{name, slug, avatar}
       }`,
       { slug },
     );
 
-    const allCategories = await sanityClient.fetch(`
+    const allCategories = await sanityClient.fetch<CategoryRef[]>(`
       *[_type == "blogCategory"] | order(title asc) {
         _id, title, slug
       }
@@ -33,7 +65,7 @@ const getCategoryWithPosts = createServerFn({ method: "GET" })
 
 export const Route = createFileRoute("/blog/category/$slug")({
   head: ({ loaderData }) => {
-    const data = loaderData as { category?: { title?: string } };
+    const data = loaderData as unknown as CategoryLoaderData | undefined;
     return {
       meta: [
         {
@@ -47,30 +79,8 @@ export const Route = createFileRoute("/blog/category/$slug")({
 });
 
 function CategoryPage() {
-  const { category, posts, allCategories } = Route.useLoaderData() as {
-    category: {
-      _id: string;
-      title: string;
-      slug: { current: string };
-      description?: string;
-      color?: { hex: string };
-    };
-    posts: Array<{
-      _id: string;
-      title: string;
-      slug: { current: string };
-      excerpt: string;
-      readTime: number;
-      publishedAt: string;
-      featuredImage?: { asset: unknown };
-      author?: { name: string };
-    }>;
-    allCategories: Array<{
-      _id: string;
-      title: string;
-      slug: { current: string };
-    }>;
-  };
+  const { category, posts, allCategories } =
+    Route.useLoaderData() as CategoryLoaderData;
 
   if (!category) {
     return (
@@ -105,75 +115,61 @@ function CategoryPage() {
         >
           All
         </Link>
-        {allCategories?.map(
-          (cat: { _id: string; title: string; slug: { current: string } }) => (
-            <Link
-              key={cat._id}
-              to={`/blog/category/${cat.slug.current}`}
-              className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-                cat.slug.current === category.slug.current
-                  ? "bg-blackberry text-cream"
-                  : "border border-border text-muted-foreground hover:bg-cream-dark"
-              }`}
-            >
-              {cat.title}
-            </Link>
-          ),
-        )}
+        {allCategories?.map((cat) => (
+          <Link
+            key={cat._id}
+            to="/blog/category/$slug"
+            params={{ slug: cat.slug.current }}
+            className={`rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+              cat.slug.current === category.slug.current
+                ? "bg-blackberry text-cream"
+                : "border border-border text-muted-foreground hover:bg-cream-dark"
+            }`}
+          >
+            {cat.title}
+          </Link>
+        ))}
       </div>
 
       <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {posts?.map(
-          (
-            post: {
-              _id: string;
-              title: string;
-              slug: { current: string };
-              excerpt: string;
-              readTime: number;
-              publishedAt: string;
-              featuredImage?: { asset: unknown };
-              author?: { name: string };
-            },
-            i: number,
-          ) => (
-            <ViewportFade key={post._id} delay={i * 0.05}>
-              <Link
-                to={`/blog/${post.slug.current}`}
-                className="group block overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-lg"
-              >
-                {post.featuredImage?.asset && (
-                  <div className="aspect-video overflow-hidden bg-cream-dark">
-                    <img
-                      src={urlFor(post.featuredImage).width(600).height(340).url()}
-                      alt={post.title}
-                      className="h-full w-full object-cover transition-transform group-hover:scale-105"
-                    />
-                  </div>
-                )}
-                <div className="p-5">
-                  <h2 className="font-heading text-lg font-bold text-foreground group-hover:text-orange">
-                    {post.title}
-                  </h2>
-                  <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
-                    {post.excerpt}
-                  </p>
-                  <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
-                    {post.author && <span>{post.author.name}</span>}
-                    <span>&middot;</span>
-                    <span>{formatDate(post.publishedAt)}</span>
-                    {post.readTime && (
-                      <>
-                        <span>&middot;</span>
-                        <span>{post.readTime} min read</span>
-                      </>
-                    )}
-                  </div>
+        {posts?.map((post, i) => (
+          <ViewportFade key={post._id} delay={i * 0.05}>
+            <Link
+              to="/blog/$slug"
+              params={{ slug: post.slug.current }}
+              className="group block overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-lg"
+            >
+              {post.heroImage?.asset && (
+                <div className="aspect-video overflow-hidden bg-cream-dark">
+                  <img
+                    src={urlFor(post.heroImage).width(600).height(340).url()}
+                    alt={post.heroImage.alt || post.title}
+                    className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                  />
                 </div>
-              </Link>
-            </ViewportFade>
-          ),
-        )}
+              )}
+              <div className="p-5">
+                <h2 className="font-heading text-lg font-bold text-foreground group-hover:text-orange">
+                  {post.title}
+                </h2>
+                <p className="mt-2 line-clamp-2 text-sm text-muted-foreground">
+                  {post.excerpt}
+                </p>
+                <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
+                  {post.author && <span>{post.author.name}</span>}
+                  <span>&middot;</span>
+                  <span>{formatDate(post.publishedAt)}</span>
+                  {post.readingTimeMinutes && (
+                    <>
+                      <span>&middot;</span>
+                      <span>{post.readingTimeMinutes} min read</span>
+                    </>
+                  )}
+                </div>
+              </div>
+            </Link>
+          </ViewportFade>
+        ))}
       </div>
 
       {(!posts || posts.length === 0) && (

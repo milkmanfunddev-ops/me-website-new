@@ -4,20 +4,42 @@ import { sanityClient, urlFor } from "@/lib/sanity";
 import { formatDate } from "@/lib/utils";
 import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
+import type { SanityImage, PortableTextValue } from "@/lib/sanity-types";
+
+type AuthorDoc = {
+  name: string;
+  avatar?: SanityImage;
+  bio?: PortableTextValue;
+  role?: string;
+};
+
+type AuthorPost = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  readingTimeMinutes?: number;
+  publishedAt: string;
+};
+
+type AuthorLoaderData = {
+  author: AuthorDoc | null;
+  posts: AuthorPost[];
+};
 
 const getAuthor = createServerFn({ method: "GET" })
   .inputValidator((slug: string) => slug)
-  .handler(async ({ data: slug }) => {
-    const author = await sanityClient.fetch(
+  .handler(async ({ data: slug }): Promise<AuthorLoaderData> => {
+    const author = await sanityClient.fetch<AuthorDoc | null>(
       `*[_type == "author" && slug.current == $slug][0] {
         _id, name, slug, avatar, bio, role, email, socialLinks
       }`,
       { slug },
     );
 
-    const posts = await sanityClient.fetch(
+    const posts = await sanityClient.fetch<AuthorPost[]>(
       `*[_type == "blogPost" && author->slug.current == $slug && status == "published"] | order(publishedAt desc) {
-        _id, title, slug, excerpt, readTime, publishedAt, featuredImage
+        _id, title, slug, excerpt, readingTimeMinutes, publishedAt, heroImage
       }`,
       { slug },
     );
@@ -27,7 +49,7 @@ const getAuthor = createServerFn({ method: "GET" })
 
 export const Route = createFileRoute("/blog/author/$slug")({
   head: ({ loaderData }) => {
-    const data = loaderData as { author?: { name?: string } };
+    const data = loaderData as unknown as AuthorLoaderData | undefined;
     return {
       meta: [
         { title: `${data?.author?.name || "Author"} | Mealvana Endurance Blog` },
@@ -39,22 +61,7 @@ export const Route = createFileRoute("/blog/author/$slug")({
 });
 
 function AuthorPage() {
-  const { author, posts } = Route.useLoaderData() as {
-    author: {
-      name: string;
-      avatar?: { asset: unknown };
-      bio?: unknown[];
-      role?: string;
-    };
-    posts: Array<{
-      _id: string;
-      title: string;
-      slug: { current: string };
-      excerpt: string;
-      readTime: number;
-      publishedAt: string;
-    }>;
-  };
+  const { author, posts } = Route.useLoaderData() as AuthorLoaderData;
 
   if (!author) {
     return (
@@ -97,7 +104,8 @@ function AuthorPage() {
           {posts?.map((post) => (
             <Link
               key={post._id}
-              to={`/blog/${post.slug.current}`}
+              to="/blog/$slug"
+              params={{ slug: post.slug.current }}
               className="block rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md"
             >
               <h3 className="font-heading text-lg font-bold text-foreground hover:text-orange">
@@ -108,7 +116,9 @@ function AuthorPage() {
               </p>
               <div className="mt-3 flex gap-3 text-xs text-muted-foreground">
                 <span>{formatDate(post.publishedAt)}</span>
-                {post.readTime && <span>{post.readTime} min read</span>}
+                {post.readingTimeMinutes && (
+                  <span>{post.readingTimeMinutes} min read</span>
+                )}
               </div>
             </Link>
           ))}

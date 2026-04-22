@@ -13,7 +13,7 @@ function SignUpPage() {
     <div className="flex min-h-[60vh] items-center justify-center px-4 py-16">
       <SignUp
         routing="hash"
-        afterSignUpUrl="/community"
+        forceRedirectUrl="/community"
         appearance={{
           elements: {
             rootBox: "mx-auto",

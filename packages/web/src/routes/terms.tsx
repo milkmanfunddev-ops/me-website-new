@@ -4,14 +4,24 @@ import { sanityClient } from "@/lib/sanity";
 import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
 import { formatDate } from "@/lib/utils";
+import type { PortableTextValue } from "@/lib/sanity-types";
 
-const getTerms = createServerFn({ method: "GET" }).handler(async () => {
-  return sanityClient.fetch(`
-    *[_type == "legalDoc" && slug.current == "terms-of-use"][0] {
-      _id, title, lastUpdated, body
-    }
-  `);
-});
+type LegalDoc = {
+  _id: string;
+  title: string;
+  lastUpdated: string;
+  body: PortableTextValue;
+};
+
+const getTerms = createServerFn({ method: "GET" }).handler(
+  async (): Promise<LegalDoc | null> => {
+    return sanityClient.fetch<LegalDoc | null>(`
+      *[_type == "legalDoc" && slug.current == "terms-of-use"][0] {
+        _id, title, lastUpdated, body
+      }
+    `);
+  },
+);
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -24,12 +34,7 @@ export const Route = createFileRoute("/terms")({
 });
 
 function TermsPage() {
-  const doc = Route.useLoaderData() as {
-    _id: string;
-    title: string;
-    lastUpdated: string;
-    body: unknown[];
-  } | null;
+  const doc = Route.useLoaderData() as LegalDoc | null;
 
   if (!doc) {
     return (

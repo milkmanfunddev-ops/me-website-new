@@ -7,6 +7,7 @@ import { changelog } from "./changelog";
 import { legalDoc } from "./legalDoc";
 import { teamMember } from "./teamMember";
 import { integrationPartner } from "./integrationPartner";
+import { catalogProduct } from "./catalogProduct";
 
 export const schemaTypes = [
   blogPost,
@@ -18,4 +19,5 @@ export const schemaTypes = [
   legalDoc,
   teamMember,
   integrationPartner,
+  catalogProduct,
 ];

@@ -2,6 +2,8 @@ import {
   PortableText as PortableTextReact,
   type PortableTextComponents,
 } from "@portabletext/react";
+
+type TypedObject = { _type: string; [key: string]: unknown };
 import { KaTeXBlock } from "./katex-block";
 import { urlFor } from "@/lib/sanity";
 import { Link } from "@tanstack/react-router";
@@ -110,7 +112,8 @@ const components: PortableTextComponents = {
     ),
     internalLink: ({ children, value }) => (
       <Link
-        to={`/blog/${value?.slug}`}
+        to="/blog/$slug"
+        params={{ slug: value?.slug ?? "" }}
         className="text-orange underline decoration-orange/30 underline-offset-2 transition-colors hover:text-orange-dark hover:decoration-orange"
       >
         {children}
@@ -377,7 +380,7 @@ const components: PortableTextComponents = {
         <div className="my-6 space-y-2">
           {value.items?.map(
             (
-              item: { title: string; content: unknown[] },
+              item: { title: string; content: TypedObject[] },
               i: number,
             ) => (
               <AccordionItem key={i} title={item.title}>
@@ -536,11 +539,12 @@ function AccordionItem({
 }
 
 interface PortableTextProps {
-  value: unknown[];
+  value: TypedObject | TypedObject[] | undefined;
   className?: string;
 }
 
 export function PortableText({ value, className }: PortableTextProps) {
+  if (!value) return null;
   return (
     <div className={className}>
       <PortableTextReact value={value} components={components} />

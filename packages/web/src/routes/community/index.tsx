@@ -87,7 +87,8 @@ function CommunityIndex() {
         {discussions?.map((discussion) => (
           <ViewportFade key={discussion._id}>
             <Link
-              to={`/community/${discussion._id}`}
+              to="/community/$discussionId"
+              params={{ discussionId: discussion._id }}
               className="flex items-start gap-4 rounded-xl border border-border bg-card p-5 transition-shadow hover:shadow-md"
             >
               <div className="flex-1">

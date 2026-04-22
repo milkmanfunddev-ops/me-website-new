@@ -4,14 +4,28 @@ import { sanityClient } from "@/lib/sanity";
 import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
 import { formatDate } from "@/lib/utils";
+import type { PortableTextValue } from "@/lib/sanity-types";
 
-const getChangelog = createServerFn({ method: "GET" }).handler(async () => {
-  return sanityClient.fetch(`
-    *[_type == "changelog"] | order(releaseDate desc) {
-      _id, version, title, releaseDate, label, whatsNew, improvements, bugFixes
-    }
-  `);
-});
+type ChangelogRelease = {
+  _id: string;
+  version: string;
+  title: string;
+  releaseDate: string;
+  label?: string;
+  whatsNew?: PortableTextValue;
+  improvements?: PortableTextValue;
+  bugFixes?: PortableTextValue;
+};
+
+const getChangelog = createServerFn({ method: "GET" }).handler(
+  async (): Promise<ChangelogRelease[]> => {
+    return sanityClient.fetch<ChangelogRelease[]>(`
+      *[_type == "changelog"] | order(releaseDate desc) {
+        _id, version, title, releaseDate, label, whatsNew, improvements, bugFixes
+      }
+    `);
+  },
+);
 
 export const Route = createFileRoute("/changelog")({
   head: () => ({
@@ -28,16 +42,7 @@ export const Route = createFileRoute("/changelog")({
 });
 
 function ChangelogPage() {
-  const releases = Route.useLoaderData() as Array<{
-    _id: string;
-    version: string;
-    title: string;
-    releaseDate: string;
-    label?: string;
-    whatsNew?: unknown[];
-    improvements?: unknown[];
-    bugFixes?: unknown[];
-  }>;
+  const releases = Route.useLoaderData() as ChangelogRelease[];
 
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">

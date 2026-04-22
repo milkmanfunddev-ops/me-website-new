@@ -6,20 +6,46 @@ import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
 import { ArrowLeft } from "lucide-react";
 import { articleJsonLd } from "@/lib/structured-data";
+import type {
+  SanityImage,
+  PortableTextValue,
+} from "@/lib/sanity-types";
+
+type BlogPostDoc = {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  readingTimeMinutes?: number;
+  publishedAt: string;
+  heroImage?: SanityImage;
+  tags?: string[];
+  body: PortableTextValue;
+  seoTitle?: string;
+  seoDescription?: string;
+  ogImage?: SanityImage;
+  author?: {
+    name: string;
+    slug: { current: string };
+    avatar?: SanityImage;
+    bio?: PortableTextValue;
+    role?: string;
+  };
+  categories?: Array<{ title: string; slug: { current: string } }>;
+};
 
 const getPost = createServerFn({ method: "GET" })
   .inputValidator((slug: string) => slug)
-  .handler(async ({ data: slug }) => {
-    return sanityClient.fetch(
+  .handler(async ({ data: slug }): Promise<BlogPostDoc | null> => {
+    return sanityClient.fetch<BlogPostDoc | null>(
       `
       *[_type == "blogPost" && slug.current == $slug][0] {
         _id,
         title,
         slug,
         excerpt,
-        readTime,
+        readingTimeMinutes,
         publishedAt,
-        featuredImage,
         heroImage,
         tags,
         body,
@@ -36,15 +62,7 @@ const getPost = createServerFn({ method: "GET" })
 
 export const Route = createFileRoute("/blog/$slug")({
   head: ({ loaderData }) => {
-    const post = loaderData as {
-      title?: string;
-      seoTitle?: string;
-      seoDescription?: string;
-      excerpt?: string;
-      slug?: { current: string };
-      publishedAt?: string;
-      author?: { name: string };
-    } | null;
+    const post = loaderData as unknown as BlogPostDoc | null;
     return {
       meta: [
         {
@@ -70,7 +88,9 @@ export const Route = createFileRoute("/blog/$slug")({
                   title: post.title || "",
                   excerpt: post.excerpt,
                   publishedAt: post.publishedAt || "",
-                  author: post.author,
+                  author: post.author
+                    ? { name: post.author.name }
+                    : undefined,
                   slug: post.slug?.current || "",
                 }),
               ),
@@ -86,26 +106,7 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 function BlogPost() {
-  const post = Route.useLoaderData() as {
-    _id: string;
-    title: string;
-    slug: { current: string };
-    excerpt: string;
-    readTime: number;
-    publishedAt: string;
-    featuredImage?: { asset: unknown; alt?: string };
-    heroImage?: { asset: unknown; alt?: string; caption?: string };
-    tags?: string[];
-    body: unknown[];
-    author?: {
-      name: string;
-      slug: { current: string };
-      avatar?: { asset: unknown };
-      bio?: unknown[];
-      role?: string;
-    };
-    categories?: Array<{ title: string; slug: { current: string } }>;
-  };
+  const post = Route.useLoaderData() as BlogPostDoc | null;
 
   if (!post) {
     return (
@@ -134,7 +135,8 @@ function BlogPost() {
             {post.categories.map((cat) => (
               <Link
                 key={cat.slug.current}
-                to={`/blog/category/${cat.slug.current}`}
+                to="/blog/category/$slug"
+                params={{ slug: cat.slug.current }}
                 className="rounded-full bg-cream-dark px-3 py-1 text-xs font-medium text-muted-foreground transition-colors hover:bg-orange/10 hover:text-orange"
               >
                 {cat.title}
@@ -150,7 +152,8 @@ function BlogPost() {
         <div className="mt-4 flex items-center gap-4 text-sm text-muted-foreground">
           {post.author && (
             <Link
-              to={`/blog/author/${post.author.slug.current}`}
+              to="/blog/author/$slug"
+              params={{ slug: post.author.slug.current }}
               className="flex items-center gap-2 hover:text-foreground"
             >
               {post.author.avatar?.asset && (
@@ -164,27 +167,21 @@ function BlogPost() {
             </Link>
           )}
           <span>{formatDate(post.publishedAt)}</span>
-          {post.readTime && <span>{post.readTime} min read</span>}
+          {post.readingTimeMinutes && (
+            <span>{post.readingTimeMinutes} min read</span>
+          )}
         </div>
       </ViewportFade>
 
-      {(() => {
-        const hero = post.featuredImage?.asset
-          ? post.featuredImage
-          : post.heroImage?.asset
-            ? post.heroImage
-            : null;
-        if (!hero) return null;
-        return (
-          <ViewportFade>
-            <img
-              src={urlFor(hero).width(1200).url()}
-              alt={hero.alt || post.title}
-              className="mt-8 w-full rounded-xl"
-            />
-          </ViewportFade>
-        );
-      })()}
+      {post.heroImage?.asset && (
+        <ViewportFade>
+          <img
+            src={urlFor(post.heroImage).width(1200).url()}
+            alt={post.heroImage.alt || post.title}
+            className="mt-8 w-full rounded-xl"
+          />
+        </ViewportFade>
+      )}
 
       <ViewportFade>
         <div className="prose-mealvana mt-10">
@@ -217,7 +214,8 @@ function BlogPost() {
             )}
             <div>
               <Link
-                to={`/blog/author/${post.author.slug.current}`}
+                to="/blog/author/$slug"
+                params={{ slug: post.author.slug.current }}
                 className="font-heading text-lg font-bold text-foreground hover:text-orange"
               >
                 {post.author.name}

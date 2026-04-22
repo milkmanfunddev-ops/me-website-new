@@ -1,29 +1,23 @@
-import { getAuth } from "@clerk/tanstack-react-start/server";
 import { createServerFn } from "@tanstack/react-start";
-import { getWebRequest } from "@tanstack/react-start/server";
 import { redirect } from "@tanstack/react-router";
+import { auth } from "@clerk/tanstack-react-start/server";
 
 export const requireAuth = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const request = getWebRequest();
-    const auth = await getAuth(request);
-
-    if (!auth.userId) {
+  async (): Promise<{ userId: string }> => {
+    const state = await auth();
+    if (!state.userId) {
       throw redirect({ to: "/sign-in" });
     }
-
-    return { userId: auth.userId };
+    return { userId: state.userId };
   },
 );
 
 export const getAuthState = createServerFn({ method: "GET" }).handler(
-  async () => {
-    const request = getWebRequest();
-    const auth = await getAuth(request);
-
+  async (): Promise<{ isAuthenticated: boolean; userId: string | null }> => {
+    const state = await auth();
     return {
-      isAuthenticated: !!auth.userId,
-      userId: auth.userId,
+      isAuthenticated: !!state.userId,
+      userId: state.userId ?? null,
     };
   },
 );

@@ -13,7 +13,7 @@ function SignInPage() {
     <div className="flex min-h-[60vh] items-center justify-center px-4 py-16">
       <SignIn
         routing="hash"
-        afterSignInUrl="/community"
+        forceRedirectUrl="/community"
         appearance={{
           elements: {
             rootBox: "mx-auto",

@@ -7,6 +7,7 @@ import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
 import { faqPageJsonLd } from "@/lib/structured-data";
 import { portableTextToPlain } from "@/lib/portable-text-to-plain";
+import type { PortableTextValue } from "@/lib/sanity-types";
 
 const FAQ_CATEGORIES = [
   "All",
@@ -20,17 +21,19 @@ const FAQ_CATEGORIES = [
 type FaqItem = {
   _id: string;
   question: string;
-  answer: unknown[];
+  answer: PortableTextValue;
   category: string;
 };
 
-const getFaqs = createServerFn({ method: "GET" }).handler(async () => {
-  return sanityClient.fetch(`
-    *[_type == "faq" && isPublished == true] | order(orderRank asc) {
-      _id, question, answer, category
-    }
-  `);
-});
+const getFaqs = createServerFn({ method: "GET" }).handler(
+  async (): Promise<FaqItem[]> => {
+    return sanityClient.fetch<FaqItem[]>(`
+      *[_type == "faq" && isPublished == true] | order(orderRank asc) {
+        _id, question, answer, category
+      }
+    `);
+  },
+);
 
 export const Route = createFileRoute("/faq")({
   head: ({ loaderData }) => {
