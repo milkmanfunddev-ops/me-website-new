@@ -1,0 +1,71 @@
+# Mealvana Endurance
+
+> Science-based nutrition planning app for endurance athletes — personalized fueling strategies for runners, cyclists, and triathletes, built on ACSM formulas and 50+ peer-reviewed studies.
+
+## About
+
+Mealvana Endurance is a mobile and web application from Milkman Inc. (Birmingham, Alabama) that generates individualized nutrition plans for endurance athletes. It uses AI and linear programming optimization to calculate carbohydrate, protein, sodium, and hydration targets across pre-run, during-run, and post-run phases, adapting to the athlete's training load, taste preferences, dietary restrictions, and race calendar. The app is offline-first and integrates with common training ecosystems.
+
+Available on iOS (App Store ID 6751113738) and Android (com.milkman.mealvanaendurance), with a companion web app at https://app.mealvana.io.
+
+## Who It's For
+
+- Distance runners (5K through ultramarathon)
+- Road and gravel cyclists
+- Triathletes across sprint, Olympic, 70.3, and Ironman distances
+- Coaches working with endurance athletes
+- Athletes training their gut for race-day carbohydrate intake
+
+## Core Capabilities
+
+- **AI-powered meal planning**: Balanced daily meal plans optimized to training phase, macro targets, and athlete preferences.
+- **Science-based calculations**: Carbohydrate, protein, sodium, and fluid needs derived from ACSM formulas and peer-reviewed sports-nutrition research.
+- **Phase-specific fueling**: Separate guidance for pre-run, during-run, and post-run nutrition across base, build, peak, taper, and recovery training phases.
+- **Gut training protocols**: Progressive carbohydrate intake schedules (typically ramping from ~30 g/hr to 90+ g/hr) to build gastrointestinal tolerance for race-day fueling.
+- **Carb loading calculator**: Multi-day carb loading protocols with gram targets and meal suggestions ahead of target races.
+- **Weather-aware hydration**: Sodium and fluid recommendations that adapt to temperature, humidity, and estimated sweat rate.
+- **Race day calendar**: Countdown nutrition plans with taper and carb-loading protocols linked to upcoming races.
+- **Training activity log**: Running, cycling, and swimming workout logging that refines nutrition recommendations.
+- **Food database integration**: Real sports-nutrition products and brands for accurate fueling during training and racing.
+- **Offline-first**: Full functionality without an internet connection — designed for remote training and race environments.
+
+## Integrations
+
+Mealvana Endurance connects with common endurance-athlete platforms:
+
+- Strava — activity import
+- Garmin — activity import from Garmin Connect
+- TrainingPeaks — workout and planned-training sync
+
+## Key Pages
+
+- [Home](https://endurance.mealvana.io/): Product overview and value proposition
+- [About](https://endurance.mealvana.io/about): Company background and team
+- [Blog](https://endurance.mealvana.io/blog): Sports nutrition articles, fueling guides, and training content
+- [FAQ](https://endurance.mealvana.io/faq): Answers to common questions across General, Nutrition, App, Billing, and Training
+- [Changelog](https://endurance.mealvana.io/changelog): Product release notes
+- [Demo](https://endurance.mealvana.io/demo): Interactive product demo
+- [Community](https://endurance.mealvana.io/community): Athlete forum
+- [Support](https://endurance.mealvana.io/support): Help center and contact
+- [Privacy Policy](https://endurance.mealvana.io/privacy)
+- [Terms of Use](https://endurance.mealvana.io/terms)
+
+## Common Questions
+
+- **What is Mealvana Endurance?** A nutrition planning app for endurance athletes that produces personalized daily fueling plans based on ACSM-derived sports-nutrition science.
+- **Who is it for?** Runners, cyclists, and triathletes, from beginners through ultra-distance and Ironman athletes.
+- **What makes it different from generic nutrition apps?** It calculates phase-specific fueling (pre/during/post run), supports gut training, and adapts macro targets to training load and race calendar rather than to weight-loss goals.
+- **Which platforms does it run on?** iOS, Android, and a web app at https://app.mealvana.io. The app is offline-first.
+- **Does it integrate with training platforms?** Yes — Strava, Garmin, and TrainingPeaks.
+- **Is the science credible?** Calculations are built on American College of Sports Medicine (ACSM) formulas and more than 50 peer-reviewed sports-nutrition studies.
+
+## Company
+
+- Product: Mealvana Endurance
+- Publisher: Milkman Inc.
+- Location: Birmingham, Alabama, USA
+- Website: https://endurance.mealvana.io
+- Web app: https://app.mealvana.io
+- Support: support@mealvana.io
+- iOS: https://apps.apple.com/us/app/mealvana-endurance/id6751113738
+- Android: https://play.google.com/store/apps/details?id=com.milkman.mealvanaendurance

@@ -17,9 +17,15 @@ import { Route as DemoRouteImport } from './routes/demo'
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as IntegrationsIndexRouteImport } from './routes/integrations/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
+import { Route as IntegrationsTrainingPeaksRouteImport } from './routes/integrations/training-peaks'
+import { Route as IntegrationsStravaRouteImport } from './routes/integrations/strava'
+import { Route as IntegrationsGarminRouteImport } from './routes/integrations/garmin'
+import { Route as IntegrationsFinalSurgeRouteImport } from './routes/integrations/final-surge'
+import { Route as CompareMealvanaVsMavrRouteImport } from './routes/compare/mealvana-vs-mavr'
 import { Route as CommunityNewRouteImport } from './routes/community/new'
 import { Route as CommunityDiscussionIdRouteImport } from './routes/community/$discussionId'
 import { Route as CheckoutSuccessRouteImport } from './routes/checkout/success'
@@ -70,6 +76,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IntegrationsIndexRoute = IntegrationsIndexRouteImport.update({
+  id: '/integrations/',
+  path: '/integrations/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommunityIndexRoute = CommunityIndexRouteImport.update({
   id: '/community/',
   path: '/community/',
@@ -83,6 +94,32 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 const SitemapXmlRoute = SitemapXmlRouteImport.update({
   id: '/sitemap/xml',
   path: '/sitemap/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsTrainingPeaksRoute =
+  IntegrationsTrainingPeaksRouteImport.update({
+    id: '/integrations/training-peaks',
+    path: '/integrations/training-peaks',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const IntegrationsStravaRoute = IntegrationsStravaRouteImport.update({
+  id: '/integrations/strava',
+  path: '/integrations/strava',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsGarminRoute = IntegrationsGarminRouteImport.update({
+  id: '/integrations/garmin',
+  path: '/integrations/garmin',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const IntegrationsFinalSurgeRoute = IntegrationsFinalSurgeRouteImport.update({
+  id: '/integrations/final-surge',
+  path: '/integrations/final-surge',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CompareMealvanaVsMavrRoute = CompareMealvanaVsMavrRouteImport.update({
+  id: '/compare/mealvana-vs-mavr',
+  path: '/compare/mealvana-vs-mavr',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityNewRoute = CommunityNewRouteImport.update({
@@ -147,9 +184,15 @@ export interface FileRoutesByFullPath {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/community/$discussionId': typeof CommunityDiscussionIdRoute
   '/community/new': typeof CommunityNewRoute
+  '/compare/mealvana-vs-mavr': typeof CompareMealvanaVsMavrRoute
+  '/integrations/final-surge': typeof IntegrationsFinalSurgeRoute
+  '/integrations/garmin': typeof IntegrationsGarminRoute
+  '/integrations/strava': typeof IntegrationsStravaRoute
+  '/integrations/training-peaks': typeof IntegrationsTrainingPeaksRoute
   '/sitemap/xml': typeof SitemapXmlRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/integrations/': typeof IntegrationsIndexRoute
   '/blog/author/$slug': typeof BlogAuthorSlugRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
 }
@@ -169,9 +212,15 @@ export interface FileRoutesByTo {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/community/$discussionId': typeof CommunityDiscussionIdRoute
   '/community/new': typeof CommunityNewRoute
+  '/compare/mealvana-vs-mavr': typeof CompareMealvanaVsMavrRoute
+  '/integrations/final-surge': typeof IntegrationsFinalSurgeRoute
+  '/integrations/garmin': typeof IntegrationsGarminRoute
+  '/integrations/strava': typeof IntegrationsStravaRoute
+  '/integrations/training-peaks': typeof IntegrationsTrainingPeaksRoute
   '/sitemap/xml': typeof SitemapXmlRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
+  '/integrations': typeof IntegrationsIndexRoute
   '/blog/author/$slug': typeof BlogAuthorSlugRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
 }
@@ -192,9 +241,15 @@ export interface FileRoutesById {
   '/checkout/success': typeof CheckoutSuccessRoute
   '/community/$discussionId': typeof CommunityDiscussionIdRoute
   '/community/new': typeof CommunityNewRoute
+  '/compare/mealvana-vs-mavr': typeof CompareMealvanaVsMavrRoute
+  '/integrations/final-surge': typeof IntegrationsFinalSurgeRoute
+  '/integrations/garmin': typeof IntegrationsGarminRoute
+  '/integrations/strava': typeof IntegrationsStravaRoute
+  '/integrations/training-peaks': typeof IntegrationsTrainingPeaksRoute
   '/sitemap/xml': typeof SitemapXmlRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
+  '/integrations/': typeof IntegrationsIndexRoute
   '/blog/author/$slug': typeof BlogAuthorSlugRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
 }
@@ -216,9 +271,15 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/community/$discussionId'
     | '/community/new'
+    | '/compare/mealvana-vs-mavr'
+    | '/integrations/final-surge'
+    | '/integrations/garmin'
+    | '/integrations/strava'
+    | '/integrations/training-peaks'
     | '/sitemap/xml'
     | '/blog/'
     | '/community/'
+    | '/integrations/'
     | '/blog/author/$slug'
     | '/blog/category/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -238,9 +299,15 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/community/$discussionId'
     | '/community/new'
+    | '/compare/mealvana-vs-mavr'
+    | '/integrations/final-surge'
+    | '/integrations/garmin'
+    | '/integrations/strava'
+    | '/integrations/training-peaks'
     | '/sitemap/xml'
     | '/blog'
     | '/community'
+    | '/integrations'
     | '/blog/author/$slug'
     | '/blog/category/$slug'
   id:
@@ -260,9 +327,15 @@ export interface FileRouteTypes {
     | '/checkout/success'
     | '/community/$discussionId'
     | '/community/new'
+    | '/compare/mealvana-vs-mavr'
+    | '/integrations/final-surge'
+    | '/integrations/garmin'
+    | '/integrations/strava'
+    | '/integrations/training-peaks'
     | '/sitemap/xml'
     | '/blog/'
     | '/community/'
+    | '/integrations/'
     | '/blog/author/$slug'
     | '/blog/category/$slug'
   fileRoutesById: FileRoutesById
@@ -283,9 +356,15 @@ export interface RootRouteChildren {
   CheckoutSuccessRoute: typeof CheckoutSuccessRoute
   CommunityDiscussionIdRoute: typeof CommunityDiscussionIdRoute
   CommunityNewRoute: typeof CommunityNewRoute
+  CompareMealvanaVsMavrRoute: typeof CompareMealvanaVsMavrRoute
+  IntegrationsFinalSurgeRoute: typeof IntegrationsFinalSurgeRoute
+  IntegrationsGarminRoute: typeof IntegrationsGarminRoute
+  IntegrationsStravaRoute: typeof IntegrationsStravaRoute
+  IntegrationsTrainingPeaksRoute: typeof IntegrationsTrainingPeaksRoute
   SitemapXmlRoute: typeof SitemapXmlRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
+  IntegrationsIndexRoute: typeof IntegrationsIndexRoute
   BlogAuthorSlugRoute: typeof BlogAuthorSlugRoute
   BlogCategorySlugRoute: typeof BlogCategorySlugRoute
 }
@@ -348,6 +427,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/integrations/': {
+      id: '/integrations/'
+      path: '/integrations'
+      fullPath: '/integrations/'
+      preLoaderRoute: typeof IntegrationsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/community/': {
       id: '/community/'
       path: '/community'
@@ -367,6 +453,41 @@ declare module '@tanstack/react-router' {
       path: '/sitemap/xml'
       fullPath: '/sitemap/xml'
       preLoaderRoute: typeof SitemapXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations/training-peaks': {
+      id: '/integrations/training-peaks'
+      path: '/integrations/training-peaks'
+      fullPath: '/integrations/training-peaks'
+      preLoaderRoute: typeof IntegrationsTrainingPeaksRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations/strava': {
+      id: '/integrations/strava'
+      path: '/integrations/strava'
+      fullPath: '/integrations/strava'
+      preLoaderRoute: typeof IntegrationsStravaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations/garmin': {
+      id: '/integrations/garmin'
+      path: '/integrations/garmin'
+      fullPath: '/integrations/garmin'
+      preLoaderRoute: typeof IntegrationsGarminRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/integrations/final-surge': {
+      id: '/integrations/final-surge'
+      path: '/integrations/final-surge'
+      fullPath: '/integrations/final-surge'
+      preLoaderRoute: typeof IntegrationsFinalSurgeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/mealvana-vs-mavr': {
+      id: '/compare/mealvana-vs-mavr'
+      path: '/compare/mealvana-vs-mavr'
+      fullPath: '/compare/mealvana-vs-mavr'
+      preLoaderRoute: typeof CompareMealvanaVsMavrRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community/new': {
@@ -451,9 +572,15 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutSuccessRoute: CheckoutSuccessRoute,
   CommunityDiscussionIdRoute: CommunityDiscussionIdRoute,
   CommunityNewRoute: CommunityNewRoute,
+  CompareMealvanaVsMavrRoute: CompareMealvanaVsMavrRoute,
+  IntegrationsFinalSurgeRoute: IntegrationsFinalSurgeRoute,
+  IntegrationsGarminRoute: IntegrationsGarminRoute,
+  IntegrationsStravaRoute: IntegrationsStravaRoute,
+  IntegrationsTrainingPeaksRoute: IntegrationsTrainingPeaksRoute,
   SitemapXmlRoute: SitemapXmlRoute,
   BlogIndexRoute: BlogIndexRoute,
   CommunityIndexRoute: CommunityIndexRoute,
+  IntegrationsIndexRoute: IntegrationsIndexRoute,
   BlogAuthorSlugRoute: BlogAuthorSlugRoute,
   BlogCategorySlugRoute: BlogCategorySlugRoute,
 }

@@ -20,6 +20,7 @@ const getPost = createServerFn({ method: "GET" })
         readTime,
         publishedAt,
         featuredImage,
+        heroImage,
         tags,
         body,
         seoTitle,
@@ -93,6 +94,7 @@ function BlogPost() {
     readTime: number;
     publishedAt: string;
     featuredImage?: { asset: unknown; alt?: string };
+    heroImage?: { asset: unknown; alt?: string; caption?: string };
     tags?: string[];
     body: unknown[];
     author?: {
@@ -166,15 +168,23 @@ function BlogPost() {
         </div>
       </ViewportFade>
 
-      {post.featuredImage?.asset && (
-        <ViewportFade>
-          <img
-            src={urlFor(post.featuredImage).width(1200).url()}
-            alt={post.featuredImage.alt || post.title}
-            className="mt-8 w-full rounded-xl"
-          />
-        </ViewportFade>
-      )}
+      {(() => {
+        const hero = post.featuredImage?.asset
+          ? post.featuredImage
+          : post.heroImage?.asset
+            ? post.heroImage
+            : null;
+        if (!hero) return null;
+        return (
+          <ViewportFade>
+            <img
+              src={urlFor(hero).width(1200).url()}
+              alt={hero.alt || post.title}
+              className="mt-8 w-full rounded-xl"
+            />
+          </ViewportFade>
+        );
+      })()}
 
       <ViewportFade>
         <div className="prose-mealvana mt-10">

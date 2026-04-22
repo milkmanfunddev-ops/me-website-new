@@ -5,6 +5,8 @@ import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
 import { useState } from "react";
 import { ChevronDown, Search } from "lucide-react";
+import { faqPageJsonLd } from "@/lib/structured-data";
+import { portableTextToPlain } from "@/lib/portable-text-to-plain";
 
 const FAQ_CATEGORIES = [
   "All",
@@ -15,6 +17,13 @@ const FAQ_CATEGORIES = [
   "Training",
 ] as const;
 
+type FaqItem = {
+  _id: string;
+  question: string;
+  answer: unknown[];
+  category: string;
+};
+
 const getFaqs = createServerFn({ method: "GET" }).handler(async () => {
   return sanityClient.fetch(`
     *[_type == "faq" && isPublished == true] | order(orderRank asc) {
@@ -24,27 +33,40 @@ const getFaqs = createServerFn({ method: "GET" }).handler(async () => {
 });
 
 export const Route = createFileRoute("/faq")({
-  head: () => ({
-    meta: [
-      { title: "FAQ | Mealvana Endurance" },
-      {
-        name: "description",
-        content:
-          "Frequently asked questions about Mealvana Endurance nutrition planning.",
-      },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    const faqs = (loaderData as FaqItem[] | undefined) ?? [];
+    return {
+      meta: [
+        { title: "FAQ | Mealvana Endurance" },
+        {
+          name: "description",
+          content:
+            "Frequently asked questions about Mealvana Endurance nutrition planning.",
+        },
+      ],
+      scripts: faqs.length
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify(
+                faqPageJsonLd(
+                  faqs.map((faq) => ({
+                    question: faq.question,
+                    answer: portableTextToPlain(faq.answer),
+                  })),
+                ),
+              ),
+            },
+          ]
+        : [],
+    };
+  },
   loader: () => getFaqs(),
   component: FaqPage,
 });
 
 function FaqPage() {
-  const faqs = Route.useLoaderData() as Array<{
-    _id: string;
-    question: string;
-    answer: unknown[];
-    category: string;
-  }>;
+  const faqs = Route.useLoaderData() as FaqItem[];
 
   const [activeCategory, setActiveCategory] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");

@@ -1,0 +1,1844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AEO & AI SEO Guide: Getting Cited by AI Search Engines</title>
+<style>
+:root {
+  --purple-900: #2d1b4e;
+  --purple-800: #3d2466;
+  --purple-700: #4c2d80;
+  --purple-600: #5b3a99;
+  --purple-500: #6b46c1;
+  --purple-400: #805ad5;
+  --purple-300: #9f7aea;
+  --purple-200: #b794f4;
+  --purple-100: #d6bcfa;
+  --purple-50: #f3ebff;
+  --purple-25: #faf5ff;
+  --gray-900: #1a1a2e;
+  --gray-800: #2d2d44;
+  --gray-700: #4a4a6a;
+  --gray-600: #64648a;
+  --gray-500: #8888a8;
+  --gray-400: #a0a0b8;
+  --gray-300: #c4c4d4;
+  --gray-200: #e2e2ec;
+  --gray-100: #f0f0f6;
+  --gray-50: #f8f8fc;
+  --white: #ffffff;
+  --sidebar-width: 280px;
+  --content-max: 860px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 24px;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', 'DM Sans', Roboto, Oxygen, Ubuntu, sans-serif;
+  color: var(--gray-900);
+  background: var(--gray-50);
+  line-height: 1.6;
+  font-size: 16px;
+}
+
+/* Top gradient bar */
+.top-bar {
+  height: 4px;
+  background: linear-gradient(90deg, var(--purple-700), var(--purple-400), var(--purple-600));
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+}
+
+/* Header */
+.page-header {
+  background: linear-gradient(135deg, var(--purple-900) 0%, var(--purple-700) 50%, var(--purple-500) 100%);
+  color: var(--white);
+  padding: 80px 40px 60px;
+  margin-top: 4px;
+  position: relative;
+  overflow: hidden;
+}
+.page-header::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -20%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(159,122,234,0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+.page-header h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+  position: relative;
+}
+.page-header .subtitle {
+  font-size: 1.15rem;
+  color: var(--purple-200);
+  max-width: 720px;
+  line-height: 1.7;
+  position: relative;
+}
+.page-header .byline {
+  margin-top: 20px;
+  font-size: 0.9rem;
+  color: var(--purple-300);
+  position: relative;
+  letter-spacing: 0.02em;
+  opacity: 0.9;
+}
+
+/* Mobile hamburger */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 16px;
+  left: 16px;
+  z-index: 1100;
+  background: var(--purple-700);
+  border: none;
+  color: var(--white);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  font-size: 22px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(45,27,78,0.3);
+  transition: background 0.2s;
+}
+.hamburger:hover { background: var(--purple-600); }
+
+/* Sidebar overlay (mobile) */
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 999;
+}
+.sidebar-overlay.active { display: block; }
+
+/* Sidebar */
+.sidebar {
+  position: fixed;
+  top: 4px;
+  left: 0;
+  width: var(--sidebar-width);
+  height: calc(100vh - 4px);
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  overflow-y: auto;
+  z-index: 1001;
+  padding: 24px 0;
+  scrollbar-width: thin;
+  scrollbar-color: var(--purple-200) transparent;
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: var(--purple-200); border-radius: 4px; }
+
+.sidebar-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--gray-500);
+  padding: 0 20px 12px;
+  border-bottom: 1px solid var(--gray-100);
+  margin-bottom: 8px;
+}
+
+.sidebar nav a {
+  display: block;
+  padding: 7px 20px 7px 24px;
+  color: var(--gray-600);
+  text-decoration: none;
+  font-size: 0.84rem;
+  line-height: 1.4;
+  border-left: 3px solid transparent;
+  transition: all 0.15s;
+}
+.sidebar nav a:hover {
+  color: var(--purple-600);
+  background: var(--purple-25);
+}
+.sidebar nav a.active {
+  color: var(--purple-700);
+  font-weight: 600;
+  border-left-color: var(--purple-500);
+  background: var(--purple-50);
+}
+.sidebar nav a.sub {
+  padding-left: 36px;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+}
+.sidebar nav a.sub.active {
+  color: var(--purple-600);
+}
+
+/* Main content */
+.main {
+  margin-left: var(--sidebar-width);
+  padding: 0;
+}
+
+.content {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: 48px 40px 100px;
+}
+
+/* Sections */
+section {
+  margin-bottom: 56px;
+  scroll-margin-top: 24px;
+}
+
+/* Typography */
+h2 {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: var(--purple-900);
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--purple-100);
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--purple-800);
+  margin-top: 36px;
+  margin-bottom: 14px;
+}
+
+h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--purple-700);
+  margin-top: 28px;
+  margin-bottom: 10px;
+}
+
+p {
+  margin-bottom: 14px;
+  color: var(--gray-800);
+}
+
+strong { color: var(--gray-900); }
+
+ul, ol {
+  margin-bottom: 14px;
+  padding-left: 24px;
+}
+li {
+  margin-bottom: 6px;
+  color: var(--gray-800);
+}
+li strong { color: var(--purple-800); }
+
+/* Stat callouts */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin: 24px 0;
+}
+.stat-card {
+  background: linear-gradient(135deg, var(--purple-50), var(--white));
+  border: 1px solid var(--purple-100);
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(107,70,193,0.12);
+}
+.stat-number {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--purple-600);
+  display: block;
+  line-height: 1.1;
+}
+.stat-label {
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+/* Tables */
+.table-wrap {
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+thead {
+  background: var(--purple-800);
+  color: var(--white);
+}
+th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+td {
+  padding: 11px 16px;
+  border-bottom: 1px solid var(--gray-100);
+  color: var(--gray-800);
+}
+tbody tr:nth-child(even) { background: var(--purple-25); }
+tbody tr:nth-child(odd) { background: var(--white); }
+tbody tr:hover { background: var(--purple-50); }
+tbody tr:last-child td { border-bottom: none; }
+td s { color: var(--gray-500); }
+
+/* Code blocks */
+pre {
+  background: var(--gray-900);
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 20px 24px;
+  overflow-x: auto;
+  margin: 16px 0 20px;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  border: 1px solid var(--gray-800);
+}
+code {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+  font-size: 0.88em;
+}
+p code, li code, td code {
+  background: var(--purple-50);
+  color: var(--purple-700);
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 0.85em;
+  border: 1px solid var(--purple-100);
+}
+
+/* Blockquote / callout */
+blockquote, .callout {
+  background: var(--purple-50);
+  border-left: 4px solid var(--purple-400);
+  padding: 16px 20px;
+  margin: 16px 0 20px;
+  border-radius: 0 8px 8px 0;
+  color: var(--gray-800);
+}
+blockquote p:last-child, .callout p:last-child { margin-bottom: 0; }
+
+/* Pillar cards */
+.pillar-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin: 20px 0;
+}
+.pillar-card {
+  background: var(--white);
+  border: 1px solid var(--purple-100);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  transition: box-shadow 0.15s;
+}
+.pillar-card:hover {
+  box-shadow: 0 4px 20px rgba(107,70,193,0.1);
+}
+.pillar-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: var(--purple-600);
+  color: var(--white);
+  border-radius: 50%;
+  font-weight: 800;
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+.pillar-card h4 {
+  margin-top: 0;
+  color: var(--purple-800);
+  font-size: 1.05rem;
+}
+.pillar-card p {
+  font-size: 0.88rem;
+  color: var(--gray-600);
+  margin-bottom: 0;
+}
+
+/* Maturity levels */
+.maturity-level {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin: 16px 0;
+  padding: 16px 20px;
+  background: var(--white);
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+}
+.maturity-badge {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  background: var(--purple-600);
+  color: var(--white);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1rem;
+}
+.maturity-level h4 { margin-top: 0; margin-bottom: 4px; }
+.maturity-level p { margin-bottom: 0; font-size: 0.92rem; }
+
+/* Week cards */
+.week-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 24px;
+  margin: 16px 0;
+  border-left: 4px solid var(--purple-500);
+}
+.week-card h3 {
+  margin-top: 0;
+  color: var(--purple-700);
+}
+
+/* Platform cards */
+.platform-card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  padding: 24px 28px;
+  margin: 20px 0;
+}
+.platform-card h3 {
+  margin-top: 0;
+  color: var(--purple-800);
+}
+
+/* Numbered list styled */
+.numbered-wins {
+  counter-reset: wins;
+  list-style: none;
+  padding-left: 0;
+}
+.numbered-wins li {
+  counter-increment: wins;
+  padding: 14px 16px 14px 52px;
+  position: relative;
+  margin-bottom: 8px;
+  background: var(--white);
+  border-radius: 8px;
+  border: 1px solid var(--gray-200);
+}
+.numbered-wins li::before {
+  content: counter(wins);
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 28px;
+  height: 28px;
+  background: var(--purple-500);
+  color: var(--white);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+
+/* Separator */
+.section-sep {
+  border: none;
+  height: 1px;
+  background: var(--gray-200);
+  margin: 48px 0;
+}
+
+/* Print */
+@media print {
+  .sidebar, .hamburger, .sidebar-overlay, .top-bar { display: none !important; }
+  .main { margin-left: 0 !important; }
+  .content { max-width: 100%; padding: 20px; }
+  .page-header { padding: 30px 20px; }
+  .stat-card, .pillar-card, .maturity-level, .week-card, .platform-card { break-inside: avoid; }
+}
+
+/* Mobile */
+@media (max-width: 900px) {
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: none;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .hamburger { display: flex; align-items: center; justify-content: center; }
+  .main { margin-left: 0; }
+  .content { padding: 32px 20px 80px; }
+  .page-header { padding: 70px 20px 40px; }
+  .page-header h1 { font-size: 2rem; }
+  .pillar-grid { grid-template-columns: 1fr; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  h2 { font-size: 1.5rem; }
+  h3 { font-size: 1.15rem; }
+}
+@media (max-width: 480px) {
+  .stat-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar"></div>
+
+<button class="hamburger" id="hamburger" aria-label="Toggle navigation">&#9776;</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-title">Table of Contents</div>
+  <nav id="tocNav">
+    <a href="#aeo-is-rebranded-seo">AEO Is Rebranded SEO</a>
+    <a href="#how-ai-search-works">How AI Search Works</a>
+    <a href="#ai-visibility-audit">AI Visibility Audit</a>
+    <a href="#optimization-strategy">Optimization Strategy</a>
+    <a href="#pillar-1" class="sub">Pillar 1: Structure</a>
+    <a href="#pillar-2" class="sub">Pillar 2: Authority</a>
+    <a href="#pillar-3" class="sub">Pillar 3: Presence</a>
+    <a href="#schema-markup">Schema Markup for AEO</a>
+    <a href="#llmstxt">llms.txt</a>
+    <a href="#content-types-cited">Content Types That Get Cited Most</a>
+    <a href="#ai-seo-content-types">AI SEO for Different Content Types</a>
+    <a href="#aeo-maturity-model">The AEO Maturity Model</a>
+    <a href="#30-day-kickstarter">The 30-Day AEO Kickstarter</a>
+    <a href="#zero-budget-wins">Zero-Budget AEO Wins</a>
+    <a href="#platform-sources">How Each AI Platform Picks Sources</a>
+    <a href="#google-aio" class="sub">Google AI Overviews</a>
+    <a href="#chatgpt" class="sub">ChatGPT</a>
+    <a href="#perplexity" class="sub">Perplexity</a>
+    <a href="#copilot" class="sub">Microsoft Copilot</a>
+    <a href="#claude" class="sub">Claude</a>
+    <a href="#robots-txt" class="sub">robots.txt</a>
+    <a href="#monitoring">Monitoring AI Visibility</a>
+    <a href="#content-patterns">AEO &amp; GEO Content Patterns</a>
+    <a href="#common-mistakes">Common Mistakes</a>
+    <a href="#deep-research-prompts">Deep Research Prompts</a>
+    <a href="#further-reading">Further Reading</a>
+  </nav>
+</aside>
+
+<div class="main">
+
+<header class="page-header">
+  <h1>AEO &amp; AI SEO Guide</h1>
+  <p class="subtitle">A comprehensive guide to Answer Engine Optimization and AI SEO. Make your content discoverable, extractable, and citable by AI systems including Google AI Overviews, ChatGPT, Perplexity, Claude, Gemini, and Copilot.</p>
+  <p class="byline">Laura Flowers &nbsp;|&nbsp; Last updated March 18, 2026</p>
+</header>
+
+<div class="content">
+
+<!-- ====== AEO IS REBRANDED SEO ====== -->
+<section id="aeo-is-rebranded-seo">
+<h2>AEO Is Rebranded SEO</h2>
+<p>AEO isn't replacing SEO. It's reorganizing your brand knowledge into machine-readable chunks that AI engines can confidently cite. The fundamentals of SEO still apply. We just need to adapt for AI.</p>
+
+<h3>The Translations</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>SEO Concept</th><th>AEO Equivalent</th></tr></thead>
+<tbody>
+<tr><td>Longtail keywords</td><td>Query fan-out</td></tr>
+<tr><td>Backlinks</td><td>Citations (backlinks repackaged)</td></tr>
+<tr><td>Schema markup</td><td>Schema markup (same thing, but no longer optional)</td></tr>
+<tr><td>Quality content</td><td>Entity-rich, structured, answerable content</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>The Key Distinction</h3>
+<ul>
+  <li><strong>SEO asks:</strong> Does my content rank for this keyword?</li>
+  <li><strong>AEO asks:</strong> Can AI systems extract a clear, accurate answer from my content and confidently attribute it to my brand?</li>
+</ul>
+<p>SEO success = rankings, traffic, position.<br>
+AEO success = citation frequency, consistency of appearance, how often your content is reused inside generated answers.</p>
+
+<h3>Two Mindset Shifts</h3>
+<p><strong>Consistency of message replaces consistency of position.</strong> You can't guarantee you'll be cited, but you can guarantee that when you are cited, the AI gets your story right. The consistency you control now is narrative consistency, not ranking consistency. Make your structured content so clear that models don't hallucinate your positioning or flatten your differentiation.</p>
+<p><strong>Ubiquity over ranking.</strong> In SEO you needed to be in one place (the SERP). In AEO you need to be everywhere the model might pull from: your site, third-party reviews, Reddit threads, YouTube, industry publications, community forums. You can't control what the model picks on any given run, but you can make sure that no matter where it looks, it finds you.</p>
+
+<h3>The Shift from Deterministic to Probabilistic</h3>
+<p>There's no algorithm update playbook for AEO the way there is for Google. No Search Console equivalent. No rank tracker that means what it used to mean. The shift is from deterministic marketing (I did X, I got Y) to probabilistic marketing (I did X, I increased the odds of Y). The playbook isn't "here's how you guarantee visibility in AI answers." It's "here's how you maximize the probability you show up, across the most runs, with the most accurate representation of your brand."</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== HOW AI SEARCH WORKS ====== -->
+<section id="how-ai-search-works">
+<h2>How AI Search Works</h2>
+
+<h3>The AI Search Landscape</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Platform</th><th>How It Works</th><th>Source Selection</th></tr></thead>
+<tbody>
+<tr><td><strong>Google AI Overviews</strong></td><td>Summarizes top-ranking pages</td><td>Strong correlation with traditional rankings + E-E-A-T</td></tr>
+<tr><td><strong>ChatGPT (with search)</strong></td><td>Searches web via Bing, cites sources</td><td>Draws from wider range, not just top-ranked</td></tr>
+<tr><td><strong>Perplexity</strong></td><td>Always cites sources with links</td><td>Favors authoritative, recent, well-structured content</td></tr>
+<tr><td><strong>Gemini</strong></td><td>Google's AI assistant</td><td>Pulls from Google index + Knowledge Graph</td></tr>
+<tr><td><strong>Copilot</strong></td><td>Bing-powered AI search</td><td>Bing index + authoritative sources</td></tr>
+<tr><td><strong>Claude</strong></td><td>Brave Search (when enabled)</td><td>Training data + Brave search results</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Key Difference from Traditional SEO</h3>
+<p>Traditional SEO gets you ranked. AI SEO gets you <strong>cited</strong>.</p>
+<p>In traditional search, you need to rank on page 1. In AI search, a well-structured page can get cited even if it ranks on page 2 or 3. AI systems select sources based on content quality, structure, and relevance, not just rank position.</p>
+
+<h3>Key Statistics</h3>
+<p style="font-size:0.88rem;color:var(--gray-600);">Sources: AirOps 2026 State of AI Search Report, Webflow State of the Web, Princeton GEO Study (KDD 2024).</p>
+
+<div class="stat-grid">
+  <div class="stat-card"><span class="stat-number">47%</span><span class="stat-label">of Google searches show AI Overviews</span></div>
+  <div class="stat-card"><span class="stat-number">60%</span><span class="stat-label">of AI Overview citations come from pages NOT in the top 20 organic results</span></div>
+  <div class="stat-card"><span class="stat-number">85%</span><span class="stat-label">of brand mentions in top-of-funnel queries come from third-party sources</span></div>
+  <div class="stat-card"><span class="stat-number">95%</span><span class="stat-label">of pages cited in ChatGPT are less than 10 months old</span></div>
+  <div class="stat-card"><span class="stat-number">6x</span><span class="stat-label">higher conversion from AI-driven traffic vs. non-brand Google traffic</span></div>
+  <div class="stat-card"><span class="stat-number">40%+</span><span class="stat-label">AI visibility boost from statistics and citations (Princeton GEO)</span></div>
+</div>
+
+<ul>
+  <li>AI Overviews reduce clicks to websites by up to <strong>58%</strong></li>
+  <li>Only <strong>30%</strong> of brands remain visible from one AI answer to the next; only <strong>20%</strong> stay visible across five consecutive runs</li>
+  <li><strong>10-25%</strong> of brand discovery already happens inside LLMs</li>
+  <li><strong>52%</strong> of marketing leaders will optimize for AI-driven search in 2026</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== AI VISIBILITY AUDIT ====== -->
+<section id="ai-visibility-audit">
+<h2>AI Visibility Audit</h2>
+<p>Before optimizing, assess your current AI search presence.</p>
+
+<h3>Step 1: Ask AI About Your Business</h3>
+<p>Run these prompts across ChatGPT, Claude, Perplexity, and Google AI Overviews:</p>
+<ol>
+  <li>"Tell me what you know about [Company Name]. Where does this information come from? What's missing or inaccurate?"</li>
+  <li>"What would you recommend to someone looking for [your product/service]? Which companies or solutions would you suggest?"</li>
+  <li>"Explain [specific topic in your industry]. Which companies or resources are most authoritative on this topic?"</li>
+</ol>
+<p>Look for patterns in what's missing, what's wrong, and where competitors get recommended instead of you. Those are your priority gaps.</p>
+
+<h3>Step 2: Test Your Key Queries</h3>
+<p>Test 10-20 of your most important queries across platforms:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Query</th><th>Google AI Overview</th><th>ChatGPT</th><th>Perplexity</th><th>You Cited?</th><th>Competitors Cited?</th></tr></thead>
+<tbody>
+<tr><td>[query 1]</td><td>Yes/No</td><td>Yes/No</td><td>Yes/No</td><td>Yes/No</td><td>[who]</td></tr>
+<tr><td>[query 2]</td><td>Yes/No</td><td>Yes/No</td><td>Yes/No</td><td>Yes/No</td><td>[who]</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Query types to test:</strong></p>
+<ul>
+  <li>"What is [your product category]?"</li>
+  <li>"Best [product category] for [use case]"</li>
+  <li>"[Your brand] vs [competitor]"</li>
+  <li>"How to [problem your product solves]"</li>
+  <li>"[Your product category] pricing"</li>
+</ul>
+<blockquote><p><strong>Important:</strong> People ask AI differently than they type into Google. A Google query looks like "best quantitative fit test instrument fire department." An AI query looks like "What's the best quantitative fit testing instrument for fire departments?" Test both formats.</p></blockquote>
+
+<h3>Step 3: Act Like a Customer</h3>
+<p>Ask what your customers ask, not what you want them to ask. Sources for real customer language:</p>
+<ul>
+  <li>Support tickets and customer emails</li>
+  <li>Sales call recordings and chat transcripts</li>
+  <li>Reddit and community threads</li>
+  <li>Google Search Console query data</li>
+  <li>Forums and industry communities</li>
+</ul>
+<p>This becomes your content roadmap.</p>
+
+<h3>Step 4: Content Extractability Check</h3>
+<p>For each priority page, verify:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Check</th><th>Pass/Fail</th></tr></thead>
+<tbody>
+<tr><td>Clear definition in first paragraph?</td><td></td></tr>
+<tr><td>Self-contained answer blocks (work without surrounding context)?</td><td></td></tr>
+<tr><td>Statistics with sources cited?</td><td></td></tr>
+<tr><td>Comparison tables for "[X] vs [Y]" queries?</td><td></td></tr>
+<tr><td>FAQ section with natural-language questions?</td><td></td></tr>
+<tr><td>Schema markup (FAQ, HowTo, Article, Product)?</td><td></td></tr>
+<tr><td>Expert attribution (author name, credentials)?</td><td></td></tr>
+<tr><td>Recently updated (within 6 months)?</td><td></td></tr>
+<tr><td>Heading structure matches query patterns?</td><td></td></tr>
+<tr><td>AI bots allowed in robots.txt?</td><td></td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Step 5: AI Bot Access Check</h3>
+<p>Verify your robots.txt allows AI crawlers. Each AI platform has its own bot, and blocking it means that platform can't cite you:</p>
+<ul>
+  <li><strong>GPTBot</strong> and <strong>ChatGPT-User</strong> &mdash; OpenAI (ChatGPT)</li>
+  <li><strong>PerplexityBot</strong> &mdash; Perplexity</li>
+  <li><strong>ClaudeBot</strong> and <strong>anthropic-ai</strong> &mdash; Anthropic (Claude)</li>
+  <li><strong>Google-Extended</strong> &mdash; Google Gemini and AI Overviews</li>
+  <li><strong>Bingbot</strong> &mdash; Microsoft Copilot (via Bing)</li>
+</ul>
+<p>Check your robots.txt for <code>Disallow</code> rules targeting any of these. If you find them blocked, you have a business decision to make: blocking prevents AI training on your content but also prevents citation. One middle ground is blocking training-only crawlers (like <strong>CCBot</strong> from Common Crawl) while allowing the search bots listed above.</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== OPTIMIZATION STRATEGY ====== -->
+<section id="optimization-strategy">
+<h2>Optimization Strategy: The Three Pillars</h2>
+
+<div class="pillar-grid">
+  <div class="pillar-card">
+    <div class="pillar-num">1</div>
+    <h4>Structure</h4>
+    <p>Make it extractable</p>
+  </div>
+  <div class="pillar-card">
+    <div class="pillar-num">2</div>
+    <h4>Authority</h4>
+    <p>Make it citable</p>
+  </div>
+  <div class="pillar-card">
+    <div class="pillar-num">3</div>
+    <h4>Presence</h4>
+    <p>Be where AI looks</p>
+  </div>
+</div>
+</section>
+
+<!-- PILLAR 1 -->
+<section id="pillar-1">
+<h3>Pillar 1: Structure &mdash; Make Content Extractable</h3>
+
+<h4>How AI Systems Retrieve Content</h4>
+<p>AI search systems use a process called retrieval-augmented generation (RAG). They don't read your entire page. They break content into passages (roughly 200-500 tokens, or 150-375 words) and retrieve the most relevant passages for a given query. Each passage is evaluated independently.</p>
+<p>This means:</p>
+<ul>
+  <li>Every section of your content needs to work as a standalone unit</li>
+  <li>A brilliant answer buried in the middle of a rambling paragraph will get skipped</li>
+  <li>Clear headings help the system understand what each passage is about</li>
+  <li>Short, self-contained paragraphs beat long, flowing prose</li>
+</ul>
+
+<h4>Query Fan-Out</h4>
+<p>Query fan-out is how AI systems expand a single user query into multiple sub-queries to capture different aspects of what the user might need. When someone asks "What's the best project management tool?", an AI system might internally decompose that into:</p>
+<ul>
+  <li>What are the top-rated project management tools?</li>
+  <li>What features matter most in project management software?</li>
+  <li>How do project management tools compare on pricing?</li>
+  <li>What do users say about [specific tools]?</li>
+</ul>
+<p>Understanding fan-out is critical because it tells you what content to create.</p>
+
+<h4>The 5 + 3 + 3 Formula for Generating Fan-Out</h4>
+<p>From a single base question, generate 11 variations:</p>
+<ul>
+  <li><strong>Core question:</strong> Restate the base question clearly</li>
+  <li><strong>What/Why/How variations (5):</strong> Questions exploring definition, reasoning, and process</li>
+  <li><strong>Contextual variations (3):</strong> Questions tied to specific use cases, industries, or scenarios</li>
+  <li><strong>Industry-specific variations (3):</strong> Questions using terminology from the target sector</li>
+</ul>
+<p><strong>Example:</strong></p>
+<p>Base question: "What is the best project management tool?"</p>
+<p>Fan-out:</p>
+<ul>
+  <li>"What is the best project management tool for a 15-person team?"</li>
+  <li>"...that integrates with Slack?"</li>
+  <li>"...that can have multiple people assigned to the same task?"</li>
+  <li>"How many team members can use [tool]?"</li>
+  <li>"What's the pricing for a 20-person team?"</li>
+  <li>"How long does setup take?"</li>
+</ul>
+<p><strong>Where to find fan-out topics:</strong></p>
+<ul>
+  <li>Google People Also Ask</li>
+  <li>Support tickets and customer emails</li>
+  <li>Sales call recordings and chat transcripts</li>
+  <li>Reddit and community threads</li>
+  <li>Google Search Console keyword data</li>
+  <li>Tools: AlsoAsked, AnswerThePublic, Profound, Scrunch, PromptWatch</li>
+</ul>
+
+<h4>FAQs: The Secret Weapon for Fan-Out</h4>
+<p>FAQs on product pages are one of the most powerful AEO tactics because:</p>
+<ul>
+  <li>They directly match how people ask questions to LLMs</li>
+  <li>They naturally address query fan-out (initial question + follow-ups)</li>
+  <li>They provide structured, easily parseable content for AI engines</li>
+  <li>They help humans AND LLMs simultaneously</li>
+  <li>They can be wrapped in FAQPage schema for additional signal</li>
+</ul>
+<p>Where to add FAQs: bottom of product pages, pillar pages, service pages, anywhere you're answering questions your audience actually asks.</p>
+
+<h4>The AEO Answer Block Formula</h4>
+<p>A structured format for creating AI-ready content blocks:</p>
+<pre><code>[Question exactly as customers ask it]
+
+Quick Answer (30-60 words):
+[The distilled truth. No fluff.]
+
+Why This Matters:
+[3-5 sentences with entity-rich language: who it's for, when it applies, what problem it solves]
+
+Common Follow-ups:
+- [Question 1] — [Brief answer]
+- [Question 2] — [Brief answer]
+- [Question 3] — [Brief answer]
+
+Example:
+[Real scenario or use case]</code></pre>
+
+<p>Why this works:</p>
+<ol>
+  <li><strong>High-signal summary</strong> &mdash; Models can quote the Quick Answer directly</li>
+  <li><strong>Context layer</strong> &mdash; Teaches AI when/why/who this applies to</li>
+  <li><strong>Decision logic</strong> &mdash; Gives AI reasoning patterns to reuse</li>
+  <li><strong>Follow-ups</strong> &mdash; Captures fan-out queries on the same page</li>
+</ol>
+<p>Guidelines:</p>
+<ul>
+  <li>Keep Answer Blocks under 200 words</li>
+  <li>Focus on one question per block</li>
+  <li>Use entity-rich language throughout</li>
+  <li>Always include the follow-up questions</li>
+</ul>
+
+<h4>Entity-Rich Language</h4>
+<p>AI engines need specifics to cite you confidently. Vague language gets skipped; entity-rich language gets cited.</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Instead of...</th><th>Try...</th></tr></thead>
+<tbody>
+<tr><td>"Our solution helps businesses"</td><td>"Our [specific product name] helps [specific industry] companies reduce [specific problem] by [specific method]"</td></tr>
+<tr><td>"We offer great customer service"</td><td>"[Company] provides 24/7 technical support with average response times under 2 hours"</td></tr>
+<tr><td>"Industry-leading technology"</td><td>"[Product] uses [specific technology] to achieve [specific measurable outcome]"</td></tr>
+</tbody>
+</table>
+</div>
+
+<h4>Structural Rules</h4>
+<ul>
+  <li>Lead every section with a direct answer (don't bury it)</li>
+  <li>Keep key answer passages to 40-60 words (optimal for snippet extraction)</li>
+  <li>Use H2/H3 headings that match how people phrase queries</li>
+  <li>Tables beat prose for comparison content</li>
+  <li>Numbered lists beat paragraphs for process content</li>
+  <li>Each paragraph should convey one clear idea</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- PILLAR 2 -->
+<section id="pillar-2">
+<h3>Pillar 2: Authority &mdash; Make Content Citable</h3>
+<p>AI systems prefer sources they can trust. Build citation-worthiness.</p>
+
+<h4>Research-Backed Optimization Methods</h4>
+<p>The Princeton GEO research (KDD 2024, studied across Perplexity.ai) ranked 9 optimization methods:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Method</th><th>Visibility Boost</th><th>How to Apply</th></tr></thead>
+<tbody>
+<tr><td><strong>Cite sources</strong></td><td>+40%</td><td>Add authoritative references with links</td></tr>
+<tr><td><strong>Add statistics</strong></td><td>+37%</td><td>Include specific numbers with sources</td></tr>
+<tr><td><strong>Add quotations</strong></td><td>+30%</td><td>Expert quotes with name and title</td></tr>
+<tr><td><strong>Authoritative tone</strong></td><td>+25%</td><td>Write with demonstrated expertise</td></tr>
+<tr><td><strong>Improve clarity</strong></td><td>+20%</td><td>Simplify complex concepts</td></tr>
+<tr><td><strong>Technical terms</strong></td><td>+18%</td><td>Use domain-specific terminology</td></tr>
+<tr><td><strong>Unique vocabulary</strong></td><td>+15%</td><td>Increase word diversity</td></tr>
+<tr><td><strong>Fluency optimization</strong></td><td>+15-30%</td><td>Improve readability and flow</td></tr>
+<tr><td><s>Keyword stuffing</s></td><td><strong>-10%</strong></td><td><strong>Actively hurts AI visibility</strong></td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Best combination:</strong> Fluency + Statistics = maximum boost. Low-ranking sites benefit even more, with up to 115% visibility increase when adding citations.</p>
+
+<h4>The Citation Desert</h4>
+<p>Not all content ages equally in AI search. Content freshness follows a predictable decay pattern:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Zone</th><th>Age</th><th>Citation Probability</th></tr></thead>
+<tbody>
+<tr><td><strong>Prime Citation Zone</strong></td><td>1-3 months</td><td>Highest probability of citation</td></tr>
+<tr><td><strong>Declining Zone</strong></td><td>3-9 months</td><td>Decreasing citation frequency</td></tr>
+<tr><td><strong>Citation Desert</strong></td><td>9-12+ months</td><td>Content effectively invisible to AI</td></tr>
+</tbody>
+</table>
+</div>
+<p><strong>Core stat:</strong> 95% of pages cited in ChatGPT are less than 10 months old (AirOps). Pages not refreshed quarterly are 3x more likely to lose citations.</p>
+<p><strong>What to do:</strong></p>
+<ul>
+  <li>Update top-performing content monthly</li>
+  <li>Refresh all content at minimum quarterly to stay out of the Citation Desert</li>
+  <li>Add the current year to URLs and meta-titles to signal freshness</li>
+  <li>"Refreshing" means more than changing the date: update statistics, add new examples, expand coverage, remove outdated information</li>
+  <li>Prioritize refreshing pages that (a) currently get cited, (b) target high-value queries, or (c) have competitors getting cited instead</li>
+</ul>
+
+<h4>Statistics and Data (+37-40% citation boost)</h4>
+<ul>
+  <li>Include specific numbers with sources</li>
+  <li>Cite original research, not summaries of research</li>
+  <li>Add dates to all statistics</li>
+  <li>Original data beats aggregated data</li>
+</ul>
+
+<h4>Expert Attribution (+25-30% citation boost)</h4>
+<ul>
+  <li>Named authors with credentials</li>
+  <li>Expert quotes with titles and organizations</li>
+  <li>"According to [Source]" framing for claims</li>
+  <li>Author bios with relevant expertise</li>
+</ul>
+
+<h4>E-E-A-T Alignment</h4>
+<ul>
+  <li>First-hand experience demonstrated</li>
+  <li>Specific, detailed information (not generic)</li>
+  <li>Transparent sourcing and methodology</li>
+  <li>Clear author expertise for the topic</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- PILLAR 3 -->
+<section id="pillar-3">
+<h3>Pillar 3: Presence &mdash; Be Where AI Looks</h3>
+<p>AI systems don't just cite your website. They cite where you appear.</p>
+
+<h4>Brand Mentions vs. Citations</h4>
+<p>These are two different things:</p>
+<ul>
+  <li><strong>Brand mention:</strong> AI names your brand in its answer ("OHD makes fit testing instruments") without linking to your content. This comes from training data and third-party sources.</li>
+  <li><strong>Citation:</strong> AI links to your content as a source. This comes from real-time web search.</li>
+</ul>
+<p>Both matter. Brand mentions build awareness and influence recommendations. Citations drive traffic. Optimize for both.</p>
+
+<h4>Brand Drives LLM Visibility</h4>
+<p>When people talk about you, cite you, and mention you across credible sources, LLMs pick it up. Brand mentions, interviews, podcasts, community discussions: they all contribute. Citation-building (the new link-building) in publications that consistently show up for your target queries is one of the highest-leverage AEO activities.</p>
+<p>AirOps found that 85% of brand mentions in top-of-funnel commercial queries come from third-party sources, not the brands themselves.</p>
+
+<h4>Third-Party Sources That Matter</h4>
+<ul>
+  <li>Wikipedia mentions (7.8% of all ChatGPT citations)</li>
+  <li>Reddit discussions (1.8% of ChatGPT citations)</li>
+  <li>Industry and trade publications</li>
+  <li>Review sites (G2, Capterra, TrustRadius for B2B)</li>
+  <li>YouTube (frequently cited by Google AI Overviews)</li>
+  <li>Quora answers</li>
+  <li>Podcasts and interviews (transcripts get indexed)</li>
+</ul>
+
+<h4>Entity Optimization</h4>
+<p>Establish your brand as a recognized entity across platforms:</p>
+<ul>
+  <li>Create or update your Wikidata entry</li>
+  <li>Maintain a Wikipedia page if notable enough</li>
+  <li>Ensure consistent brand information (name, description, category) across all platforms</li>
+  <li>Build toward a Google Knowledge Panel through structured data and consistent entity signals</li>
+  <li>Use the same brand name, product names, and descriptions everywhere</li>
+</ul>
+
+<h4>Actions</h4>
+<ul>
+  <li>Ensure your Wikipedia page is accurate and current</li>
+  <li>Participate authentically in Reddit communities</li>
+  <li>Get featured in industry roundups and comparison articles</li>
+  <li>Maintain updated profiles on relevant review platforms</li>
+  <li>Create YouTube content for key how-to queries</li>
+  <li>Answer relevant Quora questions with depth</li>
+  <li>Pitch trade publications for expert contributor opportunities (many are actively seeking contributors)</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== SCHEMA MARKUP ====== -->
+<section id="schema-markup">
+<h2>Schema Markup for AEO</h2>
+<p>Schema markup is structured data that helps AI engines understand your content. Think of it as giving LLMs a cheat sheet about your page. LLMs can't interpret pages like humans do. Schema explicitly tells them "this is a product," "this is a review," "this is a FAQ."</p>
+
+<h3>Key Schema Types</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Content Type</th><th>Schema</th><th>Why It Helps</th></tr></thead>
+<tbody>
+<tr><td>Articles/Blog posts</td><td><code>Article</code>, <code>BlogPosting</code></td><td>Author, date, topic identification</td></tr>
+<tr><td>How-to content</td><td><code>HowTo</code></td><td>Step extraction for process queries</td></tr>
+<tr><td>FAQs</td><td><code>FAQPage</code></td><td>Direct Q&amp;A extraction. Huge for AEO.</td></tr>
+<tr><td>Products</td><td><code>Product</code></td><td>Pricing, features, reviews</td></tr>
+<tr><td>Comparisons</td><td><code>ItemList</code></td><td>Structured comparison data</td></tr>
+<tr><td>Reviews</td><td><code>Review</code>, <code>AggregateRating</code></td><td>Trust signals</td></tr>
+<tr><td>Organization</td><td><code>Organization</code></td><td>Establishes brand entity</td></tr>
+<tr><td>Local businesses</td><td><code>LocalBusiness</code></td><td>Address, hours, service area</td></tr>
+</tbody>
+</table>
+</div>
+<p>Content with proper schema shows <strong>30-40% higher AI visibility</strong>.</p>
+
+<h3>Action Items</h3>
+<ul>
+  <li>Audit your current schema. Most sites only use 30-40% of available schema properties.</li>
+  <li>Use Google's Schema Markup Validator and Rich Results Test to verify.</li>
+  <li>For WordPress: Yoast handles schema well.</li>
+  <li>Webflow has a dedicated AEO audit panel that checks schema alongside SEO.</li>
+</ul>
+
+<h3>Other Technical Essentials</h3>
+<ul>
+  <li>Logical URL structure with clear subfolder organization</li>
+  <li>Clean HTML structure with proper heading hierarchy (H1, H2, H3)</li>
+  <li>Data in tables where appropriate (AI models scrape structured data more effectively)</li>
+  <li>AI engines can't render JavaScript. Ensure your content isn't obscured behind JS rendering.</li>
+  <li>Site speed and crawlability still matter. Sub-2-second load times are a clear threshold for Copilot.</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== LLMS.TXT ====== -->
+<section id="llmstxt">
+<h2>llms.txt: A New Standard for AI Discoverability</h2>
+<p><code>llms.txt</code> is a proposed web standard that provides LLMs with a structured, plain-text summary of your website. Think of it as the AI equivalent of combining robots.txt (access instructions) with a sitemap (content map) into a format specifically designed for language models.</p>
+
+<h3>How It Works</h3>
+<p>You place a plain-text file at your site root (<code>yoursite.com/llms.txt</code>) that gives AI systems a structured overview of who you are, what you do, and where your most important content lives. Unlike HTML pages that require parsing, llms.txt is immediately readable by any language model.</p>
+
+<h3>llms.txt vs. llms-full.txt</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>File</th><th>Purpose</th><th>Length</th></tr></thead>
+<tbody>
+<tr><td><code>llms.txt</code></td><td>Summary overview. Key facts, main pages, product descriptions.</td><td>Short (1-2 pages)</td></tr>
+<tr><td><code>llms-full.txt</code></td><td>Comprehensive reference. Full product details, documentation links, FAQs, technical specs.</td><td>As long as needed</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>What to Include</h3>
+<pre><code># [Company Name]
+
+&gt; [One-sentence description of what you do]
+
+## About
+[2-3 sentences: who you are, what you sell, who you serve]
+
+## Products / Services
+- [Product 1]: [Brief description, key differentiator]
+- [Product 2]: [Brief description, key differentiator]
+
+## Key Pages
+- [Page title](URL): [What this page covers]
+- [Page title](URL): [What this page covers]
+
+## FAQs
+- [Common question]: [Direct answer]
+- [Common question]: [Direct answer]
+
+## Contact
+- Website: [URL]
+- Email: [Email]
+- Phone: [Phone]</code></pre>
+
+<h3>Current Status</h3>
+<p>llms.txt is an emerging standard, not yet universally adopted. However, early adopters gain an advantage: providing structured, LLM-optimized content at a known URL makes it easier for AI systems to understand and cite your brand accurately. The cost of implementation is minimal (it's a text file), and the downside risk is zero.</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== CONTENT TYPES ====== -->
+<section id="content-types-cited">
+<h2>Content Types That Get Cited Most</h2>
+<p>Not all content is equally citable. Prioritize these formats:</p>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Content Type</th><th>Citation Share</th><th>Why AI Cites It</th></tr></thead>
+<tbody>
+<tr><td><strong>Comparison articles</strong></td><td>~33%</td><td>Structured, balanced, high-intent</td></tr>
+<tr><td><strong>Definitive guides</strong></td><td>~15%</td><td>Comprehensive, authoritative</td></tr>
+<tr><td><strong>Original research/data</strong></td><td>~12%</td><td>Unique, citable statistics</td></tr>
+<tr><td><strong>Best-of/listicles</strong></td><td>~10%</td><td>Clear structure, entity-rich</td></tr>
+<tr><td><strong>Product pages</strong></td><td>~10%</td><td>Specific details AI can extract</td></tr>
+<tr><td><strong>How-to guides</strong></td><td>~8%</td><td>Step-by-step structure</td></tr>
+<tr><td><strong>Opinion/analysis</strong></td><td>~10%</td><td>Expert perspective, quotable</td></tr>
+</tbody>
+</table>
+</div>
+
+<p><strong>Underperformers for AI citation:</strong></p>
+<ul>
+  <li>Generic blog posts without structure</li>
+  <li>Thin product pages with marketing fluff</li>
+  <li>Gated content (AI can't access it)</li>
+  <li>Content without dates or author attribution</li>
+  <li>PDF-only content (harder for most AI to parse, though Perplexity specifically prioritizes publicly accessible PDFs like whitepapers and research reports)</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== AI SEO FOR DIFFERENT CONTENT TYPES ====== -->
+<section id="ai-seo-content-types">
+<h2>AI SEO for Different Content Types</h2>
+
+<h3>Product Pages</h3>
+<p><strong>Goal:</strong> Get cited in "What is [category]?" and "Best [category]" queries.</p>
+<p><strong>Optimize:</strong></p>
+<ul>
+  <li>Clear product description in first paragraph (what it does, who it's for)</li>
+  <li>Feature comparison tables (your product vs. category benchmarks)</li>
+  <li>Specific metrics ("reduces testing time to under 3 minutes" not "fast testing")</li>
+  <li>Customer count or social proof with numbers</li>
+  <li>Pricing transparency (AI cites pages with visible pricing)</li>
+  <li>FAQ section addressing common buyer questions with query fan-out</li>
+</ul>
+
+<h3>Blog Content</h3>
+<p><strong>Goal:</strong> Get cited as an authoritative source on topics in your space.</p>
+<p><strong>Optimize:</strong></p>
+<ul>
+  <li>One clear target query per post (match heading to query)</li>
+  <li>Definition in first paragraph for "What is" queries</li>
+  <li>Original data, research, or expert quotes</li>
+  <li>"Last updated" date visible</li>
+  <li>Author bio with relevant credentials</li>
+  <li>Internal links to related product/feature pages</li>
+</ul>
+
+<h3>Comparison/Alternative Pages</h3>
+<p><strong>Goal:</strong> Get cited in "[X] vs [Y]" and "Best [X] alternatives" queries.</p>
+<p><strong>Optimize:</strong></p>
+<ul>
+  <li>Structured comparison tables (not just prose)</li>
+  <li>Fair and balanced (AI penalizes obviously biased comparisons)</li>
+  <li>Specific criteria with ratings or scores</li>
+  <li>Updated pricing and feature data</li>
+</ul>
+
+<h3>Documentation / Help Content</h3>
+<p><strong>Goal:</strong> Get cited in "How to [X] with [your product]" queries.</p>
+<p><strong>Optimize:</strong></p>
+<ul>
+  <li>Step-by-step format with numbered lists</li>
+  <li>Code examples where relevant</li>
+  <li>HowTo schema markup</li>
+  <li>Screenshots with descriptive alt text</li>
+  <li>Clear prerequisites and expected outcomes</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== AEO MATURITY MODEL ====== -->
+<section id="aeo-maturity-model">
+<h2>The AEO Maturity Model</h2>
+<p style="font-size:0.88rem;color:var(--gray-600);">Source: Webflow, "AEO for the CMO: An Actionable Maturity Model"</p>
+<p>Use this to assess where you are and what to work on next. The model has four dimensions (Content, Technical, Authority, Measurement) across five levels.</p>
+
+<h3>Five Levels</h3>
+
+<div class="maturity-level">
+  <div class="maturity-badge">1</div>
+  <div>
+    <h4>Level 1 &mdash; Keywords</h4>
+    <p>Traditional keyword-focused content, basic on-page SEO, building backlinks, tracking keyword rankings.</p>
+  </div>
+</div>
+
+<div class="maturity-level">
+  <div class="maturity-badge">2</div>
+  <div>
+    <h4>Level 2 &mdash; Answers</h4>
+    <p>Starting to reorient around answers instead of just keywords. Creating some answer-oriented content, working on basic page structure, actively pursuing E-E-A-T principles, doing ad hoc mention checking.</p>
+  </div>
+</div>
+
+<div class="maturity-level">
+  <div class="maturity-badge">3</div>
+  <div>
+    <h4>Level 3 &mdash; Structure</h4>
+    <p>Getting systematic. Creating answer question clusters, building consistent site structure on a fast site, doing proactive digital PR and thought leadership, systematically tracking LLM traffic, mentions, and sentiment.</p>
+  </div>
+</div>
+
+<div class="maturity-level">
+  <div class="maturity-badge">4</div>
+  <div>
+    <h4>Level 4 &mdash; Pillar</h4>
+    <p>Optimizing for AEO as a thought leader. Creating answer-hierarchy-driven content, automated site structure, recognized as a pillar of thought leadership, tracking share of voice and accuracy.</p>
+  </div>
+</div>
+
+<div class="maturity-level">
+  <div class="maturity-badge">5</div>
+  <div>
+    <h4>Level 5 &mdash; Authority</h4>
+    <p>Continuous adaptation to answer engine changes. Programmatic AEO with personalized content, adopted emerging standards (llms.txt, MCP), widespread positive citations, real-time analytics.</p>
+  </div>
+</div>
+
+<h3>Self-Assessment Questions</h3>
+<ul>
+  <li><strong>Content:</strong> Do you target questions prospects ask as a primary way of choosing content topics?</li>
+  <li><strong>Technical:</strong> Does your website use schema.org structure widely?</li>
+  <li><strong>Authority:</strong> Does your team explicitly aim for Google's E-E-A-T?</li>
+  <li><strong>Measurement:</strong> Does your team measure mentions in LLMs?</li>
+</ul>
+<p>Most companies are between Levels 1-3. That's fine. Progress beats perfection. Focus on getting to Level 3 solidly before trying to jump ahead.</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== 30-DAY KICKSTARTER ====== -->
+<section id="30-day-kickstarter">
+<h2>The 30-Day AEO Kickstarter</h2>
+<p>A practical 4-week plan for getting started with AEO. If time is minimal, focus just on Week 1 for a baseline.</p>
+
+<div class="week-card">
+  <h3>Week 1: Audit &amp; Understand</h3>
+  <p><strong>Goal:</strong> Figure out where you stand.</p>
+  <ul>
+    <li>Test what AI knows about your company across ChatGPT, Claude, Perplexity, and Google AI Overviews (use the audit prompts from the AI Visibility Audit section)</li>
+    <li>Document what they say (or don't say) and where you're being mentioned</li>
+    <li>Review existing content: which pages get most traffic, which topics are you known for, do you have clear answers to common industry questions</li>
+    <li>Understand the Citation Desert: 95% of pages cited in ChatGPT are less than 10 months old</li>
+  </ul>
+</div>
+
+<div class="week-card">
+  <h3>Week 2: Content That AI Can Use</h3>
+  <p><strong>Goal:</strong> Make your content more digestible for AI.</p>
+  <ul>
+    <li>Audit your best content for answerability. Does it directly answer questions?</li>
+    <li>Add FAQ sections to product pages, pillar pages, and service pages</li>
+    <li>Create query fan-outs: map all related questions from 3-5 main keywords using the 5+3+3 formula</li>
+    <li>Build Answer Blocks for your highest-priority questions</li>
+    <li>Start a simple tracking spreadsheet: monitor when and where AI cites you</li>
+  </ul>
+</div>
+
+<div class="week-card">
+  <h3>Week 3: Schema and Site Structure</h3>
+  <p><strong>Goal:</strong> Make your site technically ready for AI.</p>
+  <ul>
+    <li>Add or update schema markup: Organization, Article, FAQPage at minimum</li>
+    <li>For local businesses: add LocalBusiness schema</li>
+    <li>Use Google's Schema Markup Validator to test</li>
+    <li>Improve site structure: clean HTML, proper heading hierarchy, data tables</li>
+    <li>Create an llms.txt file and host it at your site root</li>
+  </ul>
+</div>
+
+<div class="week-card">
+  <h3>Week 4: Build for Citations</h3>
+  <p><strong>Goal:</strong> Get other people to reference you.</p>
+  <ul>
+    <li>Identify citation opportunities: authoritative industry sites, trade publications, associations, educational institutions</li>
+    <li>Create cite-worthy content: original research, data, case studies, definitive guides</li>
+    <li>Pitch trade publications. Many are actively seeking expert contributors.</li>
+    <li>Even articles that don't reference your product directly improve thought leadership and backlinks</li>
+  </ul>
+</div>
+
+<h3>Measure Your Progress</h3>
+<p>Re-run the Week 1 audit after completing Week 4. See if AI models are citing you more and if the information has improved. Then repeat quarterly.</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== ZERO-BUDGET WINS ====== -->
+<section id="zero-budget-wins">
+<h2>Zero-Budget AEO Wins</h2>
+<p>Seven things you can do right now without spending money:</p>
+<ol class="numbered-wins">
+  <li><strong>Optimize existing content with prompt-style phrasing.</strong> Rewrite headings to match how people ask questions to AI ("What is respirator fit testing?" not "Fit Testing Overview").</li>
+  <li><strong>Add FAQs with query fan-out to your top product pages.</strong> 5-10 questions each, using real customer language.</li>
+  <li><strong>Implement FAQPage schema on any page with Q&amp;A content.</strong> This is the single highest-impact schema type for AEO.</li>
+  <li><strong>Keep content fresh.</strong> Update your most important pages monthly. Refresh everything else quarterly. Change the "last updated" date only when you actually update the content.</li>
+  <li><strong>Mine sales calls and support tickets for real customer language.</strong> These reveal the exact questions people ask, in the exact words they use.</li>
+  <li><strong>Use Search Console data for query fan-out.</strong> Your existing search queries show you what people are already looking for.</li>
+  <li><strong>Join community conversations where your audience hangs out.</strong> Authentic participation in Reddit, forums, and industry communities builds the third-party presence that AI draws from.</li>
+</ol>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== HOW EACH AI PLATFORM PICKS SOURCES ====== -->
+<section id="platform-sources">
+<h2>How Each AI Platform Picks Sources</h2>
+<p>Every AI platform shares three baseline requirements:</p>
+<ol>
+  <li><strong>Your content must be in their index.</strong> Each platform uses a different search backend (Google, Bing, Brave, or their own). If you're not indexed, you can't be cited.</li>
+  <li><strong>Your content must be crawlable.</strong> AI bots need access via robots.txt. Block the bot, lose the citation.</li>
+  <li><strong>Your content must be extractable.</strong> AI systems pull passages, not pages. Clear structure and self-contained paragraphs win.</li>
+</ol>
+<p>Beyond these basics, each platform weights different signals.</p>
+
+<div class="platform-card" id="google-aio">
+  <h3>Google AI Overviews</h3>
+  <p>Google AI Overviews pull from Google's own index and lean heavily on E-E-A-T signals (Experience, Expertise, Authoritativeness, Trustworthiness). They appear in roughly 47% of Google searches (AirOps, early 2026).</p>
+  <p><strong>What makes Google AI Overviews different:</strong> They already have your traditional SEO signals: backlinks, page authority, topical relevance. The additional AI layer adds a preference for content with cited sources and structured data. Research shows that including authoritative citations in your content correlates with a 132% visibility boost, and writing with an authoritative (not salesy) tone adds another 89%.</p>
+  <p><strong>AI Overviews don't just recycle the traditional Top 10.</strong> Only about 15% of AI Overview sources overlap with conventional organic results. Pages that wouldn't crack page 1 in traditional search can still get cited if they have strong structured data and clear, extractable answers.</p>
+  <p><strong>What to focus on:</strong></p>
+  <ul>
+    <li>Schema markup is the single biggest lever: Article, FAQPage, HowTo, and Product schemas give AI Overviews structured context to work with (30-40% visibility boost)</li>
+    <li>Build topical authority through content clusters with strong internal linking</li>
+    <li>Include named, sourced citations in your content (not just claims)</li>
+    <li>Author bios with real credentials matter. E-E-A-T is weighted heavily</li>
+    <li>Get into Google's Knowledge Graph where possible (an accurate Wikipedia entry helps)</li>
+    <li>Target "how to" and "what is" query patterns, as these trigger AI Overviews most often</li>
+  </ul>
+</div>
+
+<div class="platform-card" id="chatgpt">
+  <h3>ChatGPT</h3>
+  <p>ChatGPT's web search draws from a Bing-based index. It combines this with its training knowledge to generate answers, then cites the web sources it relied on.</p>
+  <p><strong>What makes ChatGPT different:</strong> Domain authority matters more here than on other AI platforms. An SE Ranking analysis of 129,000 domains found that authority and credibility signals account for roughly 40% of what determines citation, with content quality at about 35% and platform trust at 25%. Sites with very high referring domain counts (350K+) average 8.4 citations per response, while sites with slightly lower trust scores (91-96 vs 97-100) drop from 8.4 to 6 citations.</p>
+  <p><strong>Freshness is a major differentiator.</strong> Content updated within the last 30 days gets cited about 3.2x more often than older content. ChatGPT clearly favors recent information.</p>
+  <p><strong>The most important signal is content-answer fit.</strong> A ZipTie analysis of 400,000 pages found that how well your content's style and structure matches ChatGPT's own response format accounts for about 55% of citation likelihood. This is far more important than domain authority (12%) or on-page structure (14%) alone. Write the way ChatGPT would answer the question, and you're more likely to be the source it cites.</p>
+  <p><strong>Where ChatGPT looks beyond your site:</strong> Wikipedia accounts for 7.8% of all ChatGPT citations, Reddit for 1.8%, and Forbes for 1.1%. Brand official sites are cited frequently but third-party mentions carry significant weight.</p>
+  <p><strong>What to focus on:</strong></p>
+  <ul>
+    <li>Invest in backlinks and domain authority, the strongest baseline signal</li>
+    <li>Update competitive content at least monthly</li>
+    <li>Structure your content the way ChatGPT structures its answers (conversational, direct, well-organized)</li>
+    <li>Include verifiable statistics with named sources</li>
+    <li>Clean heading hierarchy (H1 &gt; H2 &gt; H3) with descriptive headings</li>
+  </ul>
+</div>
+
+<div class="platform-card" id="perplexity">
+  <h3>Perplexity</h3>
+  <p>Perplexity always cites its sources with clickable links, making it the most transparent AI search platform. It combines its own index with Google's and runs results through multiple reranking passes: initial relevance retrieval, then traditional ranking factor scoring, then ML-based quality evaluation that can discard entire result sets if they don't meet quality thresholds.</p>
+  <p><strong>What makes Perplexity different:</strong> It's the most "research-oriented" AI search engine. Perplexity maintains curated lists of authoritative domains (Amazon, GitHub, major academic sites) that get inherent ranking boosts. It uses a time-decay algorithm that evaluates new content quickly, giving fresh publishers a real shot at citation.</p>
+  <p><strong>Perplexity has unique content preferences:</strong></p>
+  <ul>
+    <li><strong>FAQ Schema (JSON-LD)</strong> &mdash; Pages with FAQ structured data get cited noticeably more often</li>
+    <li><strong>PDF documents</strong> &mdash; Publicly accessible PDFs (whitepapers, research reports) are prioritized. If you have authoritative PDF content gated behind a form, consider making a version public.</li>
+    <li><strong>Publishing velocity</strong> &mdash; How frequently you publish matters more than keyword targeting</li>
+    <li><strong>Self-contained paragraphs</strong> &mdash; Perplexity prefers atomic, semantically complete paragraphs it can extract cleanly</li>
+  </ul>
+  <p><strong>What to focus on:</strong></p>
+  <ul>
+    <li>Allow PerplexityBot in robots.txt</li>
+    <li>Implement FAQPage schema on any page with Q&amp;A content</li>
+    <li>Host PDF resources publicly (whitepapers, guides, reports)</li>
+    <li>Add Article schema with publication and modification timestamps</li>
+    <li>Write in clear, self-contained paragraphs that work as standalone answers</li>
+    <li>Build deep topical authority in your specific niche</li>
+  </ul>
+</div>
+
+<div class="platform-card" id="copilot">
+  <h3>Microsoft Copilot</h3>
+  <p>Copilot is embedded across Microsoft's ecosystem: Edge, Windows, Microsoft 365, and Bing Search. It relies entirely on Bing's index, so if Bing hasn't indexed your content, Copilot can't cite it.</p>
+  <p><strong>What makes Copilot different:</strong> The Microsoft ecosystem connection creates unique optimization opportunities. Mentions and content on LinkedIn and GitHub provide ranking boosts that other platforms don't offer. Copilot also puts more weight on page speed, with sub-2-second load times as a clear threshold.</p>
+  <p><strong>What to focus on:</strong></p>
+  <ul>
+    <li>Submit your site to Bing Webmaster Tools (many sites only submit to Google Search Console)</li>
+    <li>Use IndexNow protocol for faster indexing of new and updated content</li>
+    <li>Optimize page speed to under 2 seconds</li>
+    <li>Write clear entity definitions: when your content defines a term or concept, make the definition explicit and extractable</li>
+    <li>Build presence on LinkedIn (publish articles, maintain company page) and GitHub if relevant</li>
+    <li>Ensure Bingbot has full crawl access</li>
+  </ul>
+</div>
+
+<div class="platform-card" id="claude">
+  <h3>Claude</h3>
+  <p>Claude uses Brave Search as its search backend when web search is enabled, not Google, not Bing. This is a completely different index, which means your Brave Search visibility directly determines whether Claude can find and cite you.</p>
+  <p><strong>What makes Claude different:</strong> Claude is extremely selective about what it cites. Its citation rate is very low. It's looking for the most factually accurate, well-sourced content on a given topic. Data-rich content with specific numbers and clear attribution performs significantly better than general-purpose content.</p>
+  <p><strong>What to focus on:</strong></p>
+  <ul>
+    <li>Verify your content appears in Brave Search results (search for your brand and key terms at search.brave.com)</li>
+    <li>Allow ClaudeBot and anthropic-ai user agents in robots.txt</li>
+    <li>Maximize factual density: specific numbers, named sources, dated statistics</li>
+    <li>Use clear, extractable structure with descriptive headings</li>
+    <li>Cite authoritative sources within your content</li>
+    <li>Aim to be the most factually accurate source on your topic</li>
+  </ul>
+</div>
+
+<div id="robots-txt">
+<h3>Allowing AI Bots in robots.txt</h3>
+<p>If your robots.txt blocks an AI bot, that platform can't cite your content. Here are the user agents to allow:</p>
+<pre><code>User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Bingbot
+Allow: /</code></pre>
+<p><strong>Training vs. search:</strong> Some AI bots are used for both model training and search citation. If you want to be cited but don't want your content used for training, your options are limited. GPTBot handles both for OpenAI. However, you can safely block <strong>CCBot</strong> (Common Crawl) without affecting any AI search citations, since it's only used for training dataset collection.</p>
+</div>
+
+<h3>Where to Start</h3>
+<p><strong>Start with Google AI Overviews.</strong> They reach the most users (47%+ of Google searches) and you likely already have Google SEO foundations in place. Add schema markup, include cited sources in your content, and strengthen E-E-A-T signals.</p>
+<p><strong>Then address ChatGPT.</strong> It's the most-used standalone AI search tool for business audiences. Focus on freshness (update content monthly), domain authority, and matching your content structure to how ChatGPT formats its responses.</p>
+<p><strong>Then expand to Perplexity.</strong> Especially valuable if your audience includes researchers, early adopters, or tech professionals. Add FAQ schema, publish PDF resources, and write in clear, self-contained paragraphs.</p>
+<p><strong>Copilot and Claude are lower priority</strong> unless your audience skews enterprise/Microsoft (Copilot) or developer/analyst (Claude). But the fundamentals: structured content, cited sources, schema markup, help across all platforms.</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== MONITORING AI VISIBILITY ====== -->
+<section id="monitoring">
+<h2>Monitoring AI Visibility</h2>
+
+<h3>What to Track</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Metric</th><th>What It Measures</th><th>How to Check</th></tr></thead>
+<tbody>
+<tr><td>AI Overview presence</td><td>Do AI Overviews appear for your queries?</td><td>Manual check or Semrush/Ahrefs</td></tr>
+<tr><td>Brand citation rate</td><td>How often you're cited in AI answers</td><td>AI visibility tools (see below)</td></tr>
+<tr><td>Share of AI voice</td><td>Your citations vs. competitors</td><td>Peec AI, Otterly, ZipTie</td></tr>
+<tr><td>Citation sentiment</td><td>How AI describes your brand</td><td>Manual review + monitoring tools</td></tr>
+<tr><td>Source attribution</td><td>Which of your pages get cited</td><td>Track referral traffic from AI sources</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Identifying AI Referral Traffic in GA4</h3>
+<p>AI platforms show up as referral sources in Google Analytics. Set up segments or filters for:</p>
+<ul>
+  <li><code>chat.openai.com</code> &mdash; ChatGPT</li>
+  <li><code>perplexity.ai</code> &mdash; Perplexity</li>
+  <li><code>gemini.google.com</code> &mdash; Gemini</li>
+  <li><code>copilot.microsoft.com</code> &mdash; Copilot</li>
+  <li><code>claude.ai</code> &mdash; Claude</li>
+</ul>
+<p>Track these as a group to see your total AI-driven traffic and which pages AI users are landing on.</p>
+
+<h3>AI Visibility Monitoring Tools</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Tool</th><th>Coverage</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td><strong>Otterly AI</strong></td><td>ChatGPT, Perplexity, Google AI Overviews</td><td>Share of AI voice tracking</td></tr>
+<tr><td><strong>Peec AI</strong></td><td>ChatGPT, Gemini, Perplexity, Claude, Copilot+</td><td>Multi-platform monitoring at scale</td></tr>
+<tr><td><strong>ZipTie</strong></td><td>Google AI Overviews, ChatGPT, Perplexity</td><td>Brand mention + sentiment tracking</td></tr>
+<tr><td><strong>LLMrefs</strong></td><td>ChatGPT, Perplexity, AI Overviews, Gemini</td><td>SEO keyword to AI visibility mapping</td></tr>
+<tr><td><strong>AirOps</strong></td><td>End-to-end content engineering</td><td>AEO audit checklists, structure analysis</td></tr>
+<tr><td><strong>Profound</strong></td><td>AI visibility layer</td><td>Citation research and monitoring</td></tr>
+<tr><td><strong>HubSpot AEO Grader</strong></td><td>Free tool</td><td>Quick AEO health check</td></tr>
+<tr><td><strong>SparkToro</strong></td><td>Brand mentions</td><td>Topic coverage across AI engines</td></tr>
+<tr><td><strong>Semrush</strong></td><td>AI overview tracking</td><td>Visibility metrics, keyword research</td></tr>
+<tr><td><strong>seoClarity</strong></td><td>AI overview monitoring</td><td>Enterprise-scale tracking</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>Query Research Tools</h3>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Tool</th><th>Best For</th></tr></thead>
+<tbody>
+<tr><td><strong>Google Search Console</strong></td><td>Query fan-out and keyword data</td></tr>
+<tr><td><strong>AlsoAsked</strong></td><td>Mapping question clusters AI might pull from</td></tr>
+<tr><td><strong>AnswerThePublic</strong></td><td>Fan-out question variations</td></tr>
+<tr><td><strong>Scrunch</strong></td><td>Prompt query identification</td></tr>
+<tr><td><strong>PromptWatch</strong></td><td>Prompt query opportunities</td></tr>
+</tbody>
+</table>
+</div>
+
+<h3>DIY Monitoring (No Tools)</h3>
+<p>Monthly manual check:</p>
+<ol>
+  <li>Pick your top 20 queries</li>
+  <li>Run each through ChatGPT, Perplexity, and Google</li>
+  <li>Record: Are you cited? Who is? What page?</li>
+  <li>Log in a spreadsheet, track month-over-month</li>
+</ol>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== AEO & GEO CONTENT PATTERNS ====== -->
+<section id="content-patterns">
+<h2>AEO &amp; GEO Content Patterns</h2>
+<p>Reusable content block patterns optimized for answer engines and AI citation.</p>
+
+<h3>Answer Engine Optimization (AEO) Patterns</h3>
+<p>These patterns help content appear in featured snippets, AI Overviews, voice search results, and answer boxes.</p>
+
+<h4>Definition Block</h4>
+<p>Use for "What is [X]?" queries.</p>
+<pre><code>## What is [Term]?
+
+[Term] is [concise 1-sentence definition]. [Expanded 1-2 sentence explanation
+with key characteristics]. [Brief context on why it matters or how it's used].</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>## What is Answer Engine Optimization?
+
+Answer Engine Optimization (AEO) is the practice of structuring content so
+AI-powered systems can easily extract and present it as direct answers to user
+queries. Unlike traditional SEO that focuses on ranking in search results, AEO
+optimizes for featured snippets, AI Overviews, and voice assistant responses.
+This approach has become essential as over 60% of Google searches now end
+without a click.</code></pre>
+
+<h4>Step-by-Step Block</h4>
+<p>Use for "How to [X]" queries. Optimal for list snippets.</p>
+<pre><code>## How to [Action/Goal]
+
+[1-sentence overview of the process]
+
+1. **[Step Name]**: [Clear action description in 1-2 sentences]
+2. **[Step Name]**: [Clear action description in 1-2 sentences]
+3. **[Step Name]**: [Clear action description in 1-2 sentences]
+4. **[Step Name]**: [Clear action description in 1-2 sentences]
+5. **[Step Name]**: [Clear action description in 1-2 sentences]
+
+[Optional: Brief note on expected outcome or time estimate]</code></pre>
+
+<h4>Comparison Table Block</h4>
+<p>Use for "[X] vs [Y]" queries. Optimal for table snippets.</p>
+<pre><code>## [Option A] vs [Option B]: [Brief Descriptor]
+
+| Feature | [Option A] | [Option B] |
+|---------|------------|------------|
+| [Criteria 1] | [Value/Description] | [Value/Description] |
+| [Criteria 2] | [Value/Description] | [Value/Description] |
+| [Criteria 3] | [Value/Description] | [Value/Description] |
+| [Criteria 4] | [Value/Description] | [Value/Description] |
+| Best For | [Use case] | [Use case] |
+
+**Bottom line**: [1-2 sentence recommendation based on different needs]</code></pre>
+
+<h4>Pros and Cons Block</h4>
+<p>Use for evaluation queries: "Is [X] worth it?", "Should I [X]?"</p>
+<pre><code>## Advantages and Disadvantages of [Topic]
+
+[1-sentence overview of the evaluation context]
+
+### Pros
+- **[Benefit category]**: [Specific explanation]
+- **[Benefit category]**: [Specific explanation]
+- **[Benefit category]**: [Specific explanation]
+
+### Cons
+- **[Drawback category]**: [Specific explanation]
+- **[Drawback category]**: [Specific explanation]
+- **[Drawback category]**: [Specific explanation]
+
+**Verdict**: [1-2 sentence balanced conclusion with recommendation]</code></pre>
+
+<h4>FAQ Block</h4>
+<p>Use for topic pages with multiple common questions. Essential for FAQ schema.</p>
+<pre><code>## Frequently Asked Questions
+
+### [Question phrased exactly as users search]?
+
+[Direct answer in first sentence]. [Supporting context in 2-3 additional sentences].
+
+### [Question phrased exactly as users search]?
+
+[Direct answer in first sentence]. [Supporting context in 2-3 additional sentences].</code></pre>
+<p><strong>Tips for FAQ questions:</strong></p>
+<ul>
+  <li>Use natural question phrasing ("How do I..." not "How does one...")</li>
+  <li>Include question words: what, how, why, when, where, who, which</li>
+  <li>Match "People Also Ask" queries from search results</li>
+  <li>Keep answers between 50-100 words</li>
+</ul>
+
+<h4>Listicle Block</h4>
+<p>Use for "Best [X]", "Top [X]", "[Number] ways to [X]" queries.</p>
+<pre><code>## [Number] Best [Items] for [Goal/Purpose]
+
+[1-2 sentence intro establishing context and selection criteria]
+
+### 1. [Item Name]
+[Why it's included in 2-3 sentences with specific benefits]
+
+### 2. [Item Name]
+[Why it's included in 2-3 sentences with specific benefits]
+
+### 3. [Item Name]
+[Why it's included in 2-3 sentences with specific benefits]</code></pre>
+
+<h3>Generative Engine Optimization (GEO) Patterns</h3>
+<p>These patterns optimize content for citation by AI assistants like ChatGPT, Claude, Perplexity, and Gemini.</p>
+
+<h4>Statistic Citation Block</h4>
+<p>Statistics increase AI citation rates by 15-30%. Always include sources.</p>
+<pre><code>[Claim statement]. According to [Source/Organization], [specific statistic
+with number and timeframe]. [Context for why this matters].</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>Mobile optimization is no longer optional for SEO success. According to
+Google's 2024 Core Web Vitals report, 70% of web traffic now comes from
+mobile devices, and pages failing mobile usability standards see 24% higher
+bounce rates. This makes mobile-first indexing a critical ranking factor.</code></pre>
+
+<h4>Expert Quote Block</h4>
+<p>Named expert attribution adds credibility and increases citation likelihood.</p>
+<pre><code>"[Direct quote from expert]," says [Expert Name], [Title/Role] at
+[Organization]. [1 sentence of context or interpretation].</code></pre>
+
+<h4>Authoritative Claim Block</h4>
+<p>Structure claims for easy AI extraction with clear attribution.</p>
+<pre><code>[Topic] [verb: is/has/requires/involves] [clear, specific claim]. [Source]
+[confirms/reports/found] that [supporting evidence]. This
+[explains/means/suggests] [implication or action].</code></pre>
+
+<h4>Self-Contained Answer Block</h4>
+<p>Create quotable, standalone statements that AI can extract directly.</p>
+<pre><code>**[Topic/Question]**: [Complete, self-contained answer that makes sense
+without additional context. Include specific details, numbers, or examples
+in 2-3 sentences.]</code></pre>
+
+<h4>Evidence Sandwich Block</h4>
+<p>Structure claims with evidence for maximum credibility.</p>
+<pre><code>[Opening claim statement].
+
+Evidence supporting this includes:
+- [Data point 1 with source]
+- [Data point 2 with source]
+- [Data point 3 with source]
+
+[Concluding statement connecting evidence to actionable insight].</code></pre>
+
+<h3>Domain-Specific GEO Tactics</h3>
+<p>Different content domains benefit from different authority signals.</p>
+
+<h4>Technology Content</h4>
+<ul>
+  <li>Emphasize technical precision and correct terminology</li>
+  <li>Include version numbers and dates for software/tools</li>
+  <li>Reference official documentation</li>
+  <li>Add code examples where relevant</li>
+</ul>
+
+<h4>Health/Medical Content</h4>
+<ul>
+  <li>Cite peer-reviewed studies with publication details</li>
+  <li>Include expert credentials (MD, RN, etc.)</li>
+  <li>Note study limitations and context</li>
+  <li>Add "last reviewed" dates</li>
+</ul>
+
+<h4>Financial Content</h4>
+<ul>
+  <li>Reference regulatory bodies (SEC, FTC, etc.)</li>
+  <li>Include specific numbers with timeframes</li>
+  <li>Note that information is educational, not advice</li>
+  <li>Cite recognized financial institutions</li>
+</ul>
+
+<h4>Legal Content</h4>
+<ul>
+  <li>Cite specific laws, statutes, and regulations</li>
+  <li>Reference jurisdiction clearly</li>
+  <li>Include professional disclaimers</li>
+  <li>Note when professional consultation is advised</li>
+</ul>
+
+<h4>Business/Marketing Content</h4>
+<ul>
+  <li>Include case studies with measurable results</li>
+  <li>Reference industry research and reports</li>
+  <li>Add percentage changes and timeframes</li>
+  <li>Quote recognized thought leaders</li>
+</ul>
+
+<h3>Voice Search Optimization</h3>
+<p>Voice queries are conversational and question-based. When optimizing for voice assistants:</p>
+<ul>
+  <li>Lead with a direct answer (under 30 words ideal)</li>
+  <li>Use natural, conversational language</li>
+  <li>Phrase headings as full questions ("How do I...", "What is...", "Where can I find...")</li>
+  <li>Avoid jargon unless targeting an expert audience</li>
+  <li>Include local context where relevant</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== COMMON MISTAKES ====== -->
+<section id="common-mistakes">
+<h2>Common Mistakes</h2>
+<ul>
+  <li><strong>Ignoring AI search entirely.</strong> ~47% of Google searches now show AI Overviews, and ChatGPT/Perplexity are growing fast.</li>
+  <li><strong>Treating AEO as separate from SEO.</strong> Good traditional SEO is the foundation. AEO adds structure and authority on top.</li>
+  <li><strong>Writing for AI, not humans.</strong> If content reads like it was written to game an algorithm, it won't get cited or convert.</li>
+  <li><strong>No freshness signals.</strong> Undated content loses to dated content. AI systems weight recency heavily. Show when content was last updated.</li>
+  <li><strong>Gating all content.</strong> AI can't access gated content. Keep your most authoritative content open.</li>
+  <li><strong>Ignoring third-party presence.</strong> 85% of brand mentions in top-of-funnel queries come from third-party sources, not your own site.</li>
+  <li><strong>No structured data.</strong> Schema markup gives AI systems structured context about your content. It's no longer optional.</li>
+  <li><strong>Keyword stuffing.</strong> Unlike traditional SEO where it's just ineffective, keyword stuffing actively reduces AI visibility by 10% (Princeton GEO study).</li>
+  <li><strong>Blocking AI bots.</strong> If GPTBot, PerplexityBot, or ClaudeBot are blocked in robots.txt, those platforms can't cite you.</li>
+  <li><strong>Generic content without data.</strong> "We're the best" won't get cited. "Our customers see 3x improvement in [metric]" will.</li>
+  <li><strong>Forgetting to monitor.</strong> You can't improve what you don't measure. Check AI visibility monthly at minimum.</li>
+  <li><strong>Vague, entity-poor language.</strong> "Our solution helps businesses" tells AI nothing. Specific products, industries, and outcomes are what get cited.</li>
+</ul>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== DEEP RESEARCH PROMPTS ====== -->
+<section id="deep-research-prompts">
+<h2>Deep Research Prompts for AEO Audits</h2>
+<p>Comprehensive audit prompts exist for running deep AEO assessments using AI research tools (Claude deep research, Perplexity Deep Research, or Gemini Deep Research). Two versions are available:</p>
+
+<p><strong>B2B Version</strong> &mdash; Designed for SaaS, manufacturing, professional services, and other B2B companies. Features a tiered source credibility system (high: major publications/analysts; medium: company sites/trade press; low: forum/blog/social), insistence on verbatim quotes with URLs and publication dates, misinformation detection, and a content gap plan deliverable. Covers 10 topic dimensions: definitions, how it works, performance and proof, comparisons, pricing, use cases, limitations, customer sentiment, thought leadership, and implementation.</p>
+
+<p><strong>B2C Version</strong> &mdash; Adapted for banks, insurance, healthcare, home services, legal, real estate, and other consumer-facing businesses. Uses different source tiers (NerdWallet, Bankrate, Consumer Reports, J.D. Power, Google Reviews vs. Gartner and Forrester), different topic dimensions (brand reputation, customer experience, local presence, life-event triggers), and a faster freshness window (1 year vs. 2 years, since rates, fees, and hours go stale faster).</p>
+
+<p>Both versions include a quick-start stripped-down version for people who find the full prompt intimidating, plus tool-specific guidance (Claude, Perplexity, and Gemini handle deep research differently).</p>
+
+<p>Contact the guide author for the full prompt text.</p>
+</section>
+
+<hr class="section-sep">
+
+<!-- ====== FURTHER READING ====== -->
+<section id="further-reading">
+<h2>Further Reading</h2>
+
+<h3>Key Reports and Research</h3>
+<ul>
+  <li><strong>AirOps 2026 State of AI Search Report</strong> &mdash; Citation patterns, freshness data, brand visibility statistics</li>
+  <li><strong>Princeton GEO Study (KDD 2024)</strong> &mdash; Research-backed optimization methods and their measured impact on AI visibility</li>
+  <li><strong>Webflow "AEO for the CMO: An Actionable Maturity Model"</strong> &mdash; The five-level maturity framework</li>
+  <li><strong>Webflow State of the Web Report</strong> &mdash; Marketing leader survey data on AI search adoption</li>
+  <li><strong>SE Ranking Domain Authority Study</strong> &mdash; Analysis of 129,000 domains and ChatGPT citation patterns</li>
+  <li><strong>ZipTie Content-Answer Fit Analysis</strong> &mdash; 400,000-page study of what determines ChatGPT citation likelihood</li>
+</ul>
+
+<h3>Industry Sources</h3>
+<ul>
+  <li><strong>AirOps Blog</strong> (airops.com/blog) &mdash; AEO audit checklists, trend reports, expert roundups</li>
+  <li><strong>Webflow AEO Solutions Hub</strong> (webflow.com/solutions/aeo) &mdash; Maturity model, tooling, guides</li>
+  <li><strong>Josh Grant / Stacked GTM</strong> (stackedgtm.ai) &mdash; "The Definitive 2026 Guide to AEO," comprehension layer concept</li>
+</ul>
+</section>
+
+</div><!-- .content -->
+</div><!-- .main -->
+
+<script>
+(function() {
+  // Sidebar toggle
+  const hamburger = document.getElementById('hamburger');
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  hamburger.addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('active');
+  });
+  overlay.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('active');
+  });
+
+  // Active TOC highlighting on scroll
+  const tocLinks = document.querySelectorAll('#tocNav a');
+  const sections = [];
+
+  tocLinks.forEach(link => {
+    const id = link.getAttribute('href').replace('#', '');
+    const el = document.getElementById(id);
+    if (el) sections.push({ id, el, link });
+  });
+
+  function updateActive() {
+    let current = sections[0];
+    const scrollY = window.scrollY + 80;
+
+    for (const s of sections) {
+      if (s.el.offsetTop <= scrollY) {
+        current = s;
+      }
+    }
+
+    tocLinks.forEach(l => l.classList.remove('active'));
+    if (current) current.link.classList.add('active');
+  }
+
+  window.addEventListener('scroll', updateActive, { passive: true });
+  updateActive();
+
+  // Close sidebar on link click (mobile)
+  tocLinks.forEach(link => {
+    link.addEventListener('click', () => {
+      if (window.innerWidth <= 900) {
+        sidebar.classList.remove('open');
+        overlay.classList.remove('active');
+      }
+    });
+  });
+})();
+</script>
+</body>
+</html>

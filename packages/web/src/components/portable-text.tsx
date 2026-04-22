@@ -201,6 +201,36 @@ const components: PortableTextComponents = {
       );
     },
 
+    // Deployed schema stores this as `callout` with fields heading/text/tone
+    callout: ({ value }) => {
+      const toneMap: Record<string, keyof typeof calloutIcons> = {
+        info: "info",
+        science: "info",
+        warning: "warning",
+        tip: "tip",
+        success: "success",
+      };
+      const type = toneMap[value.tone || "info"] ?? "info";
+      const Icon = calloutIcons[type] || Info;
+      return (
+        <div
+          className={`my-6 rounded-xl border p-5 ${calloutStyles[type] || calloutStyles.info}`}
+        >
+          <div className="flex items-start gap-3">
+            <Icon className="mt-0.5 h-5 w-5 shrink-0" />
+            <div>
+              {value.heading && (
+                <p className="mb-1 font-heading font-bold">{value.heading}</p>
+              )}
+              {value.text && (
+                <PortableTextReact value={value.text} components={components} />
+              )}
+            </div>
+          </div>
+        </div>
+      );
+    },
+
     citationBlock: ({ value }) => (
       <div className="my-4 rounded-lg border border-border bg-cream-dark/50 p-4 text-sm">
         <p className="text-foreground">{value.text}</p>
@@ -408,6 +438,32 @@ const components: PortableTextComponents = {
           )}
         </span>
       </div>
+    ),
+
+    // Deployed schema stores this as `nutritionFact` with heading/value/description/source
+    nutritionFact: ({ value }) => (
+      <aside className="my-6 rounded-2xl border border-orange/20 bg-orange/5 p-6">
+        {value.heading && (
+          <p className="font-heading text-xs font-bold uppercase tracking-wider text-orange">
+            {value.heading}
+          </p>
+        )}
+        {value.value && (
+          <p className="mt-2 font-heading text-4xl font-black text-blackberry">
+            {value.value}
+          </p>
+        )}
+        {value.description && (
+          <p className="mt-3 text-sm leading-relaxed text-foreground/80">
+            {value.description}
+          </p>
+        )}
+        {value.source && (
+          <p className="mt-3 text-xs italic text-muted-foreground">
+            Source: {value.source}
+          </p>
+        )}
+      </aside>
     ),
 
     comparisonTable: ({ value }) => (
