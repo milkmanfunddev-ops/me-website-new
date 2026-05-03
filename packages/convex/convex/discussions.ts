@@ -183,3 +183,121 @@ export const lock = mutation({
     await ctx.db.patch(args.id, { isLocked: args.isLocked });
   },
 });
+
+export const update = mutation({
+  args: {
+    id: v.id("discussions"),
+    title: v.string(),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) throw new Error("User not found");
+
+    const discussion = await ctx.db.get(args.id);
+    if (!discussion) throw new Error("Discussion not found");
+    if (discussion.authorId !== user._id) {
+      throw new Error("Only the author can edit this discussion");
+    }
+
+    await ctx.db.patch(args.id, {
+      title: args.title,
+      body: args.body,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+export const remove = mutation({
+  args: { id: v.id("discussions") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) throw new Error("User not found");
+
+    const discussion = await ctx.db.get(args.id);
+    if (!discussion) throw new Error("Discussion not found");
+    if (discussion.authorId !== user._id) {
+      throw new Error("Only the author can delete this discussion");
+    }
+
+    const replies = await ctx.db
+      .query("discussionReplies")
+      .withIndex("by_discussionId", (q) => q.eq("discussionId", args.id))
+      .collect();
+    for (const reply of replies) {
+      await ctx.db.delete(reply._id);
+    }
+
+    await ctx.db.delete(args.id);
+  },
+});
+
+export const updateReply = mutation({
+  args: {
+    id: v.id("discussionReplies"),
+    body: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) throw new Error("User not found");
+
+    const reply = await ctx.db.get(args.id);
+    if (!reply) throw new Error("Reply not found");
+    if (reply.authorId !== user._id) {
+      throw new Error("Only the author can edit this reply");
+    }
+
+    await ctx.db.patch(args.id, {
+      body: args.body,
+      isEdited: true,
+      updatedAt: Date.now(),
+    });
+  },
+});
+
+export const removeReply = mutation({
+  args: { id: v.id("discussionReplies") },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) throw new Error("Not authenticated");
+
+    const user = await ctx.db
+      .query("users")
+      .withIndex("by_clerkId", (q) => q.eq("clerkId", identity.subject))
+      .unique();
+    if (!user) throw new Error("User not found");
+
+    const reply = await ctx.db.get(args.id);
+    if (!reply) throw new Error("Reply not found");
+    if (reply.authorId !== user._id) {
+      throw new Error("Only the author can delete this reply");
+    }
+
+    const discussion = await ctx.db.get(reply.discussionId);
+    await ctx.db.delete(args.id);
+
+    if (discussion) {
+      await ctx.db.patch(reply.discussionId, {
+        replyCount: Math.max(0, discussion.replyCount - 1),
+      });
+    }
+  },
+});
