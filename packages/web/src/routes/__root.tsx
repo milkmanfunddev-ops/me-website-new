@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-router";
 import {
   ClerkProvider,
+  UserButton,
   useAuth,
 } from "@clerk/tanstack-react-start";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
@@ -84,6 +85,7 @@ function RootComponent() {
       <body>
         <ClerkProvider
           publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}
+          afterSignOutUrl="/"
         >
           <ConvexProviderWithClerk client={convexClient} useAuth={useAuth}>
             <AppShell />
@@ -110,12 +112,15 @@ function AuthButtons() {
   }
 
   return (
-    <Link
-      to="/community"
-      className="ml-2 flex h-8 w-8 items-center justify-center rounded-full bg-orange font-heading text-sm font-bold text-white"
-    >
-      A
-    </Link>
+    <div className="ml-2 flex items-center gap-3">
+      <Link
+        to="/community"
+        className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-cream-dark hover:text-foreground"
+      >
+        My Account
+      </Link>
+      <UserButton />
+    </div>
   );
 }
 
@@ -135,13 +140,16 @@ function MobileAuthButtons({ onNavigate }: { onNavigate: () => void }) {
   }
 
   return (
-    <Link
-      to="/community"
-      className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
-      onClick={onNavigate}
-    >
-      My Account
-    </Link>
+    <div className="mt-2 flex items-center justify-between gap-3 px-3">
+      <Link
+        to="/community"
+        className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
+        onClick={onNavigate}
+      >
+        My Account
+      </Link>
+      <UserButton />
+    </div>
   );
 }
 
