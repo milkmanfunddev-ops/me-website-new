@@ -68,7 +68,7 @@ const FAQ_ITEMS = [
   {
     question: "How are the nutrition plans personalized?",
     answer:
-      "Plans are generated using AI-powered linear programming optimization combined with ACSM formulas and 50+ peer-reviewed studies. We factor in your body metrics, training load, race goals, food preferences, and dietary restrictions.",
+      "Plans are generated using AI-powered linear programming optimization combined with ACSM formulas and 50+ peer-reviewed studies. We factor in your body metrics, training load, race goals, food preferences, and dietary restrictions to create a fueling strategy tailored to each session.",
   },
   {
     question: "Can I use Mealvana Endurance offline?",
@@ -76,9 +76,9 @@ const FAQ_ITEMS = [
       "Yes. The app is built with an offline-first architecture so your meal plans, fueling guides, and training logs are always available — even on remote trails or during race day without cell service.",
   },
   {
-    question: "Is there a free version?",
+    question: "What's included in the free plan?",
     answer:
-      "Mealvana Endurance offers a free tier that includes basic fueling calculations and a limited number of meal plans. Premium unlocks AI-powered plans, gut training protocols, carb loading calculators, and race-day nutrition timelines.",
+      "The free plan includes basic fueling calculations and a limited number of meal plans, so you can try Mealvana Endurance before upgrading. Premium unlocks AI-powered plans, gut training protocols, carb loading calculators, and race-day nutrition timelines.",
   },
   {
     question: "Does it integrate with my training platform?",
@@ -88,7 +88,7 @@ const FAQ_ITEMS = [
   {
     question: "How does gut training work?",
     answer:
-      "Gut training progressively increases your carbohydrate intake during long sessions so your GI system adapts to race-day fueling demands. Mealvana provides weekly targets and tracks your tolerance over time.",
+      "Gut training progressively increases your carbohydrate intake during long sessions so your GI system adapts to race-day fueling demands. Mealvana Endurance provides weekly targets and tracks your tolerance over time.",
   },
 ];
 
@@ -99,7 +99,7 @@ const FAQ_ITEMS = [
 const TESTIMONIALS = [
   {
     quote:
-      "I bonked at mile 18 of every marathon until Mealvana dialed in my fueling. Ran a 12-minute PR at Chicago with zero GI issues.",
+      "I bonked at mile 18 of every marathon until Mealvana Endurance dialed in my fueling. Ran a 12-minute PR at Chicago with zero GI issues.",
     name: "Sarah Chen",
     sport: "Marathon Runner",
   },
@@ -111,7 +111,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "As a cycling coach, I recommend Mealvana to every athlete I work with. The science-backed approach is exactly what this space needed.",
+      "As a cycling coach, I recommend Mealvana Endurance to every athlete I work with. The science-backed approach is exactly what this space needed.",
     name: "Emily Vasquez",
     sport: "Cycling Coach",
   },
@@ -141,11 +141,11 @@ const PARTNER_LOGOS = [
 /* ------------------------------------------------------------------ */
 
 const APP_SCREENSHOTS = [
+  { src: "/images/screenshots/by-hour.png", label: "Hour-by-Hour Targets" },
+  { src: "/images/screenshots/feedback.png", label: "Plan Feedback" },
+  { src: "/images/screenshots/transparency.png", label: "How We Calculate" },
   { src: "/images/screenshots/new-activity.png", label: "Create Activity Plan" },
-  { src: "/images/screenshots/activity.png", label: "Nutrition Timeline" },
   { src: "/images/screenshots/event-detail.png", label: "Race Day Planner" },
-  { src: "/images/screenshots/profile.png", label: "Athlete Profile" },
-  { src: "/images/screenshots/welcome.png", label: "Welcome" },
 ];
 
 /* ------------------------------------------------------------------ */
@@ -296,7 +296,7 @@ function HomePage() {
               <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-cream/10 bg-cream/5 px-4 py-1.5 backdrop-blur-sm">
                 <Zap className="h-3.5 w-3.5 text-orange" />
                 <span className="text-xs font-medium tracking-wide text-cream/70">
-                  Science-backed nutrition for athletes
+                  Built on sports science
                 </span>
               </div>
             </motion.div>
@@ -556,13 +556,13 @@ function HomePage() {
               {
                 step: "01",
                 title: "Train",
-                desc: "Log your workouts and let the app learn your training patterns and energy demands.",
+                desc: "Track your workouts. We calculate your fueling needs.",
                 icon: Activity,
               },
               {
                 step: "02",
                 title: "Fuel",
-                desc: "Get personalized nutrition plans optimized for your body, goals, and schedule.",
+                desc: "Get a nutrition plan tailored to your body, goals, and schedule.",
                 icon: Zap,
               },
               {
@@ -797,7 +797,8 @@ function HomePage() {
               </ul>
               <div className="mt-10">
                 <Link
-                  to="/blog"
+                  to="/blog/$slug"
+                  params={{ slug: "how-mealvana-calculates-race-fueling" }}
                   className="group inline-flex items-center gap-2 font-heading text-sm font-bold text-orange transition-colors hover:text-orange-dark"
                 >
                   Read the Science
@@ -891,69 +892,58 @@ function HomePage() {
           <div className="absolute left-1/2 top-0 h-[400px] w-[600px] -translate-x-1/2 rounded-full bg-orange/8 blur-[100px]" />
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="font-heading text-3xl font-bold tracking-tight text-cream sm:text-4xl lg:text-5xl">
-                Start Fueling Smarter Today
-              </h2>
-              <p className="mt-4 text-lg text-cream/50">
-                Download {APP_NAME} and take the guesswork out of race-day
-                nutrition.
-              </p>
-              <div className="mt-8 flex flex-wrap items-center gap-4">
-                <a
-                  href={APP_STORE_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-transform hover:scale-105"
-                >
-                  <img
-                    src="/appstore.png"
-                    alt="Download on the App Store"
-                    className="h-14"
-                  />
-                </a>
-                <a
-                  href={PLAY_STORE_LINK}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition-transform hover:scale-105"
-                >
-                  <img
-                    src="/playstore.png"
-                    alt="Get it on Google Play"
-                    className="h-14"
-                  />
-                </a>
-              </div>
-              <p className="mt-6">
-                <a
-                  href={WEB_APP_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-cream/40 underline underline-offset-4 transition-colors hover:text-cream/70"
-                >
-                  Or try the web version
-                </a>
-              </p>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="flex justify-center"
-            >
-              <PhoneMockup src="/images/screenshots/event-detail.png" />
-            </motion.div>
-          </div>
+        <div className="relative mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="text-center"
+          >
+            <h2 className="font-heading text-3xl font-bold tracking-tight text-cream sm:text-4xl lg:text-5xl">
+              Start Fueling Smarter Today
+            </h2>
+            <p className="mt-4 text-lg text-cream/50">
+              Download {APP_NAME} and take the guesswork out of race-day
+              nutrition.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+              <a
+                href={APP_STORE_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-transform hover:scale-105"
+              >
+                <img
+                  src="/appstore.png"
+                  alt="Download on the App Store"
+                  className="h-14"
+                />
+              </a>
+              <a
+                href={PLAY_STORE_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-transform hover:scale-105"
+              >
+                <img
+                  src="/playstore.png"
+                  alt="Get it on Google Play"
+                  className="h-14"
+                />
+              </a>
+            </div>
+            <p className="mt-6">
+              <a
+                href={WEB_APP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-cream/40 underline underline-offset-4 transition-colors hover:text-cream/70"
+              >
+                Or try the web version
+              </a>
+            </p>
+          </motion.div>
         </div>
       </section>
 

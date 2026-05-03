@@ -9,8 +9,9 @@ export function organizationJsonLd() {
     description: APP_DESCRIPTION,
     logo: `${APP_URL}/images/logo.svg`,
     sameAs: [
-      "https://www.instagram.com/mealvana",
-      "https://www.twitter.com/mealvana",
+      "https://www.instagram.com/mealvana_endurance/",
+      "https://www.youtube.com/@MealvanaEndurancePodcast",
+      "https://www.tiktok.com/@mealvanaendurance",
     ],
   };
 }

@@ -15,7 +15,7 @@ import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { convexClient } from "@/lib/convex";
 import { Toaster } from "sonner";
 import appCss from "@/styles/globals.css?url";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Instagram, Youtube } from "lucide-react";
 import { useState } from "react";
 import {
   APP_NAME,
@@ -275,6 +275,42 @@ function Footer() {
                 />
               </a>
             </div>
+            <div className="mt-5 flex items-center gap-4">
+              <a
+                href="https://www.instagram.com/mealvana_endurance/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Mealvana Endurance on Instagram"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Instagram className="h-5 w-5" />
+              </a>
+              <a
+                href="https://www.youtube.com/@MealvanaEndurancePodcast"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Mealvana Endurance on YouTube"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <Youtube className="h-5 w-5" />
+              </a>
+              <a
+                href="https://www.tiktok.com/@mealvanaendurance"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Mealvana Endurance on TikTok"
+                className="text-muted-foreground transition-colors hover:text-foreground"
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="h-5 w-5"
+                  aria-hidden="true"
+                >
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5.8 20.1a6.34 6.34 0 0 0 10.86-4.43V8.51a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1.84-.04Z" />
+                </svg>
+              </a>
+            </div>
           </div>
 
           <div>
@@ -288,9 +324,9 @@ function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-foreground">
+                <a href="/#faq" className="hover:text-foreground">
                   FAQ
-                </Link>
+                </a>
               </li>
               <li>
                 <Link to="/changelog" className="hover:text-foreground">
