@@ -141,11 +141,11 @@ const PARTNER_LOGOS = [
 /* ------------------------------------------------------------------ */
 
 const APP_SCREENSHOTS = [
-  { src: "/images/screenshots/by-hour.png", label: "Hour-by-Hour Targets" },
-  { src: "/images/screenshots/feedback.png", label: "Plan Feedback" },
-  { src: "/images/screenshots/transparency.png", label: "How We Calculate" },
   { src: "/images/screenshots/new-activity.png", label: "Create Activity Plan" },
-  { src: "/images/screenshots/event-detail.png", label: "Race Day Planner" },
+  { src: "/images/screenshots/by-hour.png", label: "Hour-by-Hour Plan" },
+  { src: "/images/screenshots/feedback.png", label: "Post-Workout Feedback" },
+  { src: "/images/screenshots/how-we-calculate.png", label: "How We Calculate" },
+  { src: "/images/screenshots/food-database.png", label: "Searchable Food Database" },
 ];
 
 /* ------------------------------------------------------------------ */
