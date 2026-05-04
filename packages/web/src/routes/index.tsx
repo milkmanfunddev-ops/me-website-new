@@ -99,21 +99,21 @@ const FAQ_ITEMS = [
 const TESTIMONIALS = [
   {
     quote:
-      "I bonked at mile 18 of every marathon until Mealvana Endurance dialed in my fueling. Ran a 12-minute PR at Chicago with zero GI issues.",
-    name: "Sarah Chen",
-    sport: "Marathon Runner",
+      "I send every one of my marathoners to Mealvana Endurance for their fueling plan. It does in 30 seconds what used to take me an hour with a spreadsheet — and the numbers actually match the science.",
+    name: "Alex Morrow",
+    sport: "Running Coach",
   },
   {
     quote:
-      "The carb loading calculator took the guesswork out of my Ironman prep. I've never felt stronger on the run leg.",
-    name: "James Okafor",
-    sport: "Triathlete",
+      "Triathlon nutrition is where most of my athletes fall apart on race day. Mealvana Endurance gives them an hour-by-hour plan they actually trust, so they show up to T2 with gas left in the tank.",
+    name: "Craig Cecil",
+    sport: "Triathlon Coach",
   },
   {
     quote:
-      "As a cycling coach, I recommend Mealvana Endurance to every athlete I work with. The science-backed approach is exactly what this space needed.",
-    name: "Emily Vasquez",
-    sport: "Cycling Coach",
+      "I used to guess my carbs and pay for it on the marathon leg. Mealvana Endurance got me through Kona without a single GI issue and a 14-minute PR off the bike.",
+    name: "Forrest Hinton",
+    sport: "Ironman Triathlete",
   },
 ];
 
