@@ -111,7 +111,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "I used to guess my carbs and pay for it on the marathon leg. Mealvana Endurance got me through Kona without a single GI issue and a 14-minute PR off the bike.",
+      "I used to guess my carbs and pay for it on the marathon leg. Mealvana Endurance got me through Ironman Arizona without a single GI issue and a 14-minute PR off the bike.",
     name: "Forrest Hinton",
     sport: "Ironman Triathlete",
   },
