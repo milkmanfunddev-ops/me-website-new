@@ -29,6 +29,34 @@ export default defineSchema({
     .index("by_status", ["status"])
     .index("by_createdAt", ["createdAt"]),
 
+  coachApplications: defineTable({
+    name: v.string(),
+    email: v.string(),
+    phone: v.optional(v.string()),
+    practiceType: v.union(
+      v.literal("running"),
+      v.literal("cycling"),
+      v.literal("triathlon"),
+      v.literal("swimming"),
+      v.literal("dietitian"),
+      v.literal("other"),
+    ),
+    certifications: v.string(),
+    athleteCount: v.optional(v.string()),
+    websiteOrSocial: v.optional(v.string()),
+    message: v.optional(v.string()),
+    status: v.union(
+      v.literal("new"),
+      v.literal("contacted"),
+      v.literal("approved"),
+      v.literal("declined"),
+    ),
+    createdAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_createdAt", ["createdAt"])
+    .index("by_email", ["email"]),
+
   newsletterSubscribers: defineTable({
     email: v.string(),
     name: v.optional(v.string()),

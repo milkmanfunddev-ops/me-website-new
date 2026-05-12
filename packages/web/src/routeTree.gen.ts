@@ -14,6 +14,7 @@ import { Route as SupportRouteImport } from './routes/support'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DemoRouteImport } from './routes/demo'
+import { Route as Coach_registrationRouteImport } from './routes/coach_registration'
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -59,6 +60,11 @@ const FaqRoute = FaqRouteImport.update({
 const DemoRoute = DemoRouteImport.update({
   id: '/demo',
   path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Coach_registrationRoute = Coach_registrationRouteImport.update({
+  id: '/coach_registration',
+  path: '/coach_registration',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ChangelogRoute = ChangelogRouteImport.update({
@@ -172,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/changelog': typeof ChangelogRoute
+  '/coach_registration': typeof Coach_registrationRoute
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
@@ -200,6 +207,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/changelog': typeof ChangelogRoute
+  '/coach_registration': typeof Coach_registrationRoute
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
@@ -229,6 +237,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/changelog': typeof ChangelogRoute
+  '/coach_registration': typeof Coach_registrationRoute
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/changelog'
+    | '/coach_registration'
     | '/demo'
     | '/faq'
     | '/privacy'
@@ -287,6 +297,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/changelog'
+    | '/coach_registration'
     | '/demo'
     | '/faq'
     | '/privacy'
@@ -315,6 +326,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/changelog'
+    | '/coach_registration'
     | '/demo'
     | '/faq'
     | '/privacy'
@@ -344,6 +356,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ChangelogRoute: typeof ChangelogRoute
+  Coach_registrationRoute: typeof Coach_registrationRoute
   DemoRoute: typeof DemoRoute
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
@@ -404,6 +417,13 @@ declare module '@tanstack/react-router' {
       path: '/demo'
       fullPath: '/demo'
       preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/coach_registration': {
+      id: '/coach_registration'
+      path: '/coach_registration'
+      fullPath: '/coach_registration'
+      preLoaderRoute: typeof Coach_registrationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/changelog': {
@@ -560,6 +580,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ChangelogRoute: ChangelogRoute,
+  Coach_registrationRoute: Coach_registrationRoute,
   DemoRoute: DemoRoute,
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
