@@ -1029,3 +1029,41 @@
   border: 1px solid color-mix(in srgb, var(--me-blackberry) 16%, transparent);
 }
 .rcm .footer .verified i { color: var(--me-electrolyte-dark); }
+
+/* ---- Leaflet course map (manual additions, not part of the generated port) ---- */
+.rcm .rcm-map {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  background: #e8e6e0;
+}
+/* Keep the stat/legend overlays above the Leaflet panes. */
+.rcm .map-overlay-stats,
+.rcm .map-legend { z-index: 600; }
+.rcm .map-legend { pointer-events: none; }
+.rcm .leaflet-container { font-family: var(--font-body); }
+.rcm .leaflet-control-attribution { font-size: 9px; }
+.rcm .leaflet-control-attribution a { color: var(--me-blackberry); }
+/* Branded permanent tooltips for start/finish + every-5-mile labels. */
+.rcm .leaflet-tooltip.rcm-ep-lbl,
+.rcm .leaflet-tooltip.rcm-mile-lbl {
+  background: var(--me-blackberry);
+  color: var(--me-cream);
+  border: none;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+.rcm .leaflet-tooltip.rcm-mile-lbl {
+  background: var(--me-orange);
+  color: var(--me-blackberry);
+}
+.rcm .leaflet-tooltip.rcm-ep-lbl::before,
+.rcm .leaflet-tooltip.rcm-mile-lbl::before { display: none; }
