@@ -22,11 +22,10 @@ import {
   APP_NAME,
   APP_DESCRIPTION,
   COMPANY_NAME,
-  APP_STORE_LINK,
-  PLAY_STORE_LINK,
   CONTACT_EMAIL,
   APP_URL,
 } from "@mealvana/shared";
+import { AppStoreButtons } from "@/components/app-store-buttons";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -273,26 +272,10 @@ function Footer() {
             <p className="mt-3 text-sm text-muted-foreground">
               {APP_DESCRIPTION}
             </p>
-            <div className="mt-4 flex gap-3">
-              <a href={APP_STORE_LINK} target="_blank" rel="noopener noreferrer">
-                <img
-                  src="/appstore.png"
-                  alt="Download on the App Store"
-                  className="h-10"
-                />
-              </a>
-              <a
-                href={PLAY_STORE_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <img
-                  src="/playstore.png"
-                  alt="Get it on Google Play"
-                  className="h-10"
-                />
-              </a>
-            </div>
+            <AppStoreButtons
+              variant="compact"
+              className="mt-4 flex flex-wrap gap-3"
+            />
             <div className="mt-5 flex items-center gap-4">
               <a
                 href="https://www.instagram.com/mealvana_endurance/"
