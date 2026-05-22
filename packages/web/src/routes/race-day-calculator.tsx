@@ -190,7 +190,7 @@ function RaceDayCalculator() {
               Rocket City Marathon · Huntsville, AL · Sunday, December 13, 2026
             </div>
           </div>
-          <AppStoreButtons className="flex flex-wrap items-center gap-3" imgClassName="h-12" />
+          <AppStoreButtons variant="compact" className="flex flex-wrap items-center gap-3" />
         </section>
 
         {/* COURSE MAP */}
@@ -257,7 +257,7 @@ function RaceDayCalculator() {
                 your start. Download it free on the App Store or Google Play.
               </p>
               <div className="ctas">
-                <AppStoreButtons className="flex flex-wrap items-center gap-3" imgClassName="h-12" />
+                <AppStoreButtons variant="compact" className="flex flex-wrap items-center gap-3" />
               </div>
             </div>
             <div className="mkt-tiles">

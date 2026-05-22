@@ -1002,28 +1002,6 @@ function HomePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* ============================================================ */}
-      {/*  13. PRE-FOOTER CTA                                          */}
-      {/* ============================================================ */}
-      <section className="bg-cream py-20 sm:py-24">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <p className="font-heading text-2xl font-bold text-blackberry sm:text-3xl">
-              Ready to fuel your next PR?
-            </p>
-            <div className="mt-8">
-              <AppStoreButtons className="flex flex-wrap items-center justify-center gap-4" />
-            </div>
-          </motion.div>
-        </div>
-      </section>
     </div>
   );
 }
