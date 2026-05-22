@@ -59,24 +59,18 @@ export function AppStoreButtons({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Download on the App Store"
-          className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black px-3.5 py-2 transition-transform hover:scale-105"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-black transition-transform hover:scale-105"
         >
-          <AppleMark className="h-5 w-5 shrink-0 text-white" />
-          <span className="font-heading text-sm font-semibold leading-none text-white">
-            App Store
-          </span>
+          <AppleMark className="h-5 w-5 text-white" />
         </a>
         <a
           href={PLAY_STORE_LINK}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Get it on Google Play"
-          className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-black px-3.5 py-2 transition-transform hover:scale-105"
+          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-white/10 bg-black transition-transform hover:scale-105"
         >
-          <PlayMark className="h-5 w-5 shrink-0" />
-          <span className="font-heading text-sm font-semibold leading-none text-white">
-            Google Play
-          </span>
+          <PlayMark className="h-5 w-5" />
         </a>
       </div>
     );
