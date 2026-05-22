@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useRef } from "react";
 import { ViewportFade } from "@/components/viewport-fade";
 import { NewsletterForm } from "@/components/newsletter-form";
+import { AppStoreButtons } from "@/components/app-store-buttons";
 import {
   APP_NAME,
   APP_DESCRIPTION,
@@ -329,15 +330,7 @@ function HomePage() {
               transition={{ duration: 0.7, delay: 0.3 }}
               className="mt-10 flex flex-wrap items-center gap-4"
             >
-              <a
-                href={APP_STORE_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center rounded-full bg-orange px-8 py-4 font-heading text-sm font-bold text-white shadow-lg shadow-orange/25 transition-all hover:bg-orange-light hover:shadow-orange/40 hover:-translate-y-0.5"
-              >
-                Download Free
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              <AppStoreButtons className="flex flex-wrap items-center gap-3" />
               <a
                 href="#how-it-works"
                 className="inline-flex items-center justify-center rounded-full border border-cream/20 bg-cream/5 px-8 py-4 font-heading text-sm font-bold text-cream backdrop-blur-sm transition-all hover:bg-cream/10 hover:border-cream/30"
@@ -1026,15 +1019,7 @@ function HomePage() {
               Ready to fuel your next PR?
             </p>
             <div className="mt-8">
-              <a
-                href={APP_STORE_LINK}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group inline-flex items-center justify-center rounded-full bg-orange px-8 py-4 font-heading text-sm font-bold text-white shadow-lg shadow-orange/25 transition-all hover:bg-orange-light hover:shadow-orange/40 hover:-translate-y-0.5"
-              >
-                Download Now
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </a>
+              <AppStoreButtons className="flex flex-wrap items-center justify-center gap-4" />
             </div>
           </motion.div>
         </div>

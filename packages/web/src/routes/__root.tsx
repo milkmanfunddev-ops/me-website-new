@@ -183,6 +183,9 @@ function Header() {
           <Link to="/community" className={navLinkClass}>
             Community
           </Link>
+          <Link to="/race-day-calculator" className={navLinkClass}>
+            Calculator
+          </Link>
           <Link to="/support" className={navLinkClass}>
             Support
           </Link>
@@ -227,6 +230,13 @@ function Header() {
               onClick={() => setMobileOpen(false)}
             >
               Community
+            </Link>
+            <Link
+              to="/race-day-calculator"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
+              onClick={() => setMobileOpen(false)}
+            >
+              Calculator
             </Link>
             <Link
               to="/support"
@@ -326,6 +336,14 @@ function Footer() {
               Resources
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
+              <li>
+                <Link
+                  to="/race-day-calculator"
+                  className="hover:text-foreground"
+                >
+                  Race Day Calculator
+                </Link>
+              </li>
               <li>
                 <Link to="/blog" className="hover:text-foreground">
                   Blog
