@@ -1,34 +1,33 @@
-/* Course map — stylized SVG of the Rocket City Marathon route through
- * Huntsville, plus an elevation profile. Ported from the prototype.
- * Path-based marker positions are measured in the browser (an effect),
- * so the SVG renders static on the server and hydrates with markers. */
+/* Course map — a real interactive Leaflet map of the actual Rocket City
+ * Marathon route through Huntsville (full + half), on clean Carto tiles, with
+ * the real route line, aid stations, mile markers, and start/finish. Leaflet
+ * is loaded only on the client (dynamic import in an effect) so SSR stays clean.
+ * Elevation tab uses the real sampled-terrain profile. */
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { CircleMarker, Layer, Map as LeafletMap, Polyline } from "leaflet";
 import {
   AID_STATIONS_FULL,
   AID_STATIONS_HALF,
-  ELEVATION_FULL,
-  ELEVATION_HALF,
-  FULL_COURSE_PATH,
-  HALF_COURSE_PATH,
-  pointAt,
+  FULL_BOUNDS,
+  FULL_ELEVATION,
+  FULL_MILE_MARKERS,
+  FULL_ROUTE,
+  HALF_BOUNDS,
+  HALF_ELEVATION,
+  HALF_MILE_MARKERS,
+  HALF_ROUTE,
   TOTAL_ASCENT_FULL,
   TOTAL_ASCENT_HALF,
+  type AidStationGeo,
   type ElevationPoint,
-  type PathPoint,
 } from "@/lib/race-plan/course";
-import type { AidStation, Hydration, PaceUnit, RaceType } from "@/lib/race-plan/types";
+import type { Hydration, PaceUnit, RaceType } from "@/lib/race-plan/types";
 
-interface PositionedStation extends AidStation {
-  x: number;
-  y: number;
-}
-
-interface MileMarker {
-  label: string;
-  x: number;
-  y: number;
-}
+const ORANGE = "#F78B14";
+const ELECTROLYTE = "#1CF9CF";
+const BLACKBERRY = "#381633";
+const CREAM = "#F8F6EB";
 
 interface CourseMapProps {
   raceType: RaceType;
@@ -38,57 +37,165 @@ interface CourseMapProps {
 
 export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
   const [view, setView] = useState<"aid" | "mile" | "elev">("aid");
-  const [hover, setHover] = useState<PositionedStation | null>(null);
 
-  const courseD = raceType === "half" ? HALF_COURSE_PATH : FULL_COURSE_PATH;
-  const distMi = raceType === "half" ? 13.1 : 26.2;
-  const distKm = raceType === "half" ? 21.1 : 42.2;
-  const stations = raceType === "half" ? AID_STATIONS_HALF : AID_STATIONS_FULL;
-  const elevProfile = raceType === "half" ? ELEVATION_HALF : ELEVATION_FULL;
-  const ascent = raceType === "half" ? TOTAL_ASCENT_HALF : TOTAL_ASCENT_FULL;
+  const isHalf = raceType === "half";
+  const route = isHalf ? HALF_ROUTE : FULL_ROUTE;
+  const bounds = isHalf ? HALF_BOUNDS : FULL_BOUNDS;
+  const aids = isHalf ? AID_STATIONS_HALF : AID_STATIONS_FULL;
+  const mileMarkers = isHalf ? HALF_MILE_MARKERS : FULL_MILE_MARKERS;
+  const elevProfile = isHalf ? HALF_ELEVATION : FULL_ELEVATION;
+  const ascent = isHalf ? TOTAL_ASCENT_HALF : TOTAL_ASCENT_FULL;
+  const distMi = isHalf ? 13.1 : 26.2;
 
-  const [aidPositions, setAidPositions] = useState<PositionedStation[]>([]);
-  const [mileMarkers, setMileMarkers] = useState<MileMarker[]>([]);
-  const [endpoints, setEndpoints] = useState<{ start: PathPoint; finish: PathPoint }>(
-    { start: { x: 0, y: 0 }, finish: { x: 0, y: 0 } },
-  );
+  const mapEl = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<LeafletMap | null>(null);
+  const baseLayers = useRef<Layer[]>([]);
+  const overlayLayers = useRef<Layer[]>([]);
 
-  // Measure path-based positions on the client whenever the course changes.
+  // Build / update the Leaflet map whenever the course or marker view changes.
   useEffect(() => {
-    setAidPositions(
-      stations.map((s) => {
-        const t = Math.min(0.998, s.mi / distMi);
-        const pt = pointAt(courseD, t);
-        return { ...s, x: pt.x, y: pt.y };
-      }),
-    );
-
-    const markers: MileMarker[] = [];
-    if (paceUnit === "mi") {
-      for (let mi = 5; mi < distMi; mi += 5) {
-        const pt = pointAt(courseD, mi / distMi);
-        markers.push({ label: `${mi} mi`, x: pt.x, y: pt.y });
+    // Elevation view: the map div isn't rendered — tear the instance down.
+    if (view === "elev") {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+        baseLayers.current = [];
+        overlayLayers.current = [];
       }
-    } else {
-      for (let km = 5; km < distKm; km += 5) {
-        const pt = pointAt(courseD, km / distKm);
-        markers.push({ label: `${km} km`, x: pt.x, y: pt.y });
-      }
+      return;
     }
-    setMileMarkers(markers);
 
-    setEndpoints({ start: pointAt(courseD, 0), finish: pointAt(courseD, 0.999) });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [raceType, paceUnit]);
+    let cancelled = false;
+    void (async () => {
+      const L = (await import("leaflet")).default;
+      if (cancelled || !mapEl.current) return;
+
+      if (!mapRef.current) {
+        mapRef.current = L.map(mapEl.current, {
+          zoomControl: true,
+          scrollWheelZoom: false,
+          attributionControl: true,
+        });
+        L.tileLayer(
+          "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png",
+          {
+            subdomains: "abcd",
+            maxZoom: 19,
+            attribution:
+              '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/attributions">CARTO</a>',
+          },
+        ).addTo(mapRef.current);
+      }
+      const map = mapRef.current;
+
+      // Clear previous route + markers.
+      baseLayers.current.forEach((l) => map.removeLayer(l));
+      overlayLayers.current.forEach((l) => map.removeLayer(l));
+      baseLayers.current = [];
+      overlayLayers.current = [];
+
+      // Route line.
+      const poly: Polyline = L.polyline(route, {
+        color: ORANGE,
+        weight: 4,
+        opacity: 0.95,
+        lineJoin: "round",
+        lineCap: "round",
+      }).addTo(map);
+      baseLayers.current.push(poly);
+
+      // Start + finish.
+      const start: CircleMarker = L.circleMarker(route[0], {
+        radius: 7,
+        color: CREAM,
+        weight: 2,
+        fillColor: ORANGE,
+        fillOpacity: 1,
+      })
+        .bindTooltip("START", { permanent: true, direction: "left", className: "rcm-ep-lbl" })
+        .addTo(map);
+      const finish: CircleMarker = L.circleMarker(route[route.length - 1], {
+        radius: 7,
+        color: CREAM,
+        weight: 2,
+        fillColor: BLACKBERRY,
+        fillOpacity: 1,
+      })
+        .bindTooltip("FINISH", { permanent: true, direction: "right", className: "rcm-ep-lbl" })
+        .addTo(map);
+      baseLayers.current.push(start, finish);
+
+      if (view === "aid") {
+        const dim = hydration === "own";
+        aids.forEach((a) => {
+          const m = L.circleMarker([a.lat, a.lng], {
+            radius: 8,
+            color: BLACKBERRY,
+            weight: 2,
+            fillColor: ELECTROLYTE,
+            fillOpacity: dim ? 0.4 : 1,
+          })
+            .bindTooltip(
+              `<b>#${a.num} ${a.name}</b><br>Mile ${a.mi.toFixed(1)} · ${a.offers.join(" · ")}`,
+              { direction: "top", offset: [0, -6] },
+            )
+            .addTo(map);
+          overlayLayers.current.push(m);
+        });
+      } else {
+        mileMarkers.forEach((mk) => {
+          const big = mk.mile % 5 === 0;
+          const m = L.circleMarker([mk.lat, mk.lng], {
+            radius: big ? 5 : 4,
+            color: BLACKBERRY,
+            weight: 1.5,
+            fillColor: CREAM,
+            fillOpacity: 1,
+          });
+          if (big) {
+            m.bindTooltip(`Mile ${mk.mile}`, {
+              permanent: true,
+              direction: "top",
+              className: "rcm-mile-lbl",
+            });
+          } else {
+            m.bindTooltip(`Mile ${mk.mile}`, { direction: "top" });
+          }
+          m.addTo(map);
+          overlayLayers.current.push(m);
+        });
+      }
+
+      map.fitBounds(bounds, { padding: [26, 26] });
+      // Tiles can mis-measure before layout settles.
+      setTimeout(() => map.invalidateSize(), 0);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [raceType, view, hydration, route, bounds, aids, mileMarkers]);
+
+  // Destroy the map when the component unmounts.
+  useEffect(
+    () => () => {
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
+    },
+    [],
+  );
 
   return (
     <div className="map-card">
       <div className="map-head">
         <div>
-          <h3>Course · {raceType === "half" ? "Rocket City Half" : "Rocket City Marathon"}</h3>
+          <h3>Course · {isHalf ? "Rocket City Half" : "Rocket City Marathon"}</h3>
           <div className="sub">
-            Downtown Huntsville → Twickenham →{" "}
-            {raceType === "half" ? "back to start" : "Monte Sano foothills → Hays Farm → finish"}
+            {isHalf
+              ? "Downtown Huntsville → west to the U.S. Space & Rocket Center → back to the finish"
+              : "Downtown Huntsville → Five Points → Space & Rocket Center → Botanical Garden → finish"}
           </div>
         </div>
         <div className="map-toggle" role="tablist">
@@ -96,8 +203,7 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
             <i className="fa-solid fa-droplet" style={{ marginRight: 6 }}></i>Aid stations
           </button>
           <button className={view === "mile" ? "on" : ""} onClick={() => setView("mile")}>
-            <i className="fa-solid fa-flag-checkered" style={{ marginRight: 6 }}></i>
-            {paceUnit === "mi" ? "Mile" : "KM"} markers
+            <i className="fa-solid fa-flag-checkered" style={{ marginRight: 6 }}></i>Mile markers
           </button>
           <button className={view === "elev" ? "on" : ""} onClick={() => setView("elev")}>
             <i className="fa-solid fa-mountain" style={{ marginRight: 6 }}></i>Elevation
@@ -108,170 +214,12 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
       <div className="map-stage">
         {view !== "elev" ? (
           <>
-            <svg className="map-svg" viewBox="0 0 1100 440" preserveAspectRatio="xMidYMid slice">
-              <defs>
-                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-                  <path d="M 40 0 L 0 0 0 40" fill="none" className="map-grid" />
-                </pattern>
-              </defs>
-              <rect width="1100" height="440" fill="url(#grid)" />
+            <div ref={mapEl} className="rcm-map" />
 
-              {/* River — Tennessee River loosely */}
-              <path
-                className="map-water"
-                d="M 0 410 C 200 380, 400 425, 600 410 C 800 395, 950 420, 1100 405 L 1100 440 L 0 440 Z"
-              />
-              <text x="80" y="430" className="map-label">
-                Tennessee River
-              </text>
-
-              {/* Parks */}
-              <path
-                className="map-park"
-                d="M 280 140 C 320 130, 380 130, 410 150 C 430 165, 430 195, 410 210 C 380 225, 320 225, 290 215 C 260 200, 250 165, 280 140 Z"
-              />
-              <text x="310" y="180" className="map-label">
-                Big Spring
-              </text>
-              <path
-                className="map-park"
-                d="M 870 280 C 905 270, 945 280, 960 300 C 970 320, 960 345, 935 350 C 905 355, 880 340, 870 320 C 865 305, 868 290, 870 280 Z"
-              />
-              <text x="885" y="320" className="map-label">
-                Hampton Cove
-              </text>
-
-              {/* Roads */}
-              <path className="map-road" d="M 0 200 C 200 195, 400 215, 600 200 C 800 185, 950 210, 1100 195" />
-              <path className="map-road" d="M 0 320 C 200 315, 400 325, 600 315 C 800 305, 950 320, 1100 310" />
-              <path className="map-road" d="M 300 0 C 305 100, 295 200, 310 300 C 320 380, 305 440, 305 440" />
-              <path className="map-road" d="M 720 0 C 725 90, 715 200, 730 300 C 745 380, 740 440, 740 440" />
-              <path className="map-road-thin" d="M 0 100 C 200 95, 400 115, 600 100 C 800 85, 950 110, 1100 95" />
-              <path className="map-road-thin" d="M 150 0 C 155 100, 145 200, 160 300 C 170 380, 155 440, 155 440" />
-              <path className="map-road-thin" d="M 500 0 C 505 100, 495 200, 510 300 C 520 380, 505 440, 505 440" />
-              <path className="map-road-thin" d="M 900 0 C 905 100, 895 200, 910 300 C 920 380, 905 440, 905 440" />
-              <path className="map-road-thin" d="M 0 60 L 1100 60" />
-              <path className="map-road-thin" d="M 0 380 L 1100 380" />
-
-              {/* District labels */}
-              <text x="40" y="40" className="map-label">
-                Downtown Huntsville
-              </text>
-              <text x="540" y="40" className="map-label">
-                Twickenham
-              </text>
-              <text x="820" y="40" className="map-label">
-                Five Points
-              </text>
-              <text x="980" y="160" className="map-label">
-                Monte Sano
-              </text>
-
-              {/* Course glow + main + dash */}
-              <path className="map-course-glow" d={courseD} />
-              <path className="map-course" d={courseD} />
-              <path className="map-course-dash" d={courseD} />
-
-              {/* Mile / KM markers */}
-              {view === "mile" &&
-                mileMarkers.map((m, i) => (
-                  <g key={i}>
-                    <circle cx={m.x} cy={m.y} r="6" className="mile-dot" />
-                    <circle cx={m.x} cy={m.y} r="4" fill="var(--me-blackberry)" />
-                    <text x={m.x} y={m.y - 12} textAnchor="middle" className="mile-marker">
-                      {m.label}
-                    </text>
-                  </g>
-                ))}
-
-              {/* Aid station pins */}
-              {view === "aid" &&
-                aidPositions.map((s) => {
-                  const used = hydration !== "own";
-                  return (
-                    <g
-                      key={s.num}
-                      className="aid-marker"
-                      onMouseEnter={() => setHover(s)}
-                      onMouseLeave={() => setHover(null)}
-                    >
-                      <circle
-                        cx={s.x}
-                        cy={s.y}
-                        r="13"
-                        fill={used ? "var(--me-electrolyte)" : "color-mix(in srgb, var(--me-electrolyte) 35%, transparent)"}
-                        stroke="var(--me-blackberry)"
-                        strokeWidth="1.5"
-                      />
-                      <text x={s.x} y={s.y + 3} textAnchor="middle" className="pin-num">
-                        {s.num}
-                      </text>
-                    </g>
-                  );
-                })}
-
-              {/* Start marker */}
-              <g className="start-marker" transform={`translate(${endpoints.start.x}, ${endpoints.start.y})`}>
-                <rect x="-22" y="-30" width="44" height="22" rx="6" />
-                <polygon points="0,-8 -6,-2 6,-2" fill="var(--me-orange)" />
-                <text textAnchor="middle" y="-15">
-                  START
-                </text>
-                <circle r="5" fill="var(--me-blackberry)" />
-                <circle r="3" fill="var(--me-orange)" />
-              </g>
-
-              {/* Finish marker — flag */}
-              <g className="finish-marker" transform={`translate(${endpoints.finish.x}, ${endpoints.finish.y})`}>
-                <line x1="0" y1="0" x2="0" y2="-26" stroke="var(--me-cream)" strokeWidth="1.5" />
-                <rect className="flag" x="0" y="-26" width="22" height="14" />
-                <rect className="stripe" x="0" y="-26" width="5.5" height="3.5" />
-                <rect className="stripe" x="11" y="-26" width="5.5" height="3.5" />
-                <rect className="stripe" x="5.5" y="-22.5" width="5.5" height="3.5" />
-                <rect className="stripe" x="16.5" y="-22.5" width="5.5" height="3.5" />
-                <rect className="stripe" x="0" y="-19" width="5.5" height="3.5" />
-                <rect className="stripe" x="11" y="-19" width="5.5" height="3.5" />
-                <text textAnchor="middle" y="14">
-                  FINISH
-                </text>
-                <circle r="5" fill="var(--me-blackberry)" />
-                <circle r="3" fill="var(--me-cream)" />
-              </g>
-            </svg>
-
-            {/* Aid tooltip */}
-            {hover && (
-              <div
-                className="aid-tip"
-                style={{
-                  left: `${(hover.x / 1100) * 100}%`,
-                  top: `${(hover.y / 440) * 100}%`,
-                }}
-              >
-                <div className="h">
-                  <span>
-                    {hover.num}. {hover.name}
-                  </span>
-                  <span className="pill">{hover.mi.toFixed(1)} mi</span>
-                </div>
-                <div className="desc">
-                  {(hover.mi * 1.609).toFixed(1)} km · approx. {Math.round(hover.mi * 9)} min in
-                </div>
-                <div className="offers">
-                  {hover.offers.map((o, i) => (
-                    <span key={i} className={o === "gels" || o === "chews" ? "your" : ""}>
-                      {o}
-                    </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Overlay: course stats */}
             <div className="map-overlay-stats">
               <div className="map-stat">
                 <span className="v">
-                  {raceType === "half" ? "13.1" : "26.2"}
+                  {isHalf ? "13.1" : "26.2"}
                   <span style={{ fontSize: 11, opacity: 0.6, marginLeft: 3 }}>mi</span>
                 </span>
                 <span className="l">Distance</span>
@@ -284,7 +232,7 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
                 <span className="l">Total ascent</span>
               </div>
               <div className="map-stat">
-                <span className="v">{stations.length}</span>
+                <span className="v">{aids.length}</span>
                 <span className="l">Aid stations</span>
               </div>
             </div>
@@ -292,14 +240,14 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
             <div className="map-legend">
               <div className="row">
                 <svg width="22" height="6">
-                  <line x1="0" y1="3" x2="22" y2="3" stroke="var(--me-orange)" strokeWidth="3" strokeLinecap="round" />
+                  <line x1="0" y1="3" x2="22" y2="3" stroke={ORANGE} strokeWidth="3" strokeLinecap="round" />
                 </svg>
                 <span>Course</span>
               </div>
               {view === "aid" && (
                 <div className="row">
                   <svg width="14" height="14">
-                    <circle cx="7" cy="7" r="6" fill="var(--me-electrolyte)" stroke="var(--me-cream)" strokeWidth="1" />
+                    <circle cx="7" cy="7" r="6" fill={ELECTROLYTE} stroke={CREAM} strokeWidth="1" />
                   </svg>
                   <span>Aid station</span>
                 </div>
@@ -307,9 +255,9 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
               {view === "mile" && (
                 <div className="row">
                   <svg width="14" height="14">
-                    <circle cx="7" cy="7" r="4" fill="var(--me-cream)" />
+                    <circle cx="7" cy="7" r="4" fill={CREAM} stroke={BLACKBERRY} strokeWidth="1" />
                   </svg>
-                  <span>Distance marker</span>
+                  <span>Mile marker</span>
                 </div>
               )}
             </div>
@@ -320,7 +268,7 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
             distMi={distMi}
             paceUnit={paceUnit}
             ascent={ascent}
-            stations={stations}
+            stations={aids}
           />
         )}
       </div>
@@ -333,7 +281,7 @@ interface ElevationProfileProps {
   distMi: number;
   paceUnit: PaceUnit;
   ascent: number;
-  stations: AidStation[];
+  stations: AidStationGeo[];
 }
 
 function ElevationProfile({ profile, distMi, paceUnit, ascent, stations }: ElevationProfileProps) {
@@ -397,10 +345,10 @@ function ElevationProfile({ profile, distMi, paceUnit, ascent, stations }: Eleva
             y1={padT + innerH}
             x2={xFor(s.mi)}
             y2={padT + innerH + 8}
-            stroke="var(--me-electrolyte)"
+            stroke={ELECTROLYTE}
             strokeWidth="2"
           />
-          <circle cx={xFor(s.mi)} cy={padT + innerH + 14} r="3" fill="var(--me-electrolyte)" />
+          <circle cx={xFor(s.mi)} cy={padT + innerH + 14} r="3" fill={ELECTROLYTE} />
         </g>
       ))}
 

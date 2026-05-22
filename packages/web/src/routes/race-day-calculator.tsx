@@ -91,6 +91,12 @@ export const Route = createFileRoute("/race-day-calculator")({
         rel: "stylesheet",
         href: "https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.7.2/css/all.min.css",
       },
+      {
+        rel: "stylesheet",
+        href: "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
+        integrity: "sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=",
+        crossOrigin: "",
+      },
     ],
     scripts: [
       {
