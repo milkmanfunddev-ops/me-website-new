@@ -5,8 +5,11 @@
 import type {
   AidAction,
   AidStation,
+  BuildGenericInputs,
   BuildPlanInputs,
   Conditions,
+  GenericInterval,
+  GenericPlan,
   PaceUnit,
   Plan,
   PlanEvent,
@@ -220,11 +223,8 @@ export function buildPlan(
   const distMi = distanceMi(type);
   const hours = finish / 3600;
   const fluidPh = fluidPerHour(sweatRate, conditions);
-  const fluidTotal = Math.round(fluidPh * hours);
-  const carbsTotal = Math.round(carbsPerHr * hours);
   const sod = sodiumRec(saltiness);
   const sodPh = Math.round((sod.low + sod.high) / 2);
-  const sodTotal = Math.round(sodPh * hours);
 
   // Filter aid stations for race type
   const stations = aidStations.filter((s) => type === "full" || s.half);
@@ -232,87 +232,101 @@ export function buildPlan(
   // Pre-race breakfast: aim ~1.8g carb/kg body, 3hrs out
   const bfCarbs = weightKg ? Math.round((weightKg * 1.8) / 5) * 5 : 120;
 
-  const planEvents: PlanEvent[] = [];
+  // Salt caps (supplemental sodium for salty / very-salty sweat). Generated
+  // first so their sodium can be folded into the overall sodium budget below —
+  // otherwise per-station sodium + salt caps would double-count and overshoot.
+  const saltCapEvents: PlanEvent[] = [];
+  if (saltiness !== "normal") {
+    const interval = saltiness === "verysalty" ? 35 * 60 : 50 * 60;
+    const capMg = saltiness === "verysalty" ? 400 : 300;
+    for (let t = interval; t < finish - 600; t += interval) {
+      const km = (t / finish) * distKm;
+      saltCapEvents.push({
+        mi: km / 1.609344, km, timeSec: t, type: "salt",
+        carbs: 0, fluid: 0, sodium: capMg, label: "Salt cap", station: null,
+      });
+    }
+  }
+  const saltCapTotal = saltCapEvents.reduce((a, e) => a + e.sodium, 0);
+
+  // Pass 1 — segment timing + carb scheduling. Running carb "debt" is the grams
+  // the runner should have taken by now to hold the target rate; fuel is
+  // scheduled against it (athlete carries their own gels) rather than only where
+  // the course stocks them. The old logic gated gels on `offers.includes("gels")`
+  // and used fixed per-action fluid/sodium, so the per-station plan drifted
+  // 20-70% from the headline targets. See
+  // tests/integration/race-plan-marathon-validation.test.ts.
+  const spk = paceSecPerKm(paceSec, paceUnit) ?? 0;
   let lastTime = 0;
-  const aidActions: AidAction[] = stations.map((s) => {
+  let carbDebt = 0;
+  const stops = stations.map((s) => {
     const mi = s.mi;
     const km = mi * 1.609344;
-    const spk = paceSecPerKm(paceSec, paceUnit);
-    const timeSec = spk ? spk * km : 0;
+    const timeSec = spk * km;
     const segHr = (timeSec - lastTime) / 3600;
-    const segCarbsNeeded = carbsPerHr * segHr;
     lastTime = timeSec;
+    carbDebt += carbsPerHr * segHr;
 
     let action: AidAction["action"] = "skip";
     let carbsHere = 0;
-    let fluidHere = 0;
-    let sodiumHere = 0;
-    // Skip first station if too early
     if (mi < 1.5) {
-      action = "skip";
+      action = "skip"; // too early to fuel
     } else if (mi >= distMi - 1.5) {
-      action = "drink";
-      fluidHere = 100;
+      action = "drink"; // final stretch — fluid only, no more fuel this late
+    } else if (carbDebt >= 20) {
+      action = "gel"; // ~a gel behind — take a 25g gel to catch back up
+      carbsHere = 25;
+      carbDebt -= carbsHere;
+    } else if (carbDebt >= 12 && (s.offers || []).includes("chews")) {
+      action = "chew";
+      carbsHere = 16;
+      carbDebt -= carbsHere;
     } else {
-      // Alternate gel and drink based on need
-      if (segCarbsNeeded >= 18 && (s.offers || []).includes("gels")) {
-        action = "gel";
-        carbsHere = 25;
-        fluidHere = 150;
-        sodiumHere = 80;
-      } else if (segCarbsNeeded >= 12 && (s.offers || []).includes("chews")) {
-        action = "chew";
-        carbsHere = 16;
-        fluidHere = 100;
-        sodiumHere = 50;
-      } else {
-        // Sports drink — assume 8oz with ~14g carbs and 200mg sodium
-        action = "drink";
-        carbsHere = 14;
-        fluidHere = 240;
-        sodiumHere = 200;
-      }
+      action = "drink"; // sports drink — ~14g carbs from an 8oz cup
+      carbsHere = 14;
+      carbDebt -= carbsHere;
     }
-
-    if (action !== "skip") {
-      planEvents.push({
-        mi,
-        km,
-        timeSec,
-        type: action === "gel" || action === "chew" ? "fuel" : "fluid",
-        carbs: carbsHere,
-        fluid: fluidHere,
-        sodium: sodiumHere,
-        label: action === "gel" ? "Gel" : action === "chew" ? "Chews" : "Drink mix",
-        station: s.num,
-      });
-    }
-
-    return { ...s, timeSec, action, carbsHere, fluidHere, sodiumHere };
+    return { s, mi, km, timeSec, segHr, action, carbsHere };
   });
 
-  // Add salt cap events at intervals for salty / very salty sweat
-  if (saltiness !== "normal") {
-    const interval = saltiness === "verysalty" ? 35 * 60 : 50 * 60;
-    let t = interval;
-    while (t < finish - 600) {
-      const km = (t / finish) * distKm;
-      planEvents.push({
-        mi: km / 1.609344,
-        km,
-        timeSec: t,
-        type: "salt",
-        carbs: 0,
-        fluid: 0,
-        sodium: saltiness === "verysalty" ? 400 : 300,
-        label: "Salt cap",
-        station: null,
-      });
-      t += interval;
-    }
-  }
+  // Pass 2 — size fluid + sodium to each stop's share of the per-hour target so
+  // the per-station rows sum to the race total. Fluid: drink your hourly rate
+  // across each segment. Sodium: the per-hour target minus what salt caps cover,
+  // spread across stops by segment length.
+  const fuelingStops = stops.filter((p) => p.action !== "skip");
+  const activeHr = fuelingStops.reduce((a, p) => a + p.segHr, 0) || 1;
+  const stationSodiumBudget = Math.max(0, Math.round(sodPh * hours) - saltCapTotal);
 
+  const planEvents: PlanEvent[] = [];
+  const aidActions: AidAction[] = stops.map((p) => {
+    let fluidHere = 0;
+    let sodiumHere = 0;
+    if (p.action !== "skip") {
+      fluidHere = Math.round(fluidPh * p.segHr);
+      sodiumHere = Math.round(stationSodiumBudget * (p.segHr / activeHr));
+      planEvents.push({
+        mi: p.mi,
+        km: p.km,
+        timeSec: p.timeSec,
+        type: p.action === "gel" || p.action === "chew" ? "fuel" : "fluid",
+        carbs: p.carbsHere,
+        fluid: fluidHere,
+        sodium: sodiumHere,
+        label: p.action === "gel" ? "Gel" : p.action === "chew" ? "Chews" : "Drink mix",
+        station: p.s.num,
+      });
+    }
+    return { ...p.s, timeSec: p.timeSec, action: p.action, carbsHere: p.carbsHere, fluidHere, sodiumHere };
+  });
+
+  planEvents.push(...saltCapEvents);
   planEvents.sort((a, b) => a.timeSec - b.timeSec);
+
+  // Headline totals = what the plan actually delivers, so the per-station rows
+  // reconcile with the race total instead of drifting from it.
+  const carbsTotal = planEvents.reduce((a, e) => a + e.carbs, 0);
+  const fluidTotal = planEvents.reduce((a, e) => a + e.fluid, 0);
+  const sodTotal = planEvents.reduce((a, e) => a + e.sodium, 0);
 
   return {
     conditions,
@@ -329,5 +343,67 @@ export function buildPlan(
     aidActions,
     planEvents,
     stations,
+  };
+}
+
+/** Build a course-agnostic, by-the-clock plan: totals plus 30-minute
+ * checkpoints. Used by the generic calculator when there's no aid-station map
+ * for a race. Returns null when pace or distance is missing. */
+export function buildGenericPlan(
+  inputs: BuildGenericInputs,
+): GenericPlan | null {
+  const {
+    distKm,
+    paceSec,
+    paceUnit,
+    weightKg,
+    tempC,
+    humidity,
+    sweatRate,
+    saltiness,
+    carbsPerHr,
+  } = inputs;
+  const spk = paceSecPerKm(paceSec, paceUnit);
+  if (!spk || !distKm || distKm <= 0) return null;
+
+  const conditions = classifyConditions(tempC, humidity);
+  const finish = spk * distKm;
+  const hours = finish / 3600;
+  const fluidPh = fluidPerHour(sweatRate, conditions);
+  const sod = sodiumRec(saltiness);
+  const sodPh = Math.round((sod.low + sod.high) / 2);
+  const carbsTotal = Math.round(carbsPerHr * hours);
+  const fluidTotal = Math.round(fluidPh * hours);
+  const sodTotal = Math.round(sodPh * hours);
+  const bfCarbs = weightKg ? Math.round((weightKg * 1.8) / 5) * 5 : 120;
+
+  const STEP = 30 * 60; // 30-minute checkpoints
+  const intervals: GenericInterval[] = [];
+  for (let t = 0; t < finish - 60; t += STEP) {
+    const endSec = Math.min(t + STEP, finish);
+    const segHr = (endSec - t) / 3600;
+    intervals.push({
+      startSec: t,
+      endSec,
+      carbs: Math.round(carbsPerHr * segHr),
+      fluid: Math.round(fluidPh * segHr),
+      sodium: Math.round(sodPh * segHr),
+    });
+  }
+
+  return {
+    conditions,
+    finish,
+    hours,
+    distKm,
+    distMi: distKm / 1.609344,
+    carbsPerHr,
+    fluidPh,
+    sodPh,
+    carbsTotal,
+    fluidTotal,
+    sodTotal,
+    bfCarbs,
+    intervals,
   };
 }

@@ -50,6 +50,20 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
             Built for {plan.conditions} conditions at {state.pace} {state.paceUnit === "mi" ? "/mi" : "/km"} pace. Every
             action below is slotted to a real Rocket City aid station so you don't fumble during the race.
           </p>
+          <p
+            style={{
+              marginTop: 10,
+              maxWidth: 640,
+              fontFamily: "var(--font-body)",
+              fontSize: 12.5,
+              lineHeight: 1.55,
+              color: "var(--me-blackberry-muted)",
+            }}
+          >
+            <strong style={{ color: "var(--me-blackberry)" }}>Drink to thirst.</strong> These fluid and sodium
+            numbers are targets, not quotas — don't force fluids past comfort or drink so much you gain weight.
+            Over-drinking dilutes blood sodium (hyponatremia); finishing up to ~2% lighter is normal.
+          </p>
         </div>
         <div className="view-toggle">
           <button className={view === "timeline" ? "on" : ""} onClick={() => setView("timeline")}>

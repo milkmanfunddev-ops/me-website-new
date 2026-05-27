@@ -93,3 +93,42 @@ export interface BuildPlanInputs {
   bottleCount: number;
   bottleVolMl: number;
 }
+
+/* ---- Generic (course-agnostic) plan ---- */
+
+/** One checkpoint of a by-the-clock generic plan (no aid stations). */
+export interface GenericInterval {
+  startSec: number;
+  endSec: number;
+  carbs: number;
+  fluid: number;
+  sodium: number;
+}
+
+export interface GenericPlan {
+  conditions: Conditions;
+  finish: number;
+  hours: number;
+  distKm: number;
+  distMi: number;
+  carbsPerHr: number;
+  fluidPh: number;
+  sodPh: number;
+  carbsTotal: number;
+  fluidTotal: number;
+  sodTotal: number;
+  bfCarbs: number;
+  intervals: GenericInterval[];
+}
+
+export interface BuildGenericInputs {
+  distKm: number;
+  paceSec: number | null;
+  paceUnit: PaceUnit;
+  weightKg: number | null;
+  tempC: number | null;
+  humidity: number;
+  sweatRate: SweatRate;
+  saltiness: Saltiness;
+  carbsPerHr: number;
+}

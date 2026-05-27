@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
-import { Route as RaceDayCalculatorRouteImport } from './routes/race-day-calculator'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DemoRouteImport } from './routes/demo'
@@ -19,10 +18,13 @@ import { Route as Coach_registrationRouteImport } from './routes/coach_registrat
 import { Route as ChangelogRouteImport } from './routes/changelog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as RaceDayCalculatorIndexRouteImport } from './routes/race-day-calculator/index'
 import { Route as IntegrationsIndexRouteImport } from './routes/integrations/index'
 import { Route as CommunityIndexRouteImport } from './routes/community/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
 import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
+import { Route as RaceDayCalculatorRocketCityMarathon2026RouteImport } from './routes/race-day-calculator/rocket-city-marathon-2026'
+import { Route as RaceDayCalculatorCustomRouteImport } from './routes/race-day-calculator/custom'
 import { Route as IntegrationsTrainingPeaksRouteImport } from './routes/integrations/training-peaks'
 import { Route as IntegrationsStravaRouteImport } from './routes/integrations/strava'
 import { Route as IntegrationsGarminRouteImport } from './routes/integrations/garmin'
@@ -46,11 +48,6 @@ const TermsRoute = TermsRouteImport.update({
 const SupportRoute = SupportRouteImport.update({
   id: '/support',
   path: '/support',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RaceDayCalculatorRoute = RaceDayCalculatorRouteImport.update({
-  id: '/race-day-calculator',
-  path: '/race-day-calculator',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -88,6 +85,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RaceDayCalculatorIndexRoute = RaceDayCalculatorIndexRouteImport.update({
+  id: '/race-day-calculator/',
+  path: '/race-day-calculator/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IntegrationsIndexRoute = IntegrationsIndexRouteImport.update({
   id: '/integrations/',
   path: '/integrations/',
@@ -106,6 +108,17 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
 const SitemapXmlRoute = SitemapXmlRouteImport.update({
   id: '/sitemap/xml',
   path: '/sitemap/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RaceDayCalculatorRocketCityMarathon2026Route =
+  RaceDayCalculatorRocketCityMarathon2026RouteImport.update({
+    id: '/race-day-calculator/rocket-city-marathon-2026',
+    path: '/race-day-calculator/rocket-city-marathon-2026',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const RaceDayCalculatorCustomRoute = RaceDayCalculatorCustomRouteImport.update({
+  id: '/race-day-calculator/custom',
+  path: '/race-day-calculator/custom',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IntegrationsTrainingPeaksRoute =
@@ -188,7 +201,6 @@ export interface FileRoutesByFullPath {
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
-  '/race-day-calculator': typeof RaceDayCalculatorRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/sign-in': typeof authSignInRoute
@@ -203,10 +215,13 @@ export interface FileRoutesByFullPath {
   '/integrations/garmin': typeof IntegrationsGarminRoute
   '/integrations/strava': typeof IntegrationsStravaRoute
   '/integrations/training-peaks': typeof IntegrationsTrainingPeaksRoute
+  '/race-day-calculator/custom': typeof RaceDayCalculatorCustomRoute
+  '/race-day-calculator/rocket-city-marathon-2026': typeof RaceDayCalculatorRocketCityMarathon2026Route
   '/sitemap/xml': typeof SitemapXmlRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/integrations/': typeof IntegrationsIndexRoute
+  '/race-day-calculator/': typeof RaceDayCalculatorIndexRoute
   '/blog/author/$slug': typeof BlogAuthorSlugRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
 }
@@ -218,7 +233,6 @@ export interface FileRoutesByTo {
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
-  '/race-day-calculator': typeof RaceDayCalculatorRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/sign-in': typeof authSignInRoute
@@ -233,10 +247,13 @@ export interface FileRoutesByTo {
   '/integrations/garmin': typeof IntegrationsGarminRoute
   '/integrations/strava': typeof IntegrationsStravaRoute
   '/integrations/training-peaks': typeof IntegrationsTrainingPeaksRoute
+  '/race-day-calculator/custom': typeof RaceDayCalculatorCustomRoute
+  '/race-day-calculator/rocket-city-marathon-2026': typeof RaceDayCalculatorRocketCityMarathon2026Route
   '/sitemap/xml': typeof SitemapXmlRoute
   '/blog': typeof BlogIndexRoute
   '/community': typeof CommunityIndexRoute
   '/integrations': typeof IntegrationsIndexRoute
+  '/race-day-calculator': typeof RaceDayCalculatorIndexRoute
   '/blog/author/$slug': typeof BlogAuthorSlugRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
 }
@@ -249,7 +266,6 @@ export interface FileRoutesById {
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
   '/privacy': typeof PrivacyRoute
-  '/race-day-calculator': typeof RaceDayCalculatorRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
   '/(auth)/sign-in': typeof authSignInRoute
@@ -264,10 +280,13 @@ export interface FileRoutesById {
   '/integrations/garmin': typeof IntegrationsGarminRoute
   '/integrations/strava': typeof IntegrationsStravaRoute
   '/integrations/training-peaks': typeof IntegrationsTrainingPeaksRoute
+  '/race-day-calculator/custom': typeof RaceDayCalculatorCustomRoute
+  '/race-day-calculator/rocket-city-marathon-2026': typeof RaceDayCalculatorRocketCityMarathon2026Route
   '/sitemap/xml': typeof SitemapXmlRoute
   '/blog/': typeof BlogIndexRoute
   '/community/': typeof CommunityIndexRoute
   '/integrations/': typeof IntegrationsIndexRoute
+  '/race-day-calculator/': typeof RaceDayCalculatorIndexRoute
   '/blog/author/$slug': typeof BlogAuthorSlugRoute
   '/blog/category/$slug': typeof BlogCategorySlugRoute
 }
@@ -281,7 +300,6 @@ export interface FileRouteTypes {
     | '/demo'
     | '/faq'
     | '/privacy'
-    | '/race-day-calculator'
     | '/support'
     | '/terms'
     | '/sign-in'
@@ -296,10 +314,13 @@ export interface FileRouteTypes {
     | '/integrations/garmin'
     | '/integrations/strava'
     | '/integrations/training-peaks'
+    | '/race-day-calculator/custom'
+    | '/race-day-calculator/rocket-city-marathon-2026'
     | '/sitemap/xml'
     | '/blog/'
     | '/community/'
     | '/integrations/'
+    | '/race-day-calculator/'
     | '/blog/author/$slug'
     | '/blog/category/$slug'
   fileRoutesByTo: FileRoutesByTo
@@ -311,7 +332,6 @@ export interface FileRouteTypes {
     | '/demo'
     | '/faq'
     | '/privacy'
-    | '/race-day-calculator'
     | '/support'
     | '/terms'
     | '/sign-in'
@@ -326,10 +346,13 @@ export interface FileRouteTypes {
     | '/integrations/garmin'
     | '/integrations/strava'
     | '/integrations/training-peaks'
+    | '/race-day-calculator/custom'
+    | '/race-day-calculator/rocket-city-marathon-2026'
     | '/sitemap/xml'
     | '/blog'
     | '/community'
     | '/integrations'
+    | '/race-day-calculator'
     | '/blog/author/$slug'
     | '/blog/category/$slug'
   id:
@@ -341,7 +364,6 @@ export interface FileRouteTypes {
     | '/demo'
     | '/faq'
     | '/privacy'
-    | '/race-day-calculator'
     | '/support'
     | '/terms'
     | '/(auth)/sign-in'
@@ -356,10 +378,13 @@ export interface FileRouteTypes {
     | '/integrations/garmin'
     | '/integrations/strava'
     | '/integrations/training-peaks'
+    | '/race-day-calculator/custom'
+    | '/race-day-calculator/rocket-city-marathon-2026'
     | '/sitemap/xml'
     | '/blog/'
     | '/community/'
     | '/integrations/'
+    | '/race-day-calculator/'
     | '/blog/author/$slug'
     | '/blog/category/$slug'
   fileRoutesById: FileRoutesById
@@ -372,7 +397,6 @@ export interface RootRouteChildren {
   DemoRoute: typeof DemoRoute
   FaqRoute: typeof FaqRoute
   PrivacyRoute: typeof PrivacyRoute
-  RaceDayCalculatorRoute: typeof RaceDayCalculatorRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
   authSignInRoute: typeof authSignInRoute
@@ -387,10 +411,13 @@ export interface RootRouteChildren {
   IntegrationsGarminRoute: typeof IntegrationsGarminRoute
   IntegrationsStravaRoute: typeof IntegrationsStravaRoute
   IntegrationsTrainingPeaksRoute: typeof IntegrationsTrainingPeaksRoute
+  RaceDayCalculatorCustomRoute: typeof RaceDayCalculatorCustomRoute
+  RaceDayCalculatorRocketCityMarathon2026Route: typeof RaceDayCalculatorRocketCityMarathon2026Route
   SitemapXmlRoute: typeof SitemapXmlRoute
   BlogIndexRoute: typeof BlogIndexRoute
   CommunityIndexRoute: typeof CommunityIndexRoute
   IntegrationsIndexRoute: typeof IntegrationsIndexRoute
+  RaceDayCalculatorIndexRoute: typeof RaceDayCalculatorIndexRoute
   BlogAuthorSlugRoute: typeof BlogAuthorSlugRoute
   BlogCategorySlugRoute: typeof BlogCategorySlugRoute
 }
@@ -409,13 +436,6 @@ declare module '@tanstack/react-router' {
       path: '/support'
       fullPath: '/support'
       preLoaderRoute: typeof SupportRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/race-day-calculator': {
-      id: '/race-day-calculator'
-      path: '/race-day-calculator'
-      fullPath: '/race-day-calculator'
-      preLoaderRoute: typeof RaceDayCalculatorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -467,6 +487,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/race-day-calculator/': {
+      id: '/race-day-calculator/'
+      path: '/race-day-calculator'
+      fullPath: '/race-day-calculator/'
+      preLoaderRoute: typeof RaceDayCalculatorIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/integrations/': {
       id: '/integrations/'
       path: '/integrations'
@@ -493,6 +520,20 @@ declare module '@tanstack/react-router' {
       path: '/sitemap/xml'
       fullPath: '/sitemap/xml'
       preLoaderRoute: typeof SitemapXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/race-day-calculator/rocket-city-marathon-2026': {
+      id: '/race-day-calculator/rocket-city-marathon-2026'
+      path: '/race-day-calculator/rocket-city-marathon-2026'
+      fullPath: '/race-day-calculator/rocket-city-marathon-2026'
+      preLoaderRoute: typeof RaceDayCalculatorRocketCityMarathon2026RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/race-day-calculator/custom': {
+      id: '/race-day-calculator/custom'
+      path: '/race-day-calculator/custom'
+      fullPath: '/race-day-calculator/custom'
+      preLoaderRoute: typeof RaceDayCalculatorCustomRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/integrations/training-peaks': {
@@ -604,7 +645,6 @@ const rootRouteChildren: RootRouteChildren = {
   DemoRoute: DemoRoute,
   FaqRoute: FaqRoute,
   PrivacyRoute: PrivacyRoute,
-  RaceDayCalculatorRoute: RaceDayCalculatorRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,
   authSignInRoute: authSignInRoute,
@@ -619,10 +659,14 @@ const rootRouteChildren: RootRouteChildren = {
   IntegrationsGarminRoute: IntegrationsGarminRoute,
   IntegrationsStravaRoute: IntegrationsStravaRoute,
   IntegrationsTrainingPeaksRoute: IntegrationsTrainingPeaksRoute,
+  RaceDayCalculatorCustomRoute: RaceDayCalculatorCustomRoute,
+  RaceDayCalculatorRocketCityMarathon2026Route:
+    RaceDayCalculatorRocketCityMarathon2026Route,
   SitemapXmlRoute: SitemapXmlRoute,
   BlogIndexRoute: BlogIndexRoute,
   CommunityIndexRoute: CommunityIndexRoute,
   IntegrationsIndexRoute: IntegrationsIndexRoute,
+  RaceDayCalculatorIndexRoute: RaceDayCalculatorIndexRoute,
   BlogAuthorSlugRoute: BlogAuthorSlugRoute,
   BlogCategorySlugRoute: BlogCategorySlugRoute,
 }
