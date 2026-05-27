@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { APP_NAME, APP_URL } from "@mealvana/shared";
 import { AppStoreButtons } from "@/components/app-store-buttons";
@@ -23,7 +23,8 @@ import raceCalcCss from "@/styles/race-calculator.css?url";
 const PAGE_TITLE = `Rocket City Marathon 2026 Race Day Calculator | ${APP_NAME}`;
 const PAGE_DESCRIPTION =
   "Build a free, personalized fueling and hydration race plan for the 2026 Rocket City Marathon — tailored to the Huntsville course, your pace, and December race-morning conditions, snapped to every aid station.";
-const PAGE_URL = `${APP_URL}/race-day-calculator`;
+const PAGE_URL = `${APP_URL}/race-day-calculator/rocket-city-marathon-2026`;
+const LIBRARY_URL = `${APP_URL}/race-day-calculator`;
 
 const DEFAULT_STATE: CalculatorState = {
   type: "full",
@@ -73,7 +74,28 @@ const jsonLd = {
   publisher: { "@type": "Organization", name: APP_NAME, url: APP_URL },
 };
 
-export const Route = createFileRoute("/race-day-calculator")({
+const breadcrumbLd = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Race Day Calculator",
+      item: LIBRARY_URL,
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Rocket City Marathon 2026",
+      item: PAGE_URL,
+    },
+  ],
+};
+
+export const Route = createFileRoute(
+  "/race-day-calculator/rocket-city-marathon-2026",
+)({
   head: () => ({
     meta: [
       { title: PAGE_TITLE },
@@ -99,10 +121,8 @@ export const Route = createFileRoute("/race-day-calculator")({
       },
     ],
     scripts: [
-      {
-        type: "application/ld+json",
-        children: JSON.stringify(jsonLd),
-      },
+      { type: "application/ld+json", children: JSON.stringify(jsonLd) },
+      { type: "application/ld+json", children: JSON.stringify(breadcrumbLd) },
     ],
   }),
   component: RaceDayCalculator,
@@ -175,6 +195,9 @@ function RaceDayCalculator() {
         {/* HERO */}
         <section className="hero">
           <div>
+            <Link to="/race-day-calculator" className="back-link">
+              <i className="fa-solid fa-arrow-left"></i> All races
+            </Link>
             <div className="eyebrow">
               <span className="dot"></span> Race plan calculator
             </div>

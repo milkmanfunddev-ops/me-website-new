@@ -28,6 +28,13 @@ const generateSitemap = createServerFn({ method: "GET" }).handler(async () => {
     { url: "/support", priority: "0.5", changefreq: "monthly" },
     { url: "/demo", priority: "0.7", changefreq: "monthly" },
     { url: "/community", priority: "0.8", changefreq: "daily" },
+    { url: "/race-day-calculator", priority: "0.9", changefreq: "weekly" },
+    {
+      url: "/race-day-calculator/rocket-city-marathon-2026",
+      priority: "0.8",
+      changefreq: "weekly",
+    },
+    { url: "/race-day-calculator/custom", priority: "0.7", changefreq: "monthly" },
   ];
 
   const urls = [
