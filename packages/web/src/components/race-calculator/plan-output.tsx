@@ -26,8 +26,11 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
     lines.push("IN-RACE");
     plan.aidActions.forEach((a) => {
       if (a.action !== "skip") {
+        const what = a.action === "gel"
+          ? ((a.offers || []).includes("gels") ? "gel" : "your gel")
+          : a.action;
         lines.push(
-          `  Mi ${a.mi.toFixed(1)} · ${a.name} · ${a.action}` +
+          `  Mi ${a.mi.toFixed(1)} · ${a.name} · ${what}` +
             (a.carbsHere ? ` · ${a.carbsHere}g carbs` : "") +
             (a.fluidHere ? ` · ${a.fluidHere}ml fluid` : "") +
             (a.sodiumHere ? ` · ${a.sodiumHere}mg sodium` : ""),
@@ -47,8 +50,9 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
         <div>
           <h2>Your race plan</h2>
           <p className="sub">
-            Built for {plan.conditions} conditions at {state.pace} {state.paceUnit === "mi" ? "/mi" : "/km"} pace. Every
-            action below is slotted to a real Rocket City aid station so you don't fumble during the race.
+            Built for {plan.conditions} conditions at {state.pace} {state.paceUnit === "mi" ? "/mi" : "/km"} pace, slotted
+            to the real Rocket City aid stations. The stations pour water and sports drink; carry your own gels and take
+            them on the schedule below (the few stations that also hand out gels are noted in the list).
           </p>
           <p
             style={{
@@ -357,7 +361,8 @@ function AidTable({ plan }: { plan: Plan }) {
               <td>
                 {a.action === "gel" && (
                   <span className="pill gel">
-                    <i className="fa-solid fa-bolt"></i>Gel · 25g
+                    <i className="fa-solid fa-bolt"></i>
+                    {(a.offers || []).includes("gels") ? "Gel · 25g" : "Your gel · 25g"}
                   </span>
                 )}
                 {a.action === "chew" && (
