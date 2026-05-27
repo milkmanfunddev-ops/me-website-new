@@ -191,6 +191,24 @@ describe("marathon nutrition recommendations — sanity vs published ranges", ()
     }
   });
 
+  it("only labels a stop 'Gel' where the course actually stocks gels (else 'Your gel')", () => {
+    // A marathoner needs ~10 gels but Rocket City stocks them at only 3 of 13
+    // stations. The plan correctly schedules carry-your-own gels everywhere
+    // else — those must NOT be labelled as if the aid station hands one out.
+    const offersByNum = new Map(AID_STATIONS_FULL.map((s) => [s.num, s.offers]));
+    for (const s of SCENARIOS.filter((x) => x.type === "full")) {
+      const r = rowFor(s);
+      for (const e of r.plan.planEvents) {
+        if (e.label === "Gel") {
+          expect((offersByNum.get(e.station!) || []).includes("gels"), `${s.label}: station ${e.station} labelled "Gel" but stocks none`).toBe(true);
+        }
+        if (e.label === "Your gel") {
+          expect((offersByNum.get(e.station!) || []).includes("gels"), `${s.label}: station ${e.station} labelled "Your gel" but the course stocks gels`).toBe(false);
+        }
+      }
+    }
+  });
+
   it("headline totals equal the sum of the per-station rows (internal consistency)", () => {
     // The race-total row must equal what the timeline/table actually lists.
     for (const s of SCENARIOS) {

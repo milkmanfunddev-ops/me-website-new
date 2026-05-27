@@ -304,6 +304,13 @@ export function buildPlan(
     if (p.action !== "skip") {
       fluidHere = Math.round(fluidPh * p.segHr);
       sodiumHere = Math.round(stationSodiumBudget * (p.segHr / activeHr));
+      // Gels are scheduled to the runner's carb target, so most fall at
+      // stations that don't stock them — the athlete carries their own. Label
+      // honestly: "Gel" only where the course actually hands one out.
+      const courseStocksGels = (p.s.offers || []).includes("gels");
+      const label = p.action === "gel"
+        ? (courseStocksGels ? "Gel" : "Your gel")
+        : p.action === "chew" ? "Chews" : "Drink mix";
       planEvents.push({
         mi: p.mi,
         km: p.km,
@@ -312,7 +319,7 @@ export function buildPlan(
         carbs: p.carbsHere,
         fluid: fluidHere,
         sodium: sodiumHere,
-        label: p.action === "gel" ? "Gel" : p.action === "chew" ? "Chews" : "Drink mix",
+        label,
         station: p.s.num,
       });
     }
