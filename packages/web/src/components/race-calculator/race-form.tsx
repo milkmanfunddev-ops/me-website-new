@@ -258,9 +258,27 @@ export function RaceForm({ state, set }: RaceFormProps) {
           </div>
         </div>
         <div className="form-row">
-          <div className="fld">
-            <label className="fld-lbl">Target carbs / hr</label>
-            <NumberInput value={state.carbsPerHr} onChange={(v) => set({ carbsPerHr: v })} placeholder="80" suffix="g/h" />
+          <div className="form-grid-2">
+            <div className="fld">
+              <label className="fld-lbl">Target carbs / hr</label>
+              <NumberInput value={state.carbsPerHr} onChange={(v) => set({ carbsPerHr: v })} placeholder="80" suffix="g/h" />
+            </div>
+            <div className="fld">
+              <label className="fld-lbl">
+                Caffeine{" "}
+                <span style={{ textTransform: "none", fontWeight: 400, opacity: 0.7 }}>(optional)</span>
+              </label>
+              <Segmented
+                full
+                value={state.caffeine}
+                onChange={(v) => set({ caffeine: v })}
+                options={[
+                  { value: "none", label: "None" },
+                  { value: "moderate", label: "Some" },
+                  { value: "high", label: "Lots" },
+                ]}
+              />
+            </div>
           </div>
           <div className="rec-card">
             <div className="ico">

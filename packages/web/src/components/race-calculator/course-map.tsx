@@ -33,10 +33,26 @@ interface CourseMapProps {
   raceType: RaceType;
   paceUnit: PaceUnit;
   hydration: Hydration;
+  /** Aid-station numbers marked as the runner's own drops (Hybrid mode). */
+  selectedStations?: number[];
+  /** Toggle a station in/out of the Hybrid drop set. */
+  onToggleStation?: (num: number) => void;
 }
 
-export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
+export function CourseMap({
+  raceType,
+  paceUnit,
+  hydration,
+  selectedStations = [],
+  onToggleStation,
+}: CourseMapProps) {
   const [view, setView] = useState<"aid" | "mile" | "elev">("aid");
+  const isHybrid = hydration === "hybrid";
+
+  // Keep the latest toggle handler in a ref so marker click handlers don't need
+  // to be re-bound (and the map effect doesn't need it in its deps).
+  const onToggleRef = useRef(onToggleStation);
+  onToggleRef.current = onToggleStation;
 
   const isHalf = raceType === "half";
   const route = isHalf ? HALF_ROUTE : FULL_ROUTE;
@@ -126,20 +142,30 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
       baseLayers.current.push(start, finish);
 
       if (view === "aid") {
-        const dim = hydration === "own";
         aids.forEach((a) => {
+          // Hybrid: each station is a toggle for "my own drops". Selected =
+          // solid orange, unselected = dim. Own bottles dims all. Aid = solid.
+          const picked = selectedStations.includes(a.num);
+          const fillColor = isHybrid && picked ? ORANGE : ELECTROLYTE;
+          const fillOpacity = isHybrid ? (picked ? 1 : 0.3) : hydration === "own" ? 0.4 : 1;
           const m = L.circleMarker([a.lat, a.lng], {
-            radius: 8,
+            radius: isHybrid && picked ? 9 : 8,
             color: BLACKBERRY,
             weight: 2,
-            fillColor: ELECTROLYTE,
-            fillOpacity: dim ? 0.4 : 1,
+            fillColor,
+            fillOpacity,
           })
             .bindTooltip(
-              `<b>#${a.num} ${a.name}</b><br>Mile ${a.mi.toFixed(1)} · ${a.offers.join(" · ")}`,
+              `<b>#${a.num} ${a.name}</b><br>Mile ${a.mi.toFixed(1)} · ${a.offers.join(" · ")}` +
+                (isHybrid ? `<br><i>${picked ? "✓ your drop — tap to remove" : "tap to mark as your drop"}</i>` : ""),
               { direction: "top", offset: [0, -6] },
             )
             .addTo(map);
+          if (isHybrid) {
+            m.on("click", () => onToggleRef.current?.(a.num));
+            const el = (m as unknown as { getElement?: () => HTMLElement | undefined }).getElement?.();
+            if (el) el.style.cursor = "pointer";
+          }
           overlayLayers.current.push(m);
         });
       } else {
@@ -174,7 +200,7 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
     return () => {
       cancelled = true;
     };
-  }, [raceType, view, hydration, route, bounds, aids, mileMarkers]);
+  }, [raceType, view, hydration, isHybrid, selectedStations, route, bounds, aids, mileMarkers]);
 
   // Destroy the map when the component unmounts.
   useEffect(
@@ -193,9 +219,11 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
         <div>
           <h3>Course · {isHalf ? "Rocket City Half" : "Rocket City Marathon"}</h3>
           <div className="sub">
-            {isHalf
-              ? "Downtown Huntsville → west to the U.S. Space & Rocket Center → back to the finish"
-              : "Downtown Huntsville → Five Points → Space & Rocket Center → Botanical Garden → finish"}
+            {isHybrid && view === "aid"
+              ? `Tap stations to mark your own drops · ${selectedStations.length} selected`
+              : isHalf
+                ? "Downtown Huntsville → west to the U.S. Space & Rocket Center → back to the finish"
+                : "Downtown Huntsville → Five Points → Space & Rocket Center → Botanical Garden → finish"}
           </div>
         </div>
         <div className="map-toggle" role="tablist">
@@ -250,6 +278,14 @@ export function CourseMap({ raceType, paceUnit, hydration }: CourseMapProps) {
                     <circle cx="7" cy="7" r="6" fill={ELECTROLYTE} stroke={CREAM} strokeWidth="1" />
                   </svg>
                   <span>Aid station</span>
+                </div>
+              )}
+              {view === "aid" && isHybrid && (
+                <div className="row">
+                  <svg width="14" height="14">
+                    <circle cx="7" cy="7" r="6" fill={ORANGE} stroke={CREAM} strokeWidth="1" />
+                  </svg>
+                  <span>Your drop</span>
                 </div>
               )}
               {view === "mile" && (

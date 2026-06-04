@@ -38,10 +38,12 @@ const DEFAULT_STATE: CalculatorState = {
   sweatRate: "average",
   saltiness: "salty",
   carbsPerHr: "80",
+  caffeine: "none",
   hydration: "aid",
   bottleCount: 2,
   bottleVol: "20",
   bottleVolUnit: "oz",
+  selectedStations: [],
 };
 
 // Apply ?type / ?pace / ?unit / ?carbs / ?hydration overrides from the URL.
@@ -55,6 +57,9 @@ function queryOverrides(): Partial<CalculatorState> {
   const unit = p.get("unit");
   if (unit === "mi" || unit === "km") out.paceUnit = unit;
   if (p.get("carbs")) out.carbsPerHr = p.get("carbs")!;
+  const caffeine = p.get("caffeine");
+  if (caffeine === "none" || caffeine === "moderate" || caffeine === "high")
+    out.caffeine = caffeine;
   const hydration = p.get("hydration");
   if (hydration === "aid" || hydration === "own" || hydration === "hybrid")
     out.hydration = hydration;
@@ -143,6 +148,19 @@ function RaceDayCalculator() {
     setState((s) => ({ ...s, ...patch }));
   }
 
+  // Toggle an aid station in/out of the runner's Hybrid drop set.
+  function toggleStation(num: number) {
+    setState((s) => {
+      const has = s.selectedStations.includes(num);
+      return {
+        ...s,
+        selectedStations: has
+          ? s.selectedStations.filter((n) => n !== num)
+          : [...s.selectedStations, num],
+      };
+    });
+  }
+
   // Live computed summary
   const paceSec = parsePace(state.pace);
   const weightKg = toKg(state.weight, state.weightUnit);
@@ -218,7 +236,13 @@ function RaceDayCalculator() {
 
         {/* COURSE MAP */}
         <section id="calculator">
-          <CourseMap raceType={state.type} paceUnit={state.paceUnit} hydration={state.hydration} />
+          <CourseMap
+            raceType={state.type}
+            paceUnit={state.paceUnit}
+            hydration={state.hydration}
+            selectedStations={state.selectedStations}
+            onToggleStation={toggleStation}
+          />
         </section>
 
         {/* FORM */}

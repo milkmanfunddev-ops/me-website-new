@@ -4,10 +4,13 @@
 
 import type {
   AidAction,
+  AidMileEntry,
   AidStation,
   BuildGenericInputs,
   BuildPlanInputs,
+  CarbRec,
   Conditions,
+  GelMark,
   GenericInterval,
   GenericPlan,
   PaceUnit,
@@ -123,12 +126,6 @@ export interface CarbRecArgs {
   saltiness: Saltiness;
 }
 
-export interface CarbRec {
-  low: number;
-  high: number;
-  mid: number;
-}
-
 /** Recommended carbohydrate intake range (g/hr). */
 export function carbRec({
   type,
@@ -200,6 +197,37 @@ export function fluidPerHour(
   return Math.round(base * mult);
 }
 
+/** The coach-style gel schedule: "N gels, ~30 min apart". Count scales gently
+ * with duration (a slower runner burns fewer carbs/hr, so gels stretch out
+ * rather than pile up); the last gel is always framed as optional. Mirrors the
+ * design prototype 1:1. */
+export function gelSchedule(
+  type: RaceType,
+  finish: number,
+  distMi: number,
+): { gels: GelMark[]; required: number; total: number } {
+  const hours = finish / 3600;
+  let required: number;
+  if (type === "half") required = hours < 1.5 ? 2 : 3;
+  else required = hours < 2.75 ? 4 : hours < 4.5 ? 5 : 6;
+  const total = required + 1; // last marker = optional gel
+  const startBuffer = 35 * 60;
+  const endBuffer = 15 * 60;
+  const span = Math.max(300, finish - startBuffer - endBuffer);
+  const interval = total > 1 ? span / (total - 1) : span;
+  const gels: GelMark[] = [];
+  for (let i = 0; i < total; i++) {
+    const t = startBuffer + i * interval;
+    gels.push({
+      n: i + 1,
+      timeSec: t,
+      mi: (t / finish) * distMi,
+      optional: i === total - 1,
+    });
+  }
+  return { gels, required, total };
+}
+
 /** Build the full aid-station-based race plan, or null if pace is missing. */
 export function buildPlan(
   inputs: BuildPlanInputs,
@@ -215,6 +243,9 @@ export function buildPlan(
     sweatRate,
     saltiness,
     carbsPerHr,
+    hydration,
+    bottleCount,
+    bottleVolMl,
   } = inputs;
   const conditions = classifyConditions(tempC, humidity);
   const finish = finishTime(type, paceSec, paceUnit);
@@ -225,6 +256,26 @@ export function buildPlan(
   const fluidPh = fluidPerHour(sweatRate, conditions);
   const sod = sodiumRec(saltiness);
   const sodPh = Math.round((sod.low + sod.high) / 2);
+
+  // Warm-weather trigger: >65 °F (18.3 °C) or projected finish past 4 hr.
+  const warm = (tempC != null && tempC > 18.3) || hours > 4;
+
+  // Coaching targets the editable kit's ±10% bands aim at (rate × race hours).
+  const carbsTarget = Math.round(carbsPerHr * hours);
+  const fluidTarget = Math.round(fluidPh * hours);
+  const sodTarget = Math.round(sodPh * hours);
+  const carbRange = carbRec({ type, finishSec: finish, weightKg, conditions, saltiness });
+
+  // Own / Hybrid bottles: fluid the runner carries vs. picks up at tables. Own
+  // bottles genuinely reduce the table fluid the kit suggests.
+  const carriedMl =
+    hydration === "own" || hydration === "hybrid"
+      ? Math.max(0, Math.round((bottleCount || 0) * (bottleVolMl || 0)))
+      : 0;
+  const tableFluidTarget = Math.max(0, fluidTarget - carriedMl);
+
+  // Coach's gel schedule + the "hit every table" mile list.
+  const gelInfo = gelSchedule(type, finish, distMi);
 
   // Filter aid stations for race type
   const stations = aidStations.filter((s) => type === "full" || s.half);
@@ -335,8 +386,17 @@ export function buildPlan(
   const fluidTotal = planEvents.reduce((a, e) => a + e.fluid, 0);
   const sodTotal = planEvents.reduce((a, e) => a + e.sodium, 0);
 
+  // Mile-marker list for the "hit every table" copy.
+  const aidMileList: AidMileEntry[] = stations.map((s) => ({
+    num: s.num,
+    mi: s.mi,
+    name: s.name,
+    gel: (s.offers || []).includes("gels"),
+  }));
+
   return {
     conditions,
+    warm,
     finish,
     hours,
     distKm,
@@ -346,6 +406,17 @@ export function buildPlan(
     carbsTotal,
     sodPh,
     sodTotal,
+    carbsTarget,
+    fluidTarget,
+    sodTarget,
+    carriedMl,
+    tableFluidTarget,
+    carbRange,
+    sodRange: sod,
+    gels: gelInfo.gels,
+    gelRequired: gelInfo.required,
+    gelTotal: gelInfo.total,
+    aidMileList,
     bfCarbs,
     aidActions,
     planEvents,

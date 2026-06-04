@@ -241,3 +241,62 @@ describe("marathon nutrition recommendations — sanity vs published ranges", ()
     }
   });
 });
+
+describe("new-design plan fields — coach-style kit + gel schedule", () => {
+  function planFor(s: Scenario, over: Partial<BuildPlanInputs> = {}) {
+    const paceSec = parsePace(s.pace)!;
+    const weightKg = toKg(String(s.weightLb), "lb")!;
+    const tempC = toC(String(s.tempF), "F");
+    const carb = carbRec({ type: s.type, finishSec: finishTime(s.type, paceSec, "mi")!, weightKg, conditions: classifyConditions(tempC, s.humidity), saltiness: s.saltiness });
+    const inputs: BuildPlanInputs = {
+      type: s.type, paceSec, paceUnit: "mi", weightKg, tempC, humidity: s.humidity,
+      sweatRate: s.sweatRate, saltiness: s.saltiness, carbsPerHr: carb.mid,
+      hydration: "aid", bottleCount: 0, bottleVolMl: 0, ...over,
+    };
+    return buildPlan(inputs, s.type === "full" ? AID_STATIONS_FULL : AID_STATIONS_HALF)!;
+  }
+
+  it("coaching targets equal rate × race hours (drive the ±10% kit bands)", () => {
+    for (const s of SCENARIOS) {
+      const paceSec = parsePace(s.pace)!;
+      const hours = finishTime(s.type, paceSec, "mi")! / 3600;
+      const p = planFor(s);
+      const carb = carbRec({ type: s.type, finishSec: finishTime(s.type, paceSec, "mi")!, weightKg: toKg(String(s.weightLb), "lb")!, conditions: p.conditions, saltiness: s.saltiness });
+      expect(p.carbsTarget, `${s.label} carbsTarget`).toBe(Math.round(carb.mid * hours));
+      expect(p.fluidTarget, `${s.label} fluidTarget`).toBe(Math.round(p.fluidPh * hours));
+      expect(p.sodTarget, `${s.label} sodTarget`).toBe(Math.round(p.sodPh * hours));
+    }
+  });
+
+  it("gel schedule has gelRequired+1 markers, the last one optional, paced in order", () => {
+    for (const s of SCENARIOS) {
+      const p = planFor(s);
+      expect(p.gels.length, `${s.label} gel count`).toBe(p.gelTotal);
+      expect(p.gelTotal, `${s.label} total = required+1`).toBe(p.gelRequired + 1);
+      expect(p.gels[p.gels.length - 1].optional, `${s.label} last optional`).toBe(true);
+      const times = p.gels.map((g) => g.timeSec);
+      expect(times, `${s.label} gels ascending`).toEqual([...times].sort((a, b) => a - b));
+      // Every gel fired before the finish.
+      expect(times[times.length - 1], `${s.label} last gel before finish`).toBeLessThan(p.finish);
+    }
+  });
+
+  it("own-bottle volume reduces the table fluid the kit must pick up", () => {
+    const s = SCENARIOS[2]; // default 3:43
+    const none = planFor(s, { hydration: "aid", bottleCount: 0, bottleVolMl: 0 });
+    const own = planFor(s, { hydration: "own", bottleCount: 2, bottleVolMl: 500 });
+    expect(none.carriedMl).toBe(0);
+    expect(own.carriedMl).toBe(1000);
+    // Same total fluid need, but 1 L of it is carried, so less to grab at tables.
+    expect(own.fluidTarget).toBe(none.fluidTarget);
+    expect(own.tableFluidTarget).toBe(Math.max(0, own.fluidTarget - 1000));
+    expect(own.tableFluidTarget).toBeLessThan(none.tableFluidTarget);
+  });
+
+  it("warm flag trips on heat or long time-on-feet", () => {
+    const cold = planFor(SCENARIOS[2]); // 40 °F, ~3:43 → not warm
+    expect(cold.warm).toBe(false);
+    const hot = planFor(SCENARIOS[5]); // 82 °F → warm
+    expect(hot.warm).toBe(true);
+  });
+});

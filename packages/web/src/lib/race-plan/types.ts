@@ -9,6 +9,9 @@ export type Saltiness = "normal" | "salty" | "verysalty";
 export type Hydration = "aid" | "own" | "hybrid";
 export type BottleVolUnit = "oz" | "ml";
 export type Conditions = "cool" | "moderate" | "warm" | "hot";
+/** How much caffeine the runner wants in the plan. Opt-in, never derived
+ * automatically from sweat saltiness. */
+export type Caffeine = "none" | "moderate" | "high";
 
 /** The full form/UI state of the calculator. */
 export interface CalculatorState {
@@ -23,10 +26,13 @@ export interface CalculatorState {
   sweatRate: SweatRate;
   saltiness: Saltiness;
   carbsPerHr: string;
+  caffeine: Caffeine;
   hydration: Hydration;
   bottleCount: number;
   bottleVol: string;
   bottleVolUnit: BottleVolUnit;
+  /** Aid-station numbers the runner has marked as their own drops (Hybrid). */
+  selectedStations: number[];
 }
 
 export interface AidStation {
@@ -62,8 +68,33 @@ export interface PlanEvent {
   station: number | null;
 }
 
+/** Recommended carbohydrate intake range (g/hr). */
+export interface CarbRec {
+  low: number;
+  high: number;
+  mid: number;
+}
+
+/** One scheduled gel marker in the coach-style plan (the "5 gels, ~30 min
+ * apart" artifact). The last marker is always framed as optional. */
+export interface GelMark {
+  n: number;
+  timeSec: number;
+  mi: number;
+  optional: boolean;
+}
+
+/** A compact aid-station entry for the "hit every table" mile list. */
+export interface AidMileEntry {
+  num: number;
+  mi: number;
+  name: string;
+  gel: boolean;
+}
+
 export interface Plan {
   conditions: Conditions;
+  warm: boolean;
   finish: number;
   hours: number;
   distKm: number;
@@ -73,6 +104,21 @@ export interface Plan {
   carbsTotal: number;
   sodPh: number;
   sodTotal: number;
+  /** Coaching targets = per-hour rate × race hours. These (not the reconciled
+   * *Total fields) drive the editable kit's ±10% target bands. */
+  carbsTarget: number;
+  fluidTarget: number;
+  sodTarget: number;
+  /** Fluid the runner carries in their own bottles (Own / Hybrid), and the
+   * remaining fluid they need to pick up at tables. */
+  carriedMl: number;
+  tableFluidTarget: number;
+  carbRange: CarbRec;
+  sodRange: { low: number; high: number };
+  gels: GelMark[];
+  gelRequired: number;
+  gelTotal: number;
+  aidMileList: AidMileEntry[];
   bfCarbs: number;
   aidActions: AidAction[];
   planEvents: PlanEvent[];
@@ -92,6 +138,8 @@ export interface BuildPlanInputs {
   hydration: Hydration;
   bottleCount: number;
   bottleVolMl: number;
+  /** Aid-station numbers the runner marked as own drops (Hybrid only). */
+  selectedStations?: number[];
 }
 
 /* ---- Generic (course-agnostic) plan ---- */

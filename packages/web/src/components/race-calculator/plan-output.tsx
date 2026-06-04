@@ -1,9 +1,197 @@
-/* Generated plan output — timeline + aid table + breakfast + share.
- * Ported from the prototype. */
+/* Generated plan output — the coach-style "Build your race-day kit" editor,
+ * an opt-in "Map to the course" timeline, breakfast + share cards.
+ * Ported from the design prototype; converted to TypeScript with ES imports,
+ * caffeine made an explicit opt-in (never derived from sweat saltiness), and
+ * Own-bottle volume folded into the table-fluid the kit suggests. */
 
 import { useEffect, useRef, useState } from "react";
 import { fmtClock } from "@/lib/race-plan/engine";
-import type { CalculatorState, Plan, PlanEvent } from "@/lib/race-plan/types";
+import type { Caffeine, CalculatorState, Plan, Saltiness } from "@/lib/race-plan/types";
+
+/* ---- Gel products ------------------------------------------------------
+   The athlete picks ONE gel for the plan; its profile drives the carb +
+   sodium (+ caffeine) math directly. */
+interface GelProduct {
+  key: string;
+  name: string;
+  carbs: number;
+  na: number;
+  caf: number;
+}
+const GEL_PRODUCTS: GelProduct[] = [
+  { key: "maurten", name: "Maurten Gel 100", carbs: 25, na: 85, caf: 0 },
+  { key: "maurtencaf", name: "Maurten Gel 100 Caf", carbs: 25, na: 85, caf: 100 },
+  { key: "sisgo", name: "SiS GO Isotonic", carbs: 22, na: 10, caf: 0 },
+  { key: "guroctane", name: "GU Roctane", carbs: 21, na: 125, caf: 35 },
+  { key: "sisbeta", name: "SiS Beta Fuel", carbs: 40, na: 10, caf: 0 },
+  { key: "precision", name: "Precision Fuel PF 30", carbs: 30, na: 30, caf: 0 },
+  { key: "nduranz", name: "Nduranz Gel 45", carbs: 45, na: 200, caf: 0 },
+  { key: "spring", name: "Spring Energy Awesome Sauce", carbs: 45, na: 80, caf: 0 },
+];
+
+/** Pick a sensible starting gel. Caffeine is opt-in: a caffeinated gel is
+ * NEVER chosen unless the runner asked for caffeine. Sodium-rich gels are
+ * favored for saltier sweat within the no-caffeine tier. */
+function defaultGelKey(caffeine: Caffeine, saltiness: Saltiness): string {
+  if (caffeine === "high") return "maurtencaf"; // 100 mg caf
+  if (caffeine === "moderate") return "guroctane"; // 35 mg caf + 125 mg Na
+  if (saltiness === "verysalty") return "nduranz"; // 200 mg Na, no caf
+  if (saltiness === "salty") return "maurten"; // 85 mg Na, no caf
+  return "sisgo"; // no caf
+}
+function productByKey(key: string): GelProduct {
+  return GEL_PRODUCTS.find((p) => p.key === key) || GEL_PRODUCTS[0];
+}
+function gelLabel(p: GelProduct): string {
+  return `${p.carbs}g${p.caf ? ` + ${p.caf}mg caf` : ""}`;
+}
+
+/* ---- Editable item list ------------------------------------------------
+   Each item carries a fixed per-unit nutrition profile. The summary markers
+   are the SUM of these items; the band is the ±10% target. Cups are an 8 oz
+   aid-station cup. */
+const ML_PER_OZ = 29.5735;
+type ItemKey = "gel" | "sports" | "water" | "salt";
+interface ItemDef {
+  key: ItemKey;
+  label: string;
+  cups: boolean;
+  icon: string;
+  step: number;
+  accent: string;
+  per: { carbs: number; fluidOz: number; sodium: number };
+}
+const ITEM_DEFS: ItemDef[] = [
+  { key: "gel", label: "Energy Gels", cups: false, icon: "fa-bolt", step: 1, accent: "var(--me-orange)", per: { carbs: 25, fluidOz: 0, sodium: 100 } },
+  { key: "sports", label: "Sports Drink", cups: true, icon: "fa-bottle-water", step: 0.5, accent: "var(--me-electrolyte)", per: { carbs: 15, fluidOz: 8, sodium: 110 } },
+  { key: "water", label: "Water", cups: true, icon: "fa-glass-water", step: 0.5, accent: "var(--me-electrolyte)", per: { carbs: 0, fluidOz: 8, sodium: 0 } },
+  { key: "salt", label: "Salt Caps", cups: false, icon: "fa-tablets", step: 1, accent: "var(--me-dragonfruit)", per: { carbs: 0, fluidOz: 0, sodium: 300 } },
+];
+
+type Qty = Record<ItemKey, number>;
+
+function itemPer(d: ItemDef, gel: GelProduct) {
+  if (d.key === "gel") return { carbs: gel.carbs, fluidOz: 0, sodium: gel.na, caf: gel.caf || 0 };
+  return { ...d.per, caf: 0 };
+}
+
+/** Suggested starting quantities that land each total near its target. Uses
+ * the *table* fluid target (total minus what the runner carries) so carrying
+ * your own bottles genuinely reduces the cups the kit suggests. */
+function defaultItemQty(plan: Plan, gel: GelProduct): Qty {
+  const carbsT = plan.carbsTarget;
+  const tableFluidOzT = Math.round(plan.tableFluidTarget / ML_PER_OZ);
+  const sodT = plan.sodTarget;
+  const gc = gel.carbs || 25;
+  const gna = gel.na || 0;
+  let gelN = Math.max(2, plan.gelRequired);
+  let sports = Math.min((carbsT - gelN * gc) / 15, tableFluidOzT / 8); // don't overshoot fluid
+  sports = Math.max(0, Math.round(sports * 2) / 2); // 0.5 step
+  // If sports drink is fluid-capped and carbs still short, top up with gels.
+  const carbsSoFar = gelN * gc + sports * 15;
+  if (carbsSoFar < carbsT && gc > 0) gelN += Math.max(0, Math.round((carbsT - carbsSoFar) / gc));
+  const water = Math.max(0, Math.round(((tableFluidOzT - sports * 8) / 8) * 2) / 2);
+  const sodFrom = gelN * gna + sports * 110;
+  const salt = Math.max(0, Math.round((sodT - sodFrom) / 300));
+  return { gel: gelN, sports, water, salt };
+}
+
+function sumItemNutrition(qty: Qty, gel: GelProduct) {
+  let carbs = 0;
+  let fluidOz = 0;
+  let sodium = 0;
+  let caf = 0;
+  for (const d of ITEM_DEFS) {
+    const n = qty[d.key] || 0;
+    const per = itemPer(d, gel);
+    carbs += n * per.carbs;
+    fluidOz += n * per.fluidOz;
+    sodium += n * per.sodium;
+    caf += n * per.caf;
+  }
+  return { carbs: Math.round(carbs), fluidOz: Math.round(fluidOz), sodium: Math.round(sodium), caf: Math.round(caf) };
+}
+
+function fmtQty(n: number): string {
+  return n % 1 === 0 ? String(n) : n.toFixed(1);
+}
+
+type CustomGel = { carbs: number | string; na: number | string; caf: number | string };
+
+/* Custom dropdown for choosing the plan's gel product (works on dark card). */
+function GelPicker({
+  gelKey,
+  custom,
+  onSelect,
+  onCustom,
+}: {
+  gelKey: string;
+  custom: CustomGel;
+  onSelect: (k: string) => void;
+  onCustom: () => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    if (open) document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
+  const isCustom = gelKey === "custom";
+  const current = isCustom
+    ? { name: "Custom gel", carbs: Number(custom.carbs) || 0, caf: Number(custom.caf) || 0, na: Number(custom.na) || 0 }
+    : productByKey(gelKey);
+  return (
+    <div className="gelpick" ref={ref}>
+      <button type="button" className="gelpick-trigger" onClick={() => setOpen((o) => !o)}>
+        <span className="gelpick-cur">
+          <span className="gelpick-name">{current.name}</span>
+          <span className="gelpick-meta">
+            {current.carbs}g{current.caf ? ` · ${current.caf}mg caf` : ""} · {current.na}mg Na each
+          </span>
+        </span>
+        <i className={`fa-solid fa-chevron-down gelpick-chev${open ? " open" : ""}`}></i>
+      </button>
+      {open && (
+        <div className="gelpick-menu" role="listbox">
+          {GEL_PRODUCTS.map((p) => {
+            const on = !isCustom && gelKey === p.key;
+            return (
+              <button
+                key={p.key}
+                type="button"
+                role="option"
+                aria-selected={on}
+                className={`gelpick-opt${on ? " on" : ""}`}
+                onClick={() => {
+                  onSelect(p.key);
+                  setOpen(false);
+                }}
+              >
+                <span className="go-name">{p.name}</span>
+                <span className="go-meta">{gelLabel(p)}</span>
+                {on && <i className="fa-solid fa-check go-chk"></i>}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            className={`gelpick-opt is-custom${isCustom ? " on" : ""}`}
+            onClick={() => {
+              onCustom();
+              setOpen(false);
+            }}
+          >
+            <span className="go-name">Custom gel…</span>
+            {isCustom && <i className="fa-solid fa-check go-chk"></i>}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
 
 interface PlanOutputProps {
   plan: Plan;
@@ -11,34 +199,63 @@ interface PlanOutputProps {
 }
 
 export function PlanOutput({ plan, state }: PlanOutputProps) {
-  const [view, setView] = useState<"timeline" | "table">("timeline");
   const [copied, setCopied] = useState(false);
+  const [gelKey, setGelKey] = useState<string>(() => defaultGelKey(state.caffeine, state.saltiness));
+  const [customGel, setCustomGel] = useState<CustomGel>({ carbs: 30, na: 100, caf: 0 });
+  const gelProduct: GelProduct =
+    gelKey === "custom"
+      ? { key: "custom", name: "Custom gel", carbs: Number(customGel.carbs) || 0, na: Number(customGel.na) || 0, caf: Number(customGel.caf) || 0 }
+      : productByKey(gelKey);
+  const [qty, setQty] = useState<Qty>(() => defaultItemQty(plan, gelProduct));
+  const [mapped, setMapped] = useState(false);
+
+  // Re-suggest the default gel when the runner's caffeine preference changes.
+  const caffSig = `${state.caffeine}|${state.saltiness}`;
+  const caffRef = useRef(caffSig);
+  useEffect(() => {
+    if (caffRef.current !== caffSig) {
+      caffRef.current = caffSig;
+      setGelKey(defaultGelKey(state.caffeine, state.saltiness));
+    }
+  }, [caffSig, state.caffeine, state.saltiness]);
+
+  // Re-suggest item quantities when the underlying targets or gel change.
+  const targetSig = `${plan.carbsTarget}|${plan.fluidTarget}|${plan.sodTarget}|${plan.tableFluidTarget}|${plan.gelRequired}|${gelProduct.carbs}|${gelProduct.na}`;
+  const sigRef = useRef(targetSig);
+  useEffect(() => {
+    if (sigRef.current !== targetSig) {
+      sigRef.current = targetSig;
+      setQty(defaultItemQty(plan, gelProduct));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [targetSig]);
 
   function copyPlan() {
     const lines: string[] = [];
-    lines.push(`ROCKET CITY ${state.type === "half" ? "HALF" : "MARATHON"} 2026 — RACE PLAN`);
-    lines.push(`Pace: ${state.pace} ${state.paceUnit === "mi" ? "/mi" : "/km"} · Finish: ${fmtClock(plan.finish)}`);
-    lines.push(`Conditions: ${plan.conditions} · Carbs: ${state.carbsPerHr} g/h · Fluid: ${plan.fluidPh} ml/h`);
+    const dist = state.type === "half" ? "HALF" : "MARATHON";
+    lines.push(`ROCKET CITY ${dist} 2026 — RACE PLAN`);
+    lines.push(`${state.pace} ${state.paceUnit === "mi" ? "/mi" : "/km"} · finish ~${fmtClock(plan.finish)} · ${plan.conditions} conditions`);
     lines.push("");
-    lines.push("PRE-RACE (3 hr out)");
-    lines.push(`  ~${plan.bfCarbs}g carbs · low fiber breakfast`);
+    lines.push(`THE PLAN: ${fmtQty(qty.gel || 0)} gels, ~30 min apart. Throwaway bottle for the first 3–4 mi, then`);
+    lines.push(`hit every aid table for whatever cup you can grab.`);
     lines.push("");
-    lines.push("IN-RACE");
-    plan.aidActions.forEach((a) => {
-      if (a.action !== "skip") {
-        const what = a.action === "gel"
-          ? ((a.offers || []).includes("gels") ? "gel" : "your gel")
-          : a.action;
-        lines.push(
-          `  Mi ${a.mi.toFixed(1)} · ${a.name} · ${what}` +
-            (a.carbsHere ? ` · ${a.carbsHere}g carbs` : "") +
-            (a.fluidHere ? ` · ${a.fluidHere}ml fluid` : "") +
-            (a.sodiumHere ? ` · ${a.sodiumHere}mg sodium` : ""),
-        );
-      }
+    lines.push("YOUR GELS");
+    lines.push(`  Carrying: ${gelProduct.name} · ${gelProduct.carbs} g carbs · ${gelProduct.na} mg Na${gelProduct.caf ? ` · ${gelProduct.caf} mg caf` : ""} each`);
+    plan.gels.forEach((g) => {
+      lines.push(`  ${g.optional ? "Optional gel" : "Gel " + g.n} · ~${fmtClock(g.timeSec)} (mile ${g.mi.toFixed(0)})${g.optional ? " — if you’re feeling it" : ""}`);
     });
     lines.push("");
-    lines.push(`TOTAL: ${plan.carbsTotal}g carbs · ${plan.fluidTotal}ml fluid · ${plan.sodTotal}mg sodium`);
+    if (plan.carriedMl > 0) {
+      lines.push("START BOTTLE");
+      lines.push(`  Carry ~${Math.round(plan.carriedMl / ML_PER_OZ)} oz of your own; top up at the tables after.`);
+      lines.push("");
+    }
+    lines.push("AID STATIONS — hit the table");
+    lines.push(`  Grab whatever cup you can — sports drink or water. ${plan.warm ? "Warm out: go for two cups when you can." : "Two cups if you can."}`);
+    lines.push(`  Mile markers: ${plan.aidMileList.map((s) => s.mi.toFixed(1)).join(", ")}`);
+    lines.push("");
+    lines.push("PRE-RACE BREAKFAST (3 hr out)");
+    lines.push(`  ~${plan.bfCarbs} g carbs · low fiber, low fat`);
     navigator.clipboard?.writeText(lines.join("\n"));
     setCopied(true);
     setTimeout(() => setCopied(false), 2200);
@@ -49,37 +266,35 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
       <div className="plan-head">
         <div>
           <h2>Your race plan</h2>
-          <p className="sub">
-            Built for {plan.conditions} conditions at {state.pace} {state.paceUnit === "mi" ? "/mi" : "/km"} pace, slotted
-            to the real Rocket City aid stations. The stations pour water and sports drink; carry your own gels and take
-            them on the schedule below (the few stations that also hand out gels are noted in the list).
+          <p className="plan-thesis">
+            <strong>
+              {fmtQty(qty.gel || 0)} {(qty.gel || 0) === 1 ? "gel" : "gels"}, paced ~30 min apart.
+            </strong>{" "}
+            A throwaway bottle off the line, then hit every aid table for whatever cup you can grab. Your gels and salt
+            caps carry your carbs and sodium; the aid stations carry your fluid.
           </p>
-          <p
-            style={{
-              marginTop: 10,
-              maxWidth: 640,
-              fontFamily: "var(--font-body)",
-              fontSize: 12.5,
-              lineHeight: 1.55,
-              color: "var(--me-blackberry-muted)",
-            }}
-          >
-            <strong style={{ color: "var(--me-blackberry)" }}>Drink to thirst.</strong> These fluid and sodium
-            numbers are targets, not quotas — don't force fluids past comfort or drink so much you gain weight.
-            Over-drinking dilutes blood sodium (hyponatremia); finishing up to ~2% lighter is normal.
-          </p>
-        </div>
-        <div className="view-toggle">
-          <button className={view === "timeline" ? "on" : ""} onClick={() => setView("timeline")}>
-            <i className="fa-solid fa-timeline" style={{ marginRight: 6 }}></i>Timeline
-          </button>
-          <button className={view === "table" ? "on" : ""} onClick={() => setView("table")}>
-            <i className="fa-solid fa-table-list" style={{ marginRight: 6 }}></i>Aid table
-          </button>
         </div>
       </div>
 
-      {view === "timeline" ? <Timeline plan={plan} state={state} /> : <AidTable plan={plan} />}
+      <RacePlan
+        plan={plan}
+        qty={qty}
+        setQty={setQty}
+        gelProduct={gelProduct}
+        gelKey={gelKey}
+        setGelKey={setGelKey}
+        customGel={customGel}
+        setCustomGel={setCustomGel}
+        mapped={mapped}
+        onMap={() => setMapped(true)}
+      />
+
+      {mapped && (
+        <>
+          <Timeline plan={plan} state={state} qty={qty} gelProduct={gelProduct} />
+          <MapAdvisories plan={plan} state={state} />
+        </>
+      )}
 
       <div className="plan-sub-grid">
         <div className="breakfast">
@@ -117,11 +332,12 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
         <div className="share-card">
           <h3>Take it with you</h3>
           <div className="desc">
-            Copy a printable summary, or open this plan in the Mealvana app to get reminders and in-race adjustments.
+            A coach's one-pager: your gel timing plus the plain-language plan. Copy it, print it, or open it in the
+            Mealvana app for reminders.
           </div>
           <button className="b1" onClick={copyPlan}>
             <i className={`fa-solid ${copied ? "fa-check" : "fa-copy"}`}></i>
-            {copied ? "Copied to clipboard" : "Copy plan as text"}
+            {copied ? "Copied to clipboard" : "Copy race plan"}
           </button>
           <button className="b2">
             <i className="fa-solid fa-mobile-screen"></i>
@@ -129,7 +345,7 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
           </button>
           {copied && (
             <div className="copied">
-              <i className="fa-solid fa-check"></i> Plain-text summary copied — paste it anywhere.
+              <i className="fa-solid fa-check"></i> Gel timing + plan copied — paste it anywhere.
             </div>
           )}
         </div>
@@ -138,57 +354,362 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
   );
 }
 
-interface PlacedEvent extends PlanEvent {
-  pct: number;
-  x: number;
-  side: "up" | "down";
-  lane: number;
+/* ============ RACE PLAN (default) ============ */
+type StatStatus = "in" | "low" | "high";
+const STATUS_LABEL: Record<StatStatus, string> = { in: "In range", low: "Below range", high: "Above range" };
+
+function RacePlan({
+  plan,
+  qty,
+  setQty,
+  gelProduct,
+  gelKey,
+  setGelKey,
+  customGel,
+  setCustomGel,
+  mapped,
+  onMap,
+}: {
+  plan: Plan;
+  qty: Qty;
+  setQty: React.Dispatch<React.SetStateAction<Qty>>;
+  gelProduct: GelProduct;
+  gelKey: string;
+  setGelKey: (k: string) => void;
+  customGel: CustomGel;
+  setCustomGel: React.Dispatch<React.SetStateAction<CustomGel>>;
+  mapped: boolean;
+  onMap: () => void;
+}) {
+  const sums = sumItemNutrition(qty, gelProduct);
+  const carriedOz = Math.round(plan.carriedMl / ML_PER_OZ);
+  const fluidOzTarget = Math.round(plan.fluidTarget / ML_PER_OZ);
+
+  const summary = (
+    [
+      { key: "carbs", label: "Carbs", unit: "g", accent: "var(--me-orange)", value: sums.carbs, target: plan.carbsTarget },
+      // Carried bottle fluid counts toward the runner's total fluid.
+      { key: "fluids", label: "Fluids", unit: "oz", accent: "var(--me-electrolyte)", value: sums.fluidOz + carriedOz, target: fluidOzTarget },
+      { key: "sodium", label: "Sodium", unit: "mg", accent: "var(--me-dragonfruit)", value: sums.sodium, target: plan.sodTarget },
+    ] as const
+  ).map((s) => {
+    const low = Math.round(s.target * 0.9);
+    const high = Math.round(s.target * 1.1);
+    const status: StatStatus = s.value < low ? "low" : s.value > high ? "high" : "in";
+    const span = Math.max(1, high - low);
+    const pct = Math.max(0, Math.min(1, (s.value - low) / span)) * 100;
+    return { ...s, low, high, status, pct };
+  });
+
+  function bump(key: ItemKey, step: number, dir: number) {
+    setQty((q) => {
+      const next = Math.max(0, Math.round(((q[key] || 0) + dir * step) * 2) / 2);
+      return { ...q, [key]: next };
+    });
+  }
+
+  return (
+    <div className="raceplan">
+      <section className="rp-summary">
+        <div className="rps-head">
+          <div>
+            <div className="rps-title">Build your race-day kit</div>
+            <div className="rps-sub">
+              Dial each item up or down — your totals update live and show whether they land inside the ±10% target
+              range.
+            </div>
+          </div>
+          <div className="rps-finish">
+            <span className="rps-finish-val">{fmtClock(plan.finish)}</span>
+            <span className="rps-finish-lbl">est. finish</span>
+          </div>
+        </div>
+
+        <div className="rps-stats">
+          {summary.map((s) => (
+            <div key={s.key} className={`rps-stat is-${s.status}`} style={{ "--rps-accent": s.accent } as React.CSSProperties}>
+              <div className="rps-stat-top">
+                <div className="rps-num">
+                  <span className="v">{s.value.toLocaleString()}</span>
+                  <span className="u">{s.unit}</span>
+                </div>
+                <span className={`rps-flag is-${s.status}`}>
+                  <i className={`fa-solid ${s.status === "in" ? "fa-check" : s.status === "low" ? "fa-arrow-down" : "fa-arrow-up"}`}></i>
+                  {STATUS_LABEL[s.status]}
+                </span>
+              </div>
+              <div className="rps-lbl">
+                {s.label} · target {s.target.toLocaleString()}
+                {s.unit}
+                {s.key === "fluids" && carriedOz > 0 ? ` · ${carriedOz} oz carried` : ""}
+              </div>
+              <div className="rps-range">
+                <div className="rps-track">
+                  <span className="rps-dot" style={{ left: `${s.pct}%` }}></span>
+                </div>
+                <div className="rps-ends">
+                  <span>{s.low.toLocaleString()}</span>
+                  <span>{s.high.toLocaleString()}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="rps-items">
+          {ITEM_DEFS.map((d) => {
+            const n = qty[d.key] || 0;
+            const step = (
+              <div className="rps-step">
+                <button type="button" aria-label={`Fewer ${d.label}`} onClick={() => bump(d.key, d.step, -1)} disabled={n <= 0}>
+                  <i className="fa-solid fa-minus"></i>
+                </button>
+                <span className="rps-step-n">{fmtQty(n)}</span>
+                <button type="button" aria-label={`More ${d.label}`} onClick={() => bump(d.key, d.step, 1)}>
+                  <i className="fa-solid fa-plus"></i>
+                </button>
+              </div>
+            );
+
+            if (d.key === "gel") {
+              return (
+                <div key={d.key} className="rps-item is-gel" style={{ "--rps-accent": d.accent } as React.CSSProperties}>
+                  <div className="rps-item-row">
+                    <div className="rps-item-ico">
+                      <i className={`fa-solid ${d.icon}`}></i>
+                    </div>
+                    <div className="rps-item-name">
+                      <span className="rps-item-qty">{fmtQty(n)}</span> Energy Gels
+                    </div>
+                    {step}
+                  </div>
+                  <GelPicker gelKey={gelKey} custom={customGel} onSelect={setGelKey} onCustom={() => setGelKey("custom")} />
+                  {gelKey === "custom" && (
+                    <div className="rps-custom">
+                      {(
+                        [
+                          { k: "carbs", label: "Carbs", unit: "g" },
+                          { k: "na", label: "Sodium", unit: "mg" },
+                          { k: "caf", label: "Caffeine", unit: "mg" },
+                        ] as const
+                      ).map((f) => (
+                        <label key={f.k} className="rps-custom-field">
+                          <span>
+                            {f.label} ({f.unit})
+                          </span>
+                          <input
+                            type="number"
+                            min="0"
+                            value={customGel[f.k]}
+                            onChange={(e) => setCustomGel((c) => ({ ...c, [f.k]: e.target.value }))}
+                          />
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                  {sums.caf > 0 && (
+                    <div className="rps-gel-caf">
+                      <i className="fa-solid fa-mug-hot"></i> ≈ {sums.caf.toLocaleString()} mg caffeine across {fmtQty(n)} gels
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <div key={d.key} className="rps-item" style={{ "--rps-accent": d.accent } as React.CSSProperties}>
+                <div className="rps-item-row">
+                  <div className="rps-item-ico">
+                    <i className={`fa-solid ${d.icon}`}></i>
+                  </div>
+                  <div className="rps-item-name">
+                    <span className="rps-item-qty">{fmtQty(n)}</span>
+                    {d.cups ? ` ${n === 1 ? "cup" : "cups"} ` : " "}
+                    {d.label}
+                  </div>
+                  {step}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="rps-map-cta">
+          {!mapped ? (
+            <button type="button" className="map-btn" onClick={onMap}>
+              <i className="fa-solid fa-map-location-dot"></i>
+              Map to the course
+            </button>
+          ) : (
+            <div className="rps-mapped-note">
+              <i className="fa-solid fa-circle-check"></i>
+              Mapped below — your kit, spread across the course.
+            </div>
+          )}
+        </div>
+      </section>
+    </div>
+  );
 }
 
-function Timeline({ plan, state }: { plan: Plan; state: CalculatorState }) {
-  const events = plan.planEvents;
+/* ====== MAP ADVISORIES — start-bottle + aid-station notes ====== */
+function MapAdvisories({ plan, state }: { plan: Plan; state: CalculatorState }) {
+  const ownFill = state.hydration === "own" || state.hydration === "hybrid";
+  return (
+    <div className="map-foots">
+      <div className="map-foots-label">
+        <i className="fa-solid fa-circle-info"></i>
+        Read the map with these two in mind
+      </div>
+      <div className="map-foot">
+        <div className="mf-ico">
+          <i className="fa-solid fa-bottle-water"></i>
+        </div>
+        <div className="mf-body">
+          <div className="mf-title">Before the first station · your start bottle</div>
+          <p>
+            Carry a throwaway handheld for the first 3–4 miles so you can skip the congested early aid stations — then
+            start hitting every table.
+            {ownFill
+              ? ` Fill it with ~60 g carb mix in 500 ml; add ½–1 scoop Element if you sweat salty.`
+              : ` Ditch it by mile 4 — after that you’re on the course, no need to carry.`}
+          </p>
+        </div>
+      </div>
+      <div className="map-foot">
+        <div className="mf-ico">
+          <i className="fa-solid fa-hand-holding-droplet"></i>
+        </div>
+        <div className="mf-body">
+          <div className="mf-title">At every aid station · hit the table</div>
+          <p>
+            Grab whatever cup you can — sports drink or water, doesn’t matter. Your gels already cover carbs and sodium,
+            so the only job here is fluid.
+            {plan.warm ? " It’s warm — go for two cups whenever you can." : " If you can grab two cups, even better."}{" "}
+            Stations flagged <strong>emergency gel</strong> are course backup only — never count on them for fuel.
+          </p>
+        </div>
+      </div>
+      <div className="rp-disclaimer">
+        <i className="fa-solid fa-glass-water"></i>
+        <span>
+          <strong>Don't chase a number.</strong> Take fluid at every table; if you can grab two cups, even better.
+          Finishing up to ~2% lighter is normal — thirst is a better guide than any target.
+        </span>
+      </div>
+    </div>
+  );
+}
+
+/* ============ COURSE TIMELINE ====== */
+const TL_ITEMS: Record<ItemKey, { icon: string; color: string; label: string }> = {
+  gel: { icon: "fa-bolt", color: "var(--me-orange)", label: "Gel" },
+  sports: { icon: "fa-bottle-water", color: "var(--me-electrolyte-dark)", label: "Sports drink" },
+  water: { icon: "fa-droplet", color: "var(--me-electrolyte)", label: "Water" },
+  salt: { icon: "fa-tablets", color: "var(--me-dragonfruit)", label: "Salt cap" },
+};
+
+// Spread n items across `span` slots, evenly.
+function spreadIdx(n: number, span: number): number[] {
+  const out: number[] = [];
+  for (let i = 0; i < n; i++) {
+    const pos = n <= 1 ? Math.round((span - 1) / 2) : Math.round((i * (span - 1)) / (n - 1));
+    out.push(Math.max(0, Math.min(span - 1, pos)));
+  }
+  return out;
+}
+
+interface Bucket {
+  s: Plan["aidActions"][number];
+  gel: number;
+  salt: number;
+  sports: number;
+  water: number;
+}
+
+// Map the kit quantities onto the course aid stations the runner will use.
+function buildCourseStations(plan: Plan, qty: Qty, state: CalculatorState): Bucket[] {
+  let stations = (plan.aidActions || []).filter((s) => s.timeSec > 0).slice().sort((a, b) => a.timeSec - b.timeSec);
+  // Hybrid with marked drops: only map fluid onto the stations the runner chose.
+  if (state.hydration === "hybrid" && state.selectedStations.length) {
+    const picked = stations.filter((s) => state.selectedStations.includes(s.num));
+    if (picked.length) stations = picked;
+  }
+  const K = stations.length;
+  if (!K) return [];
+  const c = {
+    gel: Math.round(qty.gel || 0),
+    salt: Math.round(qty.salt || 0),
+    sports: Math.round(qty.sports || 0),
+    water: Math.round(qty.water || 0),
+  };
+  const buckets: Bucket[] = stations.map((s) => ({ s, gel: 0, salt: 0, sports: 0, water: 0 }));
+
+  const totalDrinks = c.sports + c.water;
+  if (totalDrinks > 0) {
+    const waterSlots = new Set(spreadIdx(c.water, totalDrinks));
+    spreadIdx(totalDrinks, K).forEach((stIdx, slot) => {
+      if (waterSlots.has(slot)) buckets[stIdx].water++;
+      else buckets[stIdx].sports++;
+    });
+  }
+  spreadIdx(c.gel, K).forEach((i) => {
+    buckets[i].gel++;
+  });
+  spreadIdx(c.salt, K).forEach((i) => {
+    buckets[i].salt++;
+  });
+
+  return buckets.filter((b) => b.gel || b.salt || b.sports || b.water);
+}
+
+function Timeline({ plan, state, qty, gelProduct }: { plan: Plan; state: CalculatorState; qty: Qty; gelProduct: GelProduct }) {
   const totalSec = plan.finish;
   const ref = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(900);
 
   useEffect(() => {
     function measure() {
-      if (ref.current) {
-        // inner width = card width - 2 * padding (28px each)
-        setWidth(Math.max(400, ref.current.offsetWidth - 56));
-      }
+      if (ref.current) setWidth(Math.max(400, ref.current.offsetWidth - 56));
     }
     measure();
     window.addEventListener("resize", measure);
     return () => window.removeEventListener("resize", measure);
   }, []);
 
-  // Tick positions every 30 min (or 15 min for shorter races)
+  const buckets = buildCourseStations(plan, qty, state);
+  const events = buckets.map((b) => ({
+    timeSec: b.s.timeSec,
+    mi: b.s.mi,
+    name: b.s.name,
+    items: (["gel", "sports", "water", "salt"] as ItemKey[]).filter((k) => b[k] > 0).map((k) => ({ k, n: b[k] })),
+    hasGel: b.gel > 0,
+  }));
+
   const tickInterval = totalSec < 2.5 * 3600 ? 15 * 60 : 30 * 60;
   const ticks: { t: number; pct: number }[] = [];
   for (let t = 0; t <= totalSec; t += tickInterval) {
     ticks.push({ t, pct: t / totalSec });
   }
 
-  // Assign lanes — 2 above, 2 below. Greedy alternating placement.
   const LANES_PER_SIDE = 2;
-  const LABEL_WIDTH = 78;
-  const LABEL_GAP = 6;
+  const LABEL_WIDTH = 96;
+  const LABEL_GAP = 8;
   const lanes: Record<string, { lo: number; hi: number }[]> = {};
   function place(x: number, side: string, lane: number) {
     const k = `${side}_${lane}`;
     const arr = lanes[k] || (lanes[k] = []);
-    const lo = x - LABEL_WIDTH / 2,
-      hi = x + LABEL_WIDTH / 2 + LABEL_GAP;
+    const lo = x - LABEL_WIDTH / 2;
+    const hi = x + LABEL_WIDTH / 2 + LABEL_GAP;
     for (const r of arr) if (lo < r.hi && hi > r.lo) return false;
     arr.push({ lo, hi });
     return true;
   }
-  const placed: PlacedEvent[] = events.map((e, idx) => {
+  const placed = events.map((e, idx) => {
     const pct = e.timeSec / totalSec;
     const x = pct * width;
-    let chosen: { side: "up" | "down"; lane: number } | null = null;
-    const order: { side: "up" | "down"; lane: number }[] = [];
+    let chosen: { side: string; lane: number } | null = null;
+    const order: { side: string; lane: number }[] = [];
     for (let l = 0; l < LANES_PER_SIDE; l++) {
       order.push({ side: "down", lane: l });
       order.push({ side: "up", lane: l });
@@ -203,37 +724,39 @@ function Timeline({ plan, state }: { plan: Plan; state: CalculatorState }) {
     return { ...e, pct, x, side: chosen.side, lane: chosen.lane };
   });
 
-  const LANE_H = 56;
+  const LANE_H = 64;
   const STEM_BASE = 18;
   function yFor(side: string, lane: number) {
     const sign = side === "down" ? 1 : -1;
     return sign * (STEM_BASE + lane * LANE_H);
   }
 
+  const totals = sumItemNutrition(qty, gelProduct);
+
   return (
     <div className="timeline-card" ref={ref}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12, flexWrap: "wrap", gap: 12 }}>
         <div>
           <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 13, textTransform: "uppercase", letterSpacing: 1.2, color: "var(--me-orange)" }}>
-            Gun to tape
+            Show me the timeline
           </div>
           <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 24, lineHeight: 1.1, marginTop: 4 }}>
-            {plan.planEvents.length} fueling actions · {state.carbsPerHr}g carbs/hr
+            Your kit, mapped to the course
+          </div>
+          <div style={{ fontFamily: "var(--font-body)", fontSize: 13, color: "var(--me-blackberry-muted)", marginTop: 6, maxWidth: 560 }}>
+            Every item from your race-day kit, spread across the {buckets.length} aid stations you'll use — what to grab,
+            and when.
           </div>
         </div>
         <div style={{ display: "flex", gap: 18, alignItems: "baseline", flexWrap: "wrap" }}>
           <div>
             <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18 }}>0:00</span>{" "}
-            <span style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--me-blackberry-muted)", textTransform: "uppercase", letterSpacing: 1 }}>
-              gun
-            </span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--me-blackberry-muted)", textTransform: "uppercase", letterSpacing: 1 }}>gun</span>
           </div>
           <div style={{ width: 1, height: 18, background: "color-mix(in srgb, var(--me-blackberry) 18%, transparent)" }}></div>
           <div>
             <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18 }}>{fmtClock(plan.finish)}</span>{" "}
-            <span style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--me-blackberry-muted)", textTransform: "uppercase", letterSpacing: 1 }}>
-              finish
-            </span>
+            <span style={{ fontFamily: "var(--font-body)", fontSize: 11, color: "var(--me-blackberry-muted)", textTransform: "uppercase", letterSpacing: 1 }}>finish</span>
           </div>
         </div>
       </div>
@@ -250,11 +773,10 @@ function Timeline({ plan, state }: { plan: Plan; state: CalculatorState }) {
           </div>
         ))}
         {placed.map((e, i) => {
-          const icon = e.type === "salt" ? "fa-shaker" : e.type === "fuel" ? "fa-bolt" : "fa-droplet";
           const y = yFor(e.side, e.lane);
           const stemHeight = Math.abs(y) - 14;
           return (
-            <div key={`e${i}`} className={`tl-event ${e.type}`} style={{ left: `${Math.min(99, Math.max(1, e.pct * 100))}%` }}>
+            <div key={`e${i}`} className={`tl-event station${e.hasGel ? " has-gel" : ""}`} style={{ left: `${Math.min(99, Math.max(1, e.pct * 100))}%` }}>
               <div
                 className="stem"
                 style={{
@@ -264,7 +786,7 @@ function Timeline({ plan, state }: { plan: Plan; state: CalculatorState }) {
                 }}
               ></div>
               <div className="dot">
-                <i className={`fa-solid ${icon}`}></i>
+                <i className="fa-solid fa-location-dot"></i>
               </div>
               <div
                 className="lbl"
@@ -273,8 +795,17 @@ function Timeline({ plan, state }: { plan: Plan; state: CalculatorState }) {
                   bottom: e.side === "up" ? `${Math.abs(y) + 6}px` : "auto",
                 }}
               >
-                <span className="b">Mi {e.mi.toFixed(1)}</span>
-                <span className="m">{e.label}</span>
+                <span className="b">
+                  Mi {e.mi.toFixed(1)} · {fmtClock(e.timeSec)}
+                </span>
+                <div className="tl-chips">
+                  {e.items.map((it) => (
+                    <span key={it.k} className="tl-chip" style={{ "--c": TL_ITEMS[it.k].color } as React.CSSProperties}>
+                      <i className={`fa-solid ${TL_ITEMS[it.k].icon}`}></i>
+                      {it.n > 1 ? `×${it.n}` : ""}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           );
@@ -282,148 +813,18 @@ function Timeline({ plan, state }: { plan: Plan; state: CalculatorState }) {
       </div>
 
       <div className="tl-legend">
-        <div className="item">
-          <span className="sw" style={{ background: "var(--me-orange)" }}></span> Fuel (gel · chew)
-        </div>
-        <div className="item">
-          <span className="sw" style={{ background: "var(--me-electrolyte)" }}></span> Fluid (drink mix · water)
-        </div>
-        {state.saltiness !== "normal" && (
-          <div className="item">
-            <span className="sw" style={{ background: "var(--me-dragonfruit)" }}></span> Sodium (salt cap)
+        {(["gel", "sports", "water", "salt"] as ItemKey[]).map((k) => (
+          <div key={k} className="item">
+            <span className="tl-chip" style={{ "--c": TL_ITEMS[k].color } as React.CSSProperties}>
+              <i className={`fa-solid ${TL_ITEMS[k].icon}`}></i>
+            </span>
+            {TL_ITEMS[k].label}
           </div>
-        )}
-        <div className="item" style={{ marginLeft: "auto" }}>
-          <i className="fa-solid fa-circle-info" style={{ color: "var(--me-blackberry-muted)" }}></i>
-          <span style={{ color: "var(--me-blackberry-muted)" }}>
-            Switch to <strong>Aid table</strong> for the full per-station breakdown.
-          </span>
+        ))}
+        <div className="item" style={{ marginLeft: "auto", color: "var(--me-blackberry-muted)" }}>
+          {totals.carbs} g · {totals.fluidOz} oz · {totals.sodium} mg{totals.caf ? ` · ${totals.caf} mg caf` : ""} total
         </div>
       </div>
-    </div>
-  );
-}
-
-function AidTable({ plan }: { plan: Plan }) {
-  return (
-    <div className="aid-table">
-      <table>
-        <thead>
-          <tr>
-            <th style={{ width: 48 }}>#</th>
-            <th>Aid station</th>
-            <th>Mile</th>
-            <th>Approx. time</th>
-            <th>Fluid</th>
-            <th>Sodium</th>
-            <th>Carb action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {plan.aidActions.map((a) => (
-            <tr key={a.num}>
-              <td>
-                <span className="ix">{a.num}</span>
-              </td>
-              <td>
-                <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14 }}>{a.name}</div>
-                <div style={{ fontFamily: "var(--font-activity)", fontSize: 11, letterSpacing: 0.4, color: "var(--me-blackberry-muted)", marginTop: 2 }}>
-                  {(a.offers || []).join(" · ")}
-                </div>
-              </td>
-              <td>
-                <span className="num">{a.mi.toFixed(1)}</span>
-                <span className="un">mi</span>
-              </td>
-              <td>
-                <span className="num">{fmtClock(a.timeSec)}</span>
-              </td>
-              <td>
-                {a.fluidHere ? (
-                  <>
-                    <span className="num">{a.fluidHere}</span>
-                    <span className="un">ml</span>
-                  </>
-                ) : (
-                  <span style={{ color: "var(--me-blackberry-muted)" }}>—</span>
-                )}
-              </td>
-              <td>
-                {a.sodiumHere ? (
-                  <>
-                    <span className="num">{a.sodiumHere}</span>
-                    <span className="un">mg</span>
-                  </>
-                ) : (
-                  <span style={{ color: "var(--me-blackberry-muted)" }}>—</span>
-                )}
-              </td>
-              <td>
-                {a.action === "gel" && (
-                  <span className="pill gel">
-                    <i className="fa-solid fa-bolt"></i>
-                    {(a.offers || []).includes("gels") ? "Gel · 25g" : "Your gel · 25g"}
-                  </span>
-                )}
-                {a.action === "chew" && (
-                  <span className="pill chew">
-                    <i className="fa-solid fa-cookie-bite"></i>Chews · 16g
-                  </span>
-                )}
-                {a.action === "drink" && (
-                  <span className="pill drink">
-                    <i className="fa-solid fa-droplet"></i>Drink mix · 14g
-                  </span>
-                )}
-                {a.action === "skip" && <span className="pill skip">Skip · top off</span>}
-              </td>
-            </tr>
-          ))}
-          <tr style={{ background: "var(--me-blackberry)", color: "var(--me-cream)" }}>
-            <td colSpan={2} style={{ color: "var(--me-cream)", fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 14, textTransform: "uppercase", letterSpacing: 1.2 }}>
-              <i className="fa-solid fa-flag-checkered" style={{ color: "var(--me-orange)", marginRight: 8 }}></i>
-              Race total
-            </td>
-            <td style={{ color: "var(--me-cream)" }}>
-              <span className="num" style={{ color: "var(--me-cream)" }}>
-                {plan.distMi.toFixed(1)}
-              </span>
-              <span className="un" style={{ color: "color-mix(in srgb, var(--me-cream) 55%, transparent)" }}>
-                mi
-              </span>
-            </td>
-            <td style={{ color: "var(--me-cream)" }}>
-              <span className="num" style={{ color: "var(--me-orange)" }}>
-                {fmtClock(plan.finish)}
-              </span>
-            </td>
-            <td style={{ color: "var(--me-cream)" }}>
-              <span className="num" style={{ color: "var(--me-cream)" }}>
-                {plan.fluidTotal}
-              </span>
-              <span className="un" style={{ color: "color-mix(in srgb, var(--me-cream) 55%, transparent)" }}>
-                ml
-              </span>
-            </td>
-            <td style={{ color: "var(--me-cream)" }}>
-              <span className="num" style={{ color: "var(--me-cream)" }}>
-                {plan.sodTotal}
-              </span>
-              <span className="un" style={{ color: "color-mix(in srgb, var(--me-cream) 55%, transparent)" }}>
-                mg
-              </span>
-            </td>
-            <td style={{ color: "var(--me-cream)" }}>
-              <span className="num" style={{ color: "var(--me-electrolyte)" }}>
-                {plan.carbsTotal}
-              </span>
-              <span className="un" style={{ color: "color-mix(in srgb, var(--me-cream) 55%, transparent)" }}>
-                g carbs
-              </span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
     </div>
   );
 }
