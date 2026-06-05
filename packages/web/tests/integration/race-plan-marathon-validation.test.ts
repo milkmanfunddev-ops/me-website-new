@@ -25,6 +25,7 @@ import {
   toKg,
 } from "@/lib/race-plan/engine";
 import { AID_STATIONS_FULL, AID_STATIONS_HALF } from "@/lib/race-plan/course";
+import { seedKit, type KitGel } from "@/lib/race-plan/kit";
 import type {
   BuildPlanInputs,
   RaceType,
@@ -298,5 +299,95 @@ describe("new-design plan fields — coach-style kit + gel schedule", () => {
     expect(cold.warm).toBe(false);
     const hot = planFor(SCENARIOS[5]); // 82 °F → warm
     expect(hot.warm).toBe(true);
+  });
+});
+
+describe("race-day kit seeding — gels stay capped, totals stay in band", () => {
+  function planFor(s: Scenario, over: Partial<BuildPlanInputs> = {}) {
+    const paceSec = parsePace(s.pace)!;
+    const weightKg = toKg(String(s.weightLb), "lb")!;
+    const tempC = toC(String(s.tempF), "F");
+    const carb = carbRec({ type: s.type, finishSec: finishTime(s.type, paceSec, "mi")!, weightKg, conditions: classifyConditions(tempC, s.humidity), saltiness: s.saltiness });
+    const inputs: BuildPlanInputs = {
+      type: s.type, paceSec, paceUnit: "mi", weightKg, tempC, humidity: s.humidity,
+      sweatRate: s.sweatRate, saltiness: s.saltiness, carbsPerHr: carb.mid,
+      hydration: "aid", bottleCount: 0, bottleVolMl: 0, ...over,
+    };
+    return buildPlan(inputs, s.type === "full" ? AID_STATIONS_FULL : AID_STATIONS_HALF)!;
+  }
+
+  // A spread of real gels: low-carb/high-sodium (GU Roctane) is the one that
+  // used to blow the count up; Maurten is the design default; Beta Fuel/Nduranz
+  // are high-carb. Every one must respect the cap.
+  const GELS: Record<string, KitGel> = {
+    "GU Roctane (21/125)": { carbs: 21, na: 125 },
+    "Maurten 100 (25/85)": { carbs: 25, na: 85 },
+    "SiS GO (22/10)": { carbs: 22, na: 10 },
+    "SiS Beta Fuel (40/10)": { carbs: 40, na: 10 },
+    "Nduranz 45 (45/200)": { carbs: 45, na: 200 },
+  };
+  const HYDRATIONS: Partial<BuildPlanInputs>[] = [
+    { hydration: "aid", bottleCount: 0, bottleVolMl: 0 },
+    { hydration: "own", bottleCount: 2, bottleVolMl: 591 }, // 2 × 20 oz — the 11-gel repro
+    { hydration: "own", bottleCount: 1, bottleVolMl: 500 },
+  ];
+
+  it("gel count never exceeds the coach's schedule (plan.gelTotal)", () => {
+    for (const s of SCENARIOS) {
+      for (const hyd of HYDRATIONS) {
+        const plan = planFor(s, hyd);
+        for (const [name, gel] of Object.entries(GELS)) {
+          const { qty } = seedKit(plan, gel);
+          expect(
+            qty.gel,
+            `${s.label} · ${name} · ${hyd.hydration} → ${qty.gel} gels > cap ${plan.gelTotal}`,
+          ).toBeLessThanOrEqual(plan.gelTotal);
+          expect(qty.gel, `${s.label} · ${name}: at least 2 gels`).toBeGreaterThanOrEqual(2);
+        }
+      }
+    }
+  });
+
+  it("the reported 3:43 marathon case seeds 6 gels, not 11", () => {
+    const s = SCENARIOS[2]; // Default 3:43 full (cold), salty
+    // GU Roctane + own bottles (2 × 20 oz) was the exact config that produced 11.
+    const plan = planFor(s, { hydration: "own", bottleCount: 2, bottleVolMl: 591 });
+    const { qty } = seedKit(plan, GELS["GU Roctane (21/125)"]);
+    expect(plan.gelTotal).toBe(6);
+    expect(qty.gel).toBe(6);
+  });
+
+  it("aid-station default reproduces the design kit (Maurten → 6 gels, in-band totals)", () => {
+    const s = SCENARIOS[2]; // 3:43, salty → Maurten is the no-caf salty default
+    const plan = planFor(s, { hydration: "aid", bottleCount: 0, bottleVolMl: 0 });
+    const gel = GELS["Maurten 100 (25/85)"];
+    const { qty } = seedKit(plan, gel);
+    expect(qty.gel).toBe(6);
+    const carbs = qty.gel * gel.carbs + qty.sports * 15;
+    const sodium = qty.gel * gel.na + qty.sports * 110 + qty.salt * 300;
+    expect(carbs / plan.carbsTarget, `carbs ${carbs}/${plan.carbsTarget}`).toBeGreaterThanOrEqual(0.9);
+    expect(carbs / plan.carbsTarget).toBeLessThanOrEqual(1.1);
+    expect(sodium / plan.sodTarget, `sodium ${sodium}/${plan.sodTarget}`).toBeGreaterThanOrEqual(0.9);
+    expect(sodium / plan.sodTarget).toBeLessThanOrEqual(1.1);
+  });
+
+  it("kit totals (incl. carried bottle mix) land within the ±10% band for the default gel", () => {
+    // For each scenario, the seeded kit + carried-bottle contribution should put
+    // carbs and sodium inside the band the UI shows — no 'Below/Above range' on
+    // first paint. Uses Maurten as a representative mid gel.
+    const gel = GELS["Maurten 100 (25/85)"];
+    for (const s of SCENARIOS) {
+      for (const hyd of HYDRATIONS) {
+        const plan = planFor(s, hyd);
+        const { qty, carriedCarbs, carriedSod } = seedKit(plan, gel);
+        const carbs = qty.gel * gel.carbs + qty.sports * 15 + carriedCarbs;
+        const sodium = qty.gel * gel.na + qty.sports * 110 + qty.salt * 300 + carriedSod;
+        const tag = `${s.label} · ${hyd.hydration}`;
+        expect(carbs / plan.carbsTarget, `${tag} carbs ${carbs}/${plan.carbsTarget}`).toBeGreaterThanOrEqual(0.88);
+        expect(carbs / plan.carbsTarget, `${tag} carbs over`).toBeLessThanOrEqual(1.12);
+        expect(sodium / plan.sodTarget, `${tag} sodium ${sodium}/${plan.sodTarget}`).toBeGreaterThanOrEqual(0.88);
+        expect(sodium / plan.sodTarget, `${tag} sodium over`).toBeLessThanOrEqual(1.12);
+      }
+    }
   });
 });

@@ -175,7 +175,6 @@ function RaceDayCalculator() {
   const carbsTotal = Math.round((parseFloat(state.carbsPerHr) || 0) * hours);
   const sod = sodiumRec(state.saltiness);
   const sodPh = Math.round((sod.low + sod.high) / 2);
-  const sodTotal = Math.round(sodPh * hours);
   const distKm = state.type === "half" ? 21.1 : 42.2;
 
   function generate() {
@@ -276,10 +275,10 @@ function RaceDayCalculator() {
             </div>
           </div>
           <div className="stat">
-            <div className="l">Sodium target</div>
+            <div className="l">Sodium · per hour</div>
             <div className="v">
-              {sodTotal || "—"}
-              <span className="u">mg</span>
+              {sodPh || "—"}
+              <span className="u">mg/hr · via gels + drink</span>
             </div>
           </div>
           <button className="gen" onClick={generate} disabled={!canGen}>

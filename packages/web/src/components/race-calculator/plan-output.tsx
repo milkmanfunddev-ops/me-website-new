@@ -6,6 +6,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { fmtClock } from "@/lib/race-plan/engine";
+import { carriedKitNutrition, seedKit } from "@/lib/race-plan/kit";
 import type { Caffeine, CalculatorState, Plan, Saltiness } from "@/lib/race-plan/types";
 
 /* ---- Gel products ------------------------------------------------------
@@ -73,27 +74,6 @@ type Qty = Record<ItemKey, number>;
 function itemPer(d: ItemDef, gel: GelProduct) {
   if (d.key === "gel") return { carbs: gel.carbs, fluidOz: 0, sodium: gel.na, caf: gel.caf || 0 };
   return { ...d.per, caf: 0 };
-}
-
-/** Suggested starting quantities that land each total near its target. Uses
- * the *table* fluid target (total minus what the runner carries) so carrying
- * your own bottles genuinely reduces the cups the kit suggests. */
-function defaultItemQty(plan: Plan, gel: GelProduct): Qty {
-  const carbsT = plan.carbsTarget;
-  const tableFluidOzT = Math.round(plan.tableFluidTarget / ML_PER_OZ);
-  const sodT = plan.sodTarget;
-  const gc = gel.carbs || 25;
-  const gna = gel.na || 0;
-  let gelN = Math.max(2, plan.gelRequired);
-  let sports = Math.min((carbsT - gelN * gc) / 15, tableFluidOzT / 8); // don't overshoot fluid
-  sports = Math.max(0, Math.round(sports * 2) / 2); // 0.5 step
-  // If sports drink is fluid-capped and carbs still short, top up with gels.
-  const carbsSoFar = gelN * gc + sports * 15;
-  if (carbsSoFar < carbsT && gc > 0) gelN += Math.max(0, Math.round((carbsT - carbsSoFar) / gc));
-  const water = Math.max(0, Math.round(((tableFluidOzT - sports * 8) / 8) * 2) / 2);
-  const sodFrom = gelN * gna + sports * 110;
-  const salt = Math.max(0, Math.round((sodT - sodFrom) / 300));
-  return { gel: gelN, sports, water, salt };
 }
 
 function sumItemNutrition(qty: Qty, gel: GelProduct) {
@@ -206,7 +186,7 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
     gelKey === "custom"
       ? { key: "custom", name: "Custom gel", carbs: Number(customGel.carbs) || 0, na: Number(customGel.na) || 0, caf: Number(customGel.caf) || 0 }
       : productByKey(gelKey);
-  const [qty, setQty] = useState<Qty>(() => defaultItemQty(plan, gelProduct));
+  const [qty, setQty] = useState<Qty>(() => seedKit(plan, gelProduct).qty);
   const [mapped, setMapped] = useState(false);
 
   // Re-suggest the default gel when the runner's caffeine preference changes.
@@ -220,12 +200,12 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
   }, [caffSig, state.caffeine, state.saltiness]);
 
   // Re-suggest item quantities when the underlying targets or gel change.
-  const targetSig = `${plan.carbsTarget}|${plan.fluidTarget}|${plan.sodTarget}|${plan.tableFluidTarget}|${plan.gelRequired}|${gelProduct.carbs}|${gelProduct.na}`;
+  const targetSig = `${plan.carbsTarget}|${plan.fluidTarget}|${plan.sodTarget}|${plan.tableFluidTarget}|${plan.gelTotal}|${gelProduct.carbs}|${gelProduct.na}`;
   const sigRef = useRef(targetSig);
   useEffect(() => {
     if (sigRef.current !== targetSig) {
       sigRef.current = targetSig;
-      setQty(defaultItemQty(plan, gelProduct));
+      setQty(seedKit(plan, gelProduct).qty);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetSig]);
@@ -246,8 +226,9 @@ export function PlanOutput({ plan, state }: PlanOutputProps) {
     });
     lines.push("");
     if (plan.carriedMl > 0) {
-      lines.push("START BOTTLE");
-      lines.push(`  Carry ~${Math.round(plan.carriedMl / ML_PER_OZ)} oz of your own; top up at the tables after.`);
+      const carried = carriedKitNutrition(plan, gelProduct);
+      lines.push("YOUR BOTTLES");
+      lines.push(`  Carry ~${Math.round(plan.carriedMl / ML_PER_OZ)} oz of carb mix — about ${carried.carbs} g carbs · ${carried.sodium} mg sodium total; top up fluid at the tables.`);
       lines.push("");
     }
     lines.push("AID STATIONS — hit the table");
@@ -384,13 +365,16 @@ function RacePlan({
   const sums = sumItemNutrition(qty, gelProduct);
   const carriedOz = Math.round(plan.carriedMl / ML_PER_OZ);
   const fluidOzTarget = Math.round(plan.fluidTarget / ML_PER_OZ);
+  // Carried bottles are a carb-electrolyte mix, so they contribute carbs +
+  // sodium (not just fluid) — same as a sports-drink cup, just pre-poured.
+  const carried = carriedKitNutrition(plan, gelProduct);
 
   const summary = (
     [
-      { key: "carbs", label: "Carbs", unit: "g", accent: "var(--me-orange)", value: sums.carbs, target: plan.carbsTarget },
+      { key: "carbs", label: "Carbs", unit: "g", accent: "var(--me-orange)", value: sums.carbs + carried.carbs, target: plan.carbsTarget, note: carried.carbs > 0 ? `${carried.carbs} g from bottles` : "" },
       // Carried bottle fluid counts toward the runner's total fluid.
-      { key: "fluids", label: "Fluids", unit: "oz", accent: "var(--me-electrolyte)", value: sums.fluidOz + carriedOz, target: fluidOzTarget },
-      { key: "sodium", label: "Sodium", unit: "mg", accent: "var(--me-dragonfruit)", value: sums.sodium, target: plan.sodTarget },
+      { key: "fluids", label: "Fluids", unit: "oz", accent: "var(--me-electrolyte)", value: sums.fluidOz + carriedOz, target: fluidOzTarget, note: carriedOz > 0 ? `${carriedOz} oz carried` : "" },
+      { key: "sodium", label: "Sodium", unit: "mg", accent: "var(--me-dragonfruit)", value: sums.sodium + carried.sodium, target: plan.sodTarget, note: carried.sodium > 0 ? `${carried.sodium} mg from bottles` : "" },
     ] as const
   ).map((s) => {
     const low = Math.round(s.target * 0.9);
@@ -441,7 +425,7 @@ function RacePlan({
               <div className="rps-lbl">
                 {s.label} · target {s.target.toLocaleString()}
                 {s.unit}
-                {s.key === "fluids" && carriedOz > 0 ? ` · ${carriedOz} oz carried` : ""}
+                {s.note ? ` · ${s.note}` : ""}
               </div>
               <div className="rps-range">
                 <div className="rps-track">
