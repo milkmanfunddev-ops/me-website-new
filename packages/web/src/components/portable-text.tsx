@@ -85,9 +85,19 @@ const components: PortableTextComponents = {
     bullet: ({ children }) => (
       <li className="leading-7 text-foreground">{children}</li>
     ),
-    number: ({ children }) => (
-      <li className="leading-7 text-foreground">{children}</li>
-    ),
+    // Reference-list items are tagged with `refNum` by the markdown converter so
+    // inline [n] citations can jump to them via #ref-n.
+    number: ({ children, value }) => {
+      const refNum = (value as { refNum?: number })?.refNum;
+      return (
+        <li
+          id={refNum ? `ref-${refNum}` : undefined}
+          className={`leading-7 text-foreground${refNum ? " scroll-mt-24" : ""}`}
+        >
+          {children}
+        </li>
+      );
+    },
   },
 
   marks: {
