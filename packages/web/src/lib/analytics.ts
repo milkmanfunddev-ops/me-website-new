@@ -16,6 +16,18 @@ import mixpanel from "mixpanel-browser";
  * configured, so it stays invisible while the token is unset.
  */
 
+/**
+ * Master switch. Analytics on this site is currently OFF — `initAnalytics()` is
+ * not called from anywhere, so nothing tracks today.
+ *
+ * Flip to `true` to turn on consent-gated analytics. That is a deliberate
+ * product decision, not a side effect of deploying: while it is `false` no
+ * Mixpanel runs and the consent banner never appears, even if
+ * VITE_MIXPANEL_TOKEN is set in the environment. Turning analytics on should be
+ * an explicit act by whoever owns the analytics workstream.
+ */
+const WEB_ANALYTICS_ENABLED = false;
+
 const CONSENT_KEY = "mv_analytics_consent";
 
 export type ConsentStatus = "granted" | "denied" | "unknown";
@@ -33,9 +45,9 @@ function getToken(): string | undefined {
   return import.meta.env.VITE_MIXPANEL_TOKEN;
 }
 
-/** True when a Mixpanel token is configured — i.e. analytics could actually run. */
+/** True only when analytics is switched on AND a Mixpanel token is configured. */
 export function analyticsIsConfigured(): boolean {
-  return Boolean(getToken());
+  return WEB_ANALYTICS_ENABLED && Boolean(getToken());
 }
 
 /**
@@ -119,6 +131,8 @@ function mayInitialize(): boolean {
  * has consented, and `grantAnalyticsConsent()` calls it again once they do.
  */
 export function initAnalytics() {
+  if (!WEB_ANALYTICS_ENABLED) return;
+
   const token = getToken();
   if (!token || initialized) return;
   if (!mayInitialize()) return;
