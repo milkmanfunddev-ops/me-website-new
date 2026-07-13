@@ -26,6 +26,7 @@ import {
   APP_URL,
 } from "@mealvana/shared";
 import { AppStoreButtons } from "@/components/app-store-buttons";
+import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -71,6 +72,11 @@ function AppShell() {
         <Footer />
       </div>
       <Toaster richColors position="top-right" />
+      {/* Renders nothing unless analytics is actually configured AND this
+          visitor still owes a decision — so it stays invisible while the
+          Mixpanel token is unset. It is mounted now so that enabling analytics
+          later cannot ship without a consent gate. */}
+      <AnalyticsConsentBanner />
     </>
   );
 }
