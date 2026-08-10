@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as SupportRouteImport } from './routes/support'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as LinksRouteImport } from './routes/links'
 import { Route as FaqRouteImport } from './routes/faq'
 import { Route as DemoRouteImport } from './routes/demo'
 import { Route as Coach_registrationRouteImport } from './routes/coach_registration'
@@ -53,6 +54,11 @@ const SupportRoute = SupportRouteImport.update({
 const PrivacyRoute = PrivacyRouteImport.update({
   id: '/privacy',
   path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LinksRoute = LinksRouteImport.update({
+  id: '/links',
+  path: '/links',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaqRoute = FaqRouteImport.update({
@@ -200,6 +206,7 @@ export interface FileRoutesByFullPath {
   '/coach_registration': typeof Coach_registrationRoute
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
+  '/links': typeof LinksRoute
   '/privacy': typeof PrivacyRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -232,6 +239,7 @@ export interface FileRoutesByTo {
   '/coach_registration': typeof Coach_registrationRoute
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
+  '/links': typeof LinksRoute
   '/privacy': typeof PrivacyRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -265,6 +273,7 @@ export interface FileRoutesById {
   '/coach_registration': typeof Coach_registrationRoute
   '/demo': typeof DemoRoute
   '/faq': typeof FaqRoute
+  '/links': typeof LinksRoute
   '/privacy': typeof PrivacyRoute
   '/support': typeof SupportRoute
   '/terms': typeof TermsRoute
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/coach_registration'
     | '/demo'
     | '/faq'
+    | '/links'
     | '/privacy'
     | '/support'
     | '/terms'
@@ -331,6 +341,7 @@ export interface FileRouteTypes {
     | '/coach_registration'
     | '/demo'
     | '/faq'
+    | '/links'
     | '/privacy'
     | '/support'
     | '/terms'
@@ -363,6 +374,7 @@ export interface FileRouteTypes {
     | '/coach_registration'
     | '/demo'
     | '/faq'
+    | '/links'
     | '/privacy'
     | '/support'
     | '/terms'
@@ -396,6 +408,7 @@ export interface RootRouteChildren {
   Coach_registrationRoute: typeof Coach_registrationRoute
   DemoRoute: typeof DemoRoute
   FaqRoute: typeof FaqRoute
+  LinksRoute: typeof LinksRoute
   PrivacyRoute: typeof PrivacyRoute
   SupportRoute: typeof SupportRoute
   TermsRoute: typeof TermsRoute
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       path: '/privacy'
       fullPath: '/privacy'
       preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/links': {
+      id: '/links'
+      path: '/links'
+      fullPath: '/links'
+      preLoaderRoute: typeof LinksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faq': {
@@ -644,6 +664,7 @@ const rootRouteChildren: RootRouteChildren = {
   Coach_registrationRoute: Coach_registrationRoute,
   DemoRoute: DemoRoute,
   FaqRoute: FaqRoute,
+  LinksRoute: LinksRoute,
   PrivacyRoute: PrivacyRoute,
   SupportRoute: SupportRoute,
   TermsRoute: TermsRoute,

@@ -35,6 +35,7 @@ const generateSitemap = createServerFn({ method: "GET" }).handler(async () => {
       changefreq: "weekly",
     },
     { url: "/race-day-calculator/custom", priority: "0.7", changefreq: "monthly" },
+    { url: "/links", priority: "0.3", changefreq: "weekly" },
   ];
 
   const urls = [

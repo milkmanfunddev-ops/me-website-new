@@ -1,4 +1,4 @@
-import mixpanel from "mixpanel-browser";
+import mixpanel, { type RequestOptions } from "mixpanel-browser";
 
 /**
  * Marketing-site analytics, consent-gated.
@@ -144,9 +144,21 @@ export function initAnalytics() {
   initialized = true;
 }
 
-export function trackEvent(name: string, properties?: Record<string, unknown>) {
+/**
+ * For an event fired immediately before a navigation, pass
+ * `{ transport: "sendBeacon", send_immediately: true }` — both parts matter.
+ * Mixpanel batches requests on a ~5s timer that does not flush on pagehide, so
+ * without `send_immediately` the event just sits in the queue; and a plain XHR
+ * gets cancelled when the document unloads, where a beacon survives.
+ * See the outbound links on /links.
+ */
+export function trackEvent(
+  name: string,
+  properties?: Record<string, unknown>,
+  options?: RequestOptions,
+) {
   if (initialized) {
-    mixpanel.track(name, properties);
+    mixpanel.track(name, properties, options);
   }
 }
 

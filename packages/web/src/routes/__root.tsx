@@ -82,6 +82,10 @@ function AppShell() {
 }
 
 function RootComponent() {
+  /* No initAnalytics() call here on purpose: <AnalyticsConsentBanner /> owns
+   * that entry point. Calling it directly would start Mixpanel for a non-EEA
+   * visitor whose consent is still "unknown" — mayInitialize() allows that —
+   * before the banner has offered them the choice. */
   return (
     <html lang="en">
       <head>
