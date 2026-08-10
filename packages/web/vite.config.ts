@@ -28,8 +28,16 @@ export default defineConfig({
   plugins: [
     tanstackStart(),
     nitro({
-      prerender: {
-        routes: ["/"],
+      /* `prerender` belongs under `config` — as a top-level key it was silently
+       * ignored, which is why nothing was ever actually prerendered (and why
+       * tsc flagged it). "/" is deliberately not listed: it pulls Sanity
+       * content, so freezing it at build time is a separate call to make. */
+      config: {
+        prerender: {
+          /* /links has no loader and no client-side fetching, so it can be
+           * emitted as static HTML at build time. */
+          routes: ["/links"],
+        },
       },
     }),
     viteReact(),
