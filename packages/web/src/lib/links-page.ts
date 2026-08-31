@@ -115,3 +115,59 @@ export function readPlatform(search?: string): PlatformProperties {
     ? { platform: "other", platform_raw: slug }
     : { platform: "other" };
 }
+
+/* ------------------------------------------------------------------------ */
+/*  STORE CAMPAIGN LINKS — attributing installs, not just clicks             */
+/* ------------------------------------------------------------------------ */
+
+/**
+ * Apple provider token, from App Store Connect → Analytics → Acquisition →
+ * Campaigns ("Generate a Campaign Link").
+ *
+ * Not a secret: it appears in public marketing URLs by design, which is why it
+ * sits in the repo rather than in an env var.
+ */
+export const APPLE_PROVIDER_TOKEN = "123134095";
+
+/**
+ * The store URL for a destination, tagged so the store itself can attribute the
+ * install to a platform.
+ *
+ * Mixpanel stops at the click — once the visitor leaves for the store our
+ * JavaScript is gone and we can never learn whether they installed. Only Apple
+ * and Google know that, and only if the campaign rode along on the link:
+ * Apple reads `ct` (App Store Connect → Campaigns), Google reads `referrer`
+ * (Play Console → Acquisition).
+ *
+ * Deliberately NOT folded into APP_STORE_LINK / PLAY_STORE_LINK in
+ * @mealvana/shared: those are used all over the site, and tagging them there
+ * would attribute every footer and homepage link to this page's campaigns.
+ */
+export function campaignStoreUrl(
+  store: "appStore" | "googlePlay",
+  platform: Platform,
+): string {
+  const base = store === "appStore" ? APP_LINKS.appStore : APP_LINKS.googlePlay;
+
+  try {
+    const url = new URL(base);
+
+    if (store === "appStore") {
+      url.searchParams.set("pt", APPLE_PROVIDER_TOKEN);
+      url.searchParams.set("ct", platform);
+      url.searchParams.set("mt", "8");
+    } else {
+      /* Play takes one `referrer` value containing an encoded UTM string;
+       * searchParams.set handles the inner escaping. */
+      url.searchParams.set(
+        "referrer",
+        `utm_source=${platform}&utm_medium=social&utm_campaign=${LINKS_PAGE_SOURCE}`,
+      );
+    }
+
+    return url.toString();
+  } catch {
+    // A malformed base URL must never cost us the download itself.
+    return base;
+  }
+}

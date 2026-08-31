@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
+  APPLE_PROVIDER_TOKEN,
+  campaignStoreUrl,
   KNOWN_PLATFORMS,
   PLATFORM_PARAM,
   readPlatform,
@@ -61,5 +63,43 @@ describe("readPlatform", () => {
     expect(readPlatform("?src=" + encodeURIComponent("!!!"))).toEqual({
       platform: "other",
     });
+  });
+});
+
+describe("campaignStoreUrl", () => {
+  it("tags the App Store link with the provider and campaign tokens", () => {
+    const url = new URL(campaignStoreUrl("appStore", "instagram"));
+    expect(url.searchParams.get("pt")).toBe(APPLE_PROVIDER_TOKEN);
+    expect(url.searchParams.get("ct")).toBe("instagram");
+    expect(url.searchParams.get("mt")).toBe("8");
+    expect(url.hostname).toBe("apps.apple.com");
+  });
+
+  it("tags the Play link with an encoded UTM referrer", () => {
+    const url = new URL(campaignStoreUrl("googlePlay", "tiktok"));
+    // Play takes ONE referrer value containing the UTM string.
+    expect(url.searchParams.get("referrer")).toBe(
+      "utm_source=tiktok&utm_medium=social&utm_campaign=links_page",
+    );
+    // ...which must be escaped in the raw URL, or Play sees three params.
+    expect(url.search).toContain("referrer=utm_source%3Dtiktok%26");
+  });
+
+  it("keeps the Play link's existing query parameters", () => {
+    const url = new URL(campaignStoreUrl("googlePlay", "instagram"));
+    expect(url.searchParams.get("id")).toBe("com.milkman.mealvanaendurance");
+    expect(url.searchParams.get("hl")).toBe("en_US");
+  });
+
+  it("still produces a usable link for an untagged visitor", () => {
+    const url = new URL(campaignStoreUrl("appStore", "direct"));
+    expect(url.searchParams.get("ct")).toBe("direct");
+    expect(url.pathname).toContain("id6751113738");
+  });
+
+  it("gives each platform a distinct campaign", () => {
+    const ig = new URL(campaignStoreUrl("appStore", "instagram"));
+    const tt = new URL(campaignStoreUrl("appStore", "tiktok"));
+    expect(ig.searchParams.get("ct")).not.toBe(tt.searchParams.get("ct"));
   });
 });

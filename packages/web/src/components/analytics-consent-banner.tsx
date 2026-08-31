@@ -4,6 +4,7 @@ import {
   denyAnalyticsConsent,
   grantAnalyticsConsent,
   initAnalytics,
+  mustAskBeforeTracking,
   needsConsentDecision,
   requiresOptIn,
 } from "@/lib/analytics";
@@ -16,10 +17,15 @@ import {
  * of the site) it never appears, and nobody is nagged for consent to something
  * that isn't running.
  *
- * Under ePrivacy, consent for a persistent identifier must be collected BEFORE
- * it is stored. Mixpanel persists its distinct_id in localStorage, so
- * `initAnalytics()` is a no-op until the visitor accepts — this banner is what
- * unblocks it, not something that runs alongside an already-tracking page.
+ * Two behaviours, matching what the law actually asks for — and matching what
+ * `mayInitialize()` has always permitted:
+ *
+ * - EEA/UK: consent for a persistent identifier must be collected BEFORE it is
+ *   stored, so nothing starts until the visitor accepts. `initAnalytics()` is a
+ *   no-op until then and this banner is what unblocks it.
+ * - Everywhere else: notice-and-opt-out. The banner still appears and Decline
+ *   still works (and now genuinely stops tracking), but analytics starts on
+ *   arrival rather than waiting for a tap nobody makes.
  */
 export function AnalyticsConsentBanner() {
   // Deliberately starts false: the decision depends on localStorage and Intl,
@@ -32,8 +38,12 @@ export function AnalyticsConsentBanner() {
     if (needsConsentDecision()) {
       setOptIn(requiresOptIn());
       setVisible(true);
-    } else {
-      // Consent already granted (or not required) — start analytics.
+    }
+
+    // Outside the EEA/UK this runs even while the banner is up: the visitor is
+    // being told, not asked. initAnalytics() still checks mayInitialize(), so a
+    // previous "denied" is respected and the EEA/UK path stays blocked.
+    if (!mustAskBeforeTracking()) {
       initAnalytics();
     }
   }, []);

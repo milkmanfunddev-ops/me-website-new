@@ -95,6 +95,19 @@ export function needsConsentDecision(): boolean {
   return analyticsIsConfigured() && getConsentStatus() === "unknown";
 }
 
+/**
+ * True when this visitor must be asked BEFORE anything starts.
+ *
+ * The EEA/UK case only. Everyone else gets notice-and-opt-out: the banner is
+ * still shown and Decline still works, but analytics does not wait for a tap —
+ * which is what `mayInitialize()` has always permitted for them. Gating those
+ * visitors too meant the overwhelming majority (who scroll past a banner sat
+ * below the buttons they came to press) were never counted at all.
+ */
+export function mustAskBeforeTracking(): boolean {
+  return needsConsentDecision() && requiresOptIn();
+}
+
 function setConsentStatus(status: Exclude<ConsentStatus, "unknown">) {
   try {
     window.localStorage.setItem(CONSENT_KEY, status);
@@ -108,8 +121,32 @@ export function grantAnalyticsConsent() {
   initAnalytics();
 }
 
+/**
+ * Record a refusal and actually stop tracking.
+ *
+ * Setting the flag is not enough now that analytics can already be running when
+ * this is called (non-EEA visitors start on notice, before they have touched
+ * the banner). Without the opt-out below, "Decline" would only take effect on
+ * the next page load, and the distinct_id already written to localStorage would
+ * survive — a decline button that doesn't decline.
+ *
+ * `opt_out_tracking()` stops further events and records the opt-out in
+ * Mixpanel's own storage. It is guarded on `initialized` because calling it
+ * before `mixpanel.init()` throws. Clearing `initialized` here is what makes
+ * trackEvent() inert again for the rest of this page view.
+ */
 export function denyAnalyticsConsent() {
   setConsentStatus("denied");
+
+  if (initialized) {
+    try {
+      mixpanel.opt_out_tracking();
+    } catch {
+      // Never let a failure here block the UI: the "denied" flag above is
+      // already stored, so the next page load will not initialize at all.
+    }
+    initialized = false;
+  }
 }
 
 /**

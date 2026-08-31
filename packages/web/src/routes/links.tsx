@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Youtube } from "lucide-react";
-import type { ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { APP_NAME, APP_DESCRIPTION, APP_URL } from "@mealvana/shared";
 import { AppleMark, PlayMark } from "@/components/app-store-buttons";
 import { trackEvent } from "@/lib/analytics";
 import {
-  APP_LINKS,
+  campaignStoreUrl,
   LATEST_EPISODE,
   LINKS_PAGE_SOURCE,
   readPlatform,
   type LinkDestination,
+  type Platform,
 } from "@/lib/links-page";
 
 const PAGE_TITLE = `${APP_NAME} | Get the app & listen to the podcast`;
@@ -121,6 +122,17 @@ function SectionHeading({ children }: { children: ReactNode }) {
 }
 
 function LinksPage() {
+  /* The store hrefs need the channel at RENDER time, but this page is
+   * prerendered and window.location doesn't exist then. Starting at "direct"
+   * and correcting in an effect keeps the server and first client render
+   * identical (no hydration mismatch); the href is upgraded a tick later.
+   *
+   * The tracked event does NOT depend on this — it calls readPlatform() at
+   * click time, so Mixpanel is correct even for a click that lands before
+   * hydration. Only the store-side campaign tag can miss such a click. */
+  const [platform, setPlatform] = useState<Platform>("direct");
+  useEffect(() => setPlatform(readPlatform().platform), []);
+
   return (
     <div className="mx-auto w-full max-w-md px-5 py-10 sm:py-14">
       {/* Header */}
@@ -147,7 +159,7 @@ function LinksPage() {
         </SectionHeading>
         <div className="mt-3 flex flex-col gap-3">
           <OutboundLink
-            href={APP_LINKS.appStore}
+            href={campaignStoreUrl("appStore", platform)}
             destination="app_store"
             className="bg-blackberry text-cream active:bg-blackberry-light"
           >
@@ -155,7 +167,7 @@ function LinksPage() {
             <span>Download for iPhone</span>
           </OutboundLink>
           <OutboundLink
-            href={APP_LINKS.googlePlay}
+            href={campaignStoreUrl("googlePlay", platform)}
             destination="google_play"
             className="bg-blackberry text-cream active:bg-blackberry-light"
           >
