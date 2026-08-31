@@ -3,10 +3,10 @@ import mixpanel, { type RequestOptions } from "mixpanel-browser";
 /**
  * Marketing-site analytics, consent-gated.
  *
- * Status as of 2026-07-13: `initAnalytics()` is not called from anywhere, so no
- * Mixpanel currently runs on this site and nothing is written to localStorage.
- * The gate below exists so that whoever wires analytics up cannot reintroduce
- * the violation by accident — `initAnalytics()` is a no-op until consent is on
+ * <AnalyticsConsentBanner /> (mounted in __root) is the only caller of
+ * `initAnalytics()`, and it is the sole entry point on purpose. The gate below
+ * exists so that wiring analytics up cannot reintroduce the violation by
+ * accident — `initAnalytics()` is a no-op until consent is on
  * file, and in the EEA/UK consent must be an affirmative act (ePrivacy requires
  * consent BEFORE a persistent identifier is stored on the device, and Mixpanel
  * persists its distinct_id in localStorage).
@@ -17,16 +17,17 @@ import mixpanel, { type RequestOptions } from "mixpanel-browser";
  */
 
 /**
- * Master switch. Analytics on this site is currently OFF — `initAnalytics()` is
- * not called from anywhere, so nothing tracks today.
+ * Master switch, ON as of 2026-08-31 — a deliberate product decision, not a
+ * side effect of deploying. Setting it back to `false` stops all analytics: no
+ * Mixpanel runs and the consent banner never appears, even with
+ * VITE_MIXPANEL_TOKEN set.
  *
- * Flip to `true` to turn on consent-gated analytics. That is a deliberate
- * product decision, not a side effect of deploying: while it is `false` no
- * Mixpanel runs and the consent banner never appears, even if
- * VITE_MIXPANEL_TOKEN is set in the environment. Turning analytics on should be
- * an explicit act by whoever owns the analytics workstream.
+ * `true` alone still tracks nothing. `analyticsIsConfigured()` also requires
+ * VITE_MIXPANEL_TOKEN, which Vite inlines at BUILD time — so the token must be
+ * set in the Vercel project environment and the site redeployed before any
+ * event is sent. Until then this stays inert.
  */
-const WEB_ANALYTICS_ENABLED = false;
+const WEB_ANALYTICS_ENABLED = true;
 
 const CONSENT_KEY = "mv_analytics_consent";
 
