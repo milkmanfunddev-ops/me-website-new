@@ -1,0 +1,41 @@
+{
+  "skill_name": "aeo",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I want to figure out why our competitors show up in ChatGPT answers but we don't. We sell industrial safety equipment and have a decent website with blog posts. Where do I even start?",
+      "expected_output": "Should trigger an AI visibility audit workflow: recommend testing specific queries across platforms, provide the three audit prompts, check robots.txt for blocked AI bots, analyze competitor content structure vs yours, and suggest the maturity model for self-assessment. Should reference the Citation Desert and check content freshness.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Can you help me create some AEO-optimized content for our main product page? We make water filtration systems for commercial buildings. I want to add FAQs and make the page more citable by AI.",
+      "expected_output": "Should use the query fan-out 5+3+3 formula to generate FAQ questions from a base query about commercial water filtration, create Answer Blocks using the formula (Quick Answer / Why This Matters / Common Follow-ups / Example), recommend FAQPage schema, and use entity-rich language throughout. Should reference content-patterns.md for block formats.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "I keep hearing about AEO but I don't know where to start. I'm a marketing manager at a mid-size B2B company. What should I do first?",
+      "expected_output": "Should assess their maturity level (likely Level 1-2), recommend the 30-Day AEO Kickstarter starting with Week 1 audit, provide the three audit prompts, explain AEO as 'rebranded SEO' to reduce intimidation, and list zero-budget wins they can do immediately. Should not overwhelm with advanced tactics.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "We need to set up an llms.txt file for our SaaS company. We have three products and about 20 key pages. Can you help me draft one?",
+      "expected_output": "Should read the llms-txt reference file and help create a structured llms.txt following the template, explain the difference between llms.txt and llms-full.txt, recommend hosting at site root, and use entity-rich language with specific product descriptions.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Our blog posts are about 18 months old and we're not getting any AI citations. What's going on and how do we fix it?",
+      "expected_output": "Should immediately identify the Citation Desert problem (content >10 months old is effectively invisible), explain the three zones (Prime 1-3mo, Declining 3-9mo, Desert 9-12+), provide a content refresh strategy including prioritization and what 'refreshing' actually means, and recommend a monthly/quarterly update cadence.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "I want to know which AI platforms to focus on. We're a B2B manufacturing company and our customers are safety managers and industrial hygienists. We don't have unlimited resources.",
+      "expected_output": "Should recommend prioritization based on their audience: Google AI Overviews first (47% of searches), then ChatGPT, then Perplexity. Should reference platform-specific ranking factors and provide actionable first steps for each platform. Should not recommend trying to optimize for all platforms equally.",
+      "files": []
+    }
+  ]
+}
