@@ -8,6 +8,7 @@ import {
   APP_LINKS,
   LATEST_EPISODE,
   LINKS_PAGE_SOURCE,
+  readPlatform,
   type LinkDestination,
 } from "@/lib/links-page";
 
@@ -92,7 +93,10 @@ function OutboundLink({
       onClick={() =>
         trackEvent(
           "Outbound Link Clicked",
-          { destination, source: LINKS_PAGE_SOURCE },
+          /* readPlatform() is called here, not at mount: the ?src= parameter
+           * sits in the address bar for the whole visit, and reading it at
+           * click time keeps this component free of any state or effect. */
+          { destination, source: LINKS_PAGE_SOURCE, ...readPlatform() },
           /* These links navigate in the same tab, so the document unloads
            * immediately. `send_immediately` bypasses Mixpanel's ~5s request
            * batcher (which does not flush on pagehide, so a queued event would
