@@ -30,11 +30,12 @@ export const APP_LINKS = {
 /* ------------------------------------------------------------------------ */
 
 export const LATEST_EPISODE = {
-  title: "The Long Way to Kona: Grit, Data, and a Lot of Trial and Error",
-  youtube: "https://youtu.be/df_bT31I5TE",
-  spotify: "https://open.spotify.com/episode/6n3l9P9fAlJS5rQUiyqlU4",
+  title:
+    "One Hard Thing a Year — Landon Bruski, from couldn't run a mile to 100 miles",
+  youtube: "https://youtu.be/4l1ekf8ETdg",
+  spotify: "https://open.spotify.com/episode/3adOLcy8o2gnDnFvaVJJNz",
   applePodcasts:
-    "https://podcasts.apple.com/us/podcast/the-long-way-to-kona-grit-data-and-a-lot-of-trial-and-error/id1847987393?i=1000780302156",
+    "https://podcasts.apple.com/us/podcast/one-hard-thing-a-year-landon-bruski-from-couldnt/id1847987393?i=1000788868730",
 } as const;
 
 /* ------------------------------------------------------------------------ */
