@@ -198,6 +198,9 @@ function Header() {
           <Link to="/support" className={navLinkClass}>
             Support
           </Link>
+          <Link to="/coach" className={navLinkClass}>
+            For Coaches
+          </Link>
         </nav>
 
         <div className="hidden items-center gap-2 md:flex">
@@ -253,6 +256,13 @@ function Header() {
               onClick={() => setMobileOpen(false)}
             >
               Support
+            </Link>
+            <Link
+              to="/coach"
+              className="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-cream-dark"
+              onClick={() => setMobileOpen(false)}
+            >
+              For Coaches
             </Link>
             <hr className="my-2 border-border" />
             <MobileAuthButtons onNavigate={() => setMobileOpen(false)} />
@@ -355,6 +365,11 @@ function Footer() {
               <li>
                 <Link to="/demo" className="hover:text-foreground">
                   Demo
+                </Link>
+              </li>
+              <li>
+                <Link to="/coach" className="hover:text-foreground">
+                  For Coaches
                 </Link>
               </li>
             </ul>

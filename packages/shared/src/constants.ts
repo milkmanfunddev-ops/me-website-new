@@ -13,6 +13,13 @@ export const IOS_APP_ID = "6751113738";
 export const ANDROID_PACKAGE = "com.milkman.mealvanaendurance";
 
 export const CONTACT_EMAIL = "support@mealvana.io";
+
+/** Google Calendar booking page for a coach call, owned by support@. Every
+ * "Book a 30-minute demo" button reads this, so a change of booking tool is a
+ * one-line edit. */
+export const COACH_CALL_BOOKING_URL =
+  "https://calendar.app.google/CXVNghav45k79Eth8";
+
 export const COMPANY_NAME = "Milkman Inc.";
 export const COMPANY_LOCATION = "Birmingham, Alabama";
 
