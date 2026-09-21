@@ -196,3 +196,85 @@ describe("initAnalytics", () => {
     expect(mixpanelMock.opt_in_tracking).toHaveBeenCalledTimes(1);
   });
 });
+
+describe("Mixpanel config", () => {
+  it("turns on autocapture for pageviews, clicks and scroll depth, with session replay off", async () => {
+    visitAs("America/Chicago", "en-US");
+    const analytics = await loadAnalytics();
+    analytics.initAnalytics();
+
+    const config = mixpanelMock.init.mock.calls[0][1];
+    expect(config.autocapture).toMatchObject({
+      pageview: "url-with-path",
+      click: true,
+      scroll: true,
+    });
+    expect(config.record_sessions_percent).toBe(0);
+  });
+});
+
+describe("recordStoreClicks", () => {
+  function clickLink(href: string) {
+    const link = document.createElement("a");
+    link.href = href;
+    link.innerHTML = "<img alt='store badge'>";
+    document.body.append(link);
+    // A click on the badge image inside the link, as a visitor makes it.
+    link.querySelector("img")!.dispatchEvent(
+      new MouseEvent("click", { bubbles: true, cancelable: true }),
+    );
+    link.remove();
+  }
+
+  let stop: (() => void) | undefined;
+  afterEach(() => stop?.());
+
+  // jsdom can't navigate, so every click is cancelled before it tries.
+  function preventNavigation(event: Event) {
+    event.preventDefault();
+  }
+  beforeEach(() => document.addEventListener("click", preventNavigation));
+  afterEach(() => document.removeEventListener("click", preventNavigation));
+
+  it("records App Store and Google Play clicks with the store and the page", async () => {
+    visitAs("America/Chicago", "en-US");
+    window.history.replaceState(null, "", "/integrations/garmin");
+    const analytics = await loadAnalytics();
+    analytics.initAnalytics();
+    stop = analytics.recordStoreClicks();
+
+    clickLink("https://apps.apple.com/us/app/mealvana-endurance/id6751113738");
+    clickLink("https://play.google.com/store/apps/details?id=com.milkman.mealvanaendurance");
+
+    const storeEvents = mixpanelMock.track.mock.calls.filter(
+      ([name]) => name === "app_store_clicked",
+    );
+    expect(storeEvents.map(([, props]) => props)).toEqual([
+      { store: "app_store", page: "/integrations/garmin" },
+      { store: "google_play", page: "/integrations/garmin" },
+    ]);
+  });
+
+  it("ignores links that don't go to a store", async () => {
+    visitAs("America/Chicago", "en-US");
+    const analytics = await loadAnalytics();
+    analytics.initAnalytics();
+    stop = analytics.recordStoreClicks();
+
+    clickLink("https://www.youtube.com/@mealvana");
+    clickLink("/coach");
+
+    expect(mixpanelMock.track).not.toHaveBeenCalled();
+  });
+
+  it("records nothing in Europe/Berlin", async () => {
+    visitAs("Europe/Berlin", "en-US");
+    const analytics = await loadAnalytics();
+    analytics.initAnalytics();
+    stop = analytics.recordStoreClicks();
+
+    clickLink("https://apps.apple.com/us/app/mealvana-endurance/id6751113738");
+
+    expect(mixpanelMock.track).not.toHaveBeenCalled();
+  });
+});

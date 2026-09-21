@@ -1,6 +1,7 @@
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { ViewportFade } from "@/components/viewport-fade";
+import { trackEvent } from "@/lib/analytics";
 import { APP_NAME, COACH_CALL_BOOKING_URL } from "@mealvana/shared";
 import {
   ArrowRight,
@@ -60,12 +61,21 @@ const STEPS: Array<{ icon: LucideIcon; title: string; body: string }> = [
 const COACH_TESTIMONIALS: Array<{ quote: string; name: string; role: string }> =
   [];
 
-function CoachCallButton() {
+/* The /coach funnel ends at this click. The booking itself happens on
+ * Google's site, where Mixpanel can't see it. */
+function CoachCallButton({ placement }: { placement: "hero" | "final" }) {
   return (
     <a
       href={COACH_CALL_BOOKING_URL}
       target="_blank"
       rel="noopener noreferrer"
+      onClick={() =>
+        trackEvent(
+          "coach_cta_clicked",
+          { button: placement },
+          { send_immediately: true },
+        )
+      }
       className="inline-flex items-center justify-center gap-2 rounded-full bg-orange px-8 py-4 font-heading text-sm font-bold text-white shadow-lg shadow-orange/25 transition-colors hover:bg-orange-dark"
     >
       Book a 30-minute demo
@@ -91,7 +101,34 @@ function SectionHeading({
   );
 }
 
+/* `coach_section_viewed` once per section per page view, when the section
+ * reaches the middle of the screen. A line rather than a visible fraction,
+ * because on a phone some sections are taller than the screen. */
+function useSectionViews() {
+  useEffect(() => {
+    const seen = new Set<string>();
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const section = (entry.target as HTMLElement).dataset.coachSection;
+          if (!entry.isIntersecting || !section || seen.has(section)) continue;
+          seen.add(section);
+          observer.unobserve(entry.target);
+          trackEvent("coach_section_viewed", { section });
+        }
+      },
+      { rootMargin: "0px 0px -50% 0px" },
+    );
+    for (const el of document.querySelectorAll("[data-coach-section]")) {
+      observer.observe(el);
+    }
+    return () => observer.disconnect();
+  }, []);
+}
+
 function CoachPage() {
+  useSectionViews();
+
   return (
     <div className="bg-cream">
       <section
@@ -114,7 +151,7 @@ function CoachPage() {
             plan for each athlete.
           </p>
           <div className="mt-10 flex flex-wrap items-center gap-4">
-            <CoachCallButton />
+            <CoachCallButton placement="hero" />
             <a
               href="#how-it-works"
               className="inline-flex items-center justify-center rounded-full border border-cream/20 bg-cream/5 px-8 py-4 font-heading text-sm font-bold text-cream transition-colors hover:border-cream/30 hover:bg-cream/10"
@@ -267,7 +304,7 @@ function CoachPage() {
               answer your questions.
             </p>
             <div className="mt-8">
-              <CoachCallButton />
+              <CoachCallButton placement="final" />
             </div>
           </div>
         </ViewportFade>

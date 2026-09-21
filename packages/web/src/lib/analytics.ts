@@ -141,8 +141,17 @@ export function initAnalytics() {
 
   if (!started) {
     mixpanel.init(token, {
-      track_pageview: "url-with-path",
       persistence: "localStorage",
+      // Pageviews (again on each client-side route change), clicks and scroll
+      // depth. Referrer and device come with every event. Form inputs are left
+      // out, and element text is off by default.
+      autocapture: {
+        pageview: "url-with-path",
+        click: true,
+        scroll: true,
+        input: false,
+      },
+      record_sessions_percent: 0,
     });
     started = true;
   }
@@ -208,6 +217,40 @@ export function trackEvent(
   if (initialized) {
     mixpanel.track(name, properties, options);
   }
+}
+
+const STORE_HOSTS: Record<string, "app_store" | "google_play"> = {
+  "apps.apple.com": "app_store",
+  "play.google.com": "google_play",
+};
+
+function recordStoreClick(event: MouseEvent) {
+  const link = (event.target as Element | null)?.closest?.("a[href]");
+  if (!(link instanceof HTMLAnchorElement)) return;
+
+  const store = STORE_HOSTS[link.hostname];
+  if (!store) return;
+
+  trackEvent(
+    "app_store_clicked",
+    { store, page: window.location.pathname },
+    // Some store links open in the same tab. See trackEvent().
+    { transport: "sendBeacon", send_immediately: true },
+  );
+}
+
+/**
+ * Record `app_store_clicked` for every click on a link to the App Store or
+ * Google Play, on any page, however the link was built. Returns the cleanup.
+ *
+ * Listens in the capture phase so the event is queued before the browser
+ * leaves the page. Does nothing for a visitor `mayTrack()` refuses, because
+ * trackEvent() is inert until initAnalytics() has run.
+ */
+export function recordStoreClicks(): () => void {
+  document.addEventListener("click", recordStoreClick, { capture: true });
+  return () =>
+    document.removeEventListener("click", recordStoreClick, { capture: true });
 }
 
 export function identifyUser(userId: string, traits?: Record<string, unknown>) {

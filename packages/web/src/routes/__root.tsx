@@ -26,7 +26,7 @@ import {
   APP_URL,
 } from "@mealvana/shared";
 import { AppStoreButtons } from "@/components/app-store-buttons";
-import { initAnalytics } from "@/lib/analytics";
+import { initAnalytics, recordStoreClicks } from "@/lib/analytics";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -80,6 +80,7 @@ function RootComponent() {
   // Client only. initAnalytics() does nothing for EEA/UK or opted-out visitors.
   useEffect(() => {
     initAnalytics();
+    return recordStoreClicks();
   }, []);
 
   return (

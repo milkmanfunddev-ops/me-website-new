@@ -25,5 +25,9 @@ export default defineConfig({
     command: "pnpm dev --port 3001",
     url: "http://localhost:3001",
     reuseExistingServer: !process.env.CI,
+    /* A fake token, so specs that don't intercept Mixpanel send nothing that
+     * lands in a real project. Process env beats .env.local in Vite. An
+     * already-running dev server on 3001 keeps whatever token it started with. */
+    env: { VITE_MIXPANEL_TOKEN: "e2e-fake-token" },
   },
 });
