@@ -17,7 +17,7 @@ import { convexClient } from "@/lib/convex";
 import { Toaster } from "sonner";
 import appCss from "@/styles/globals.css?url";
 import { Menu, X, Instagram, Youtube } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   APP_NAME,
   APP_DESCRIPTION,
@@ -26,7 +26,7 @@ import {
   APP_URL,
 } from "@mealvana/shared";
 import { AppStoreButtons } from "@/components/app-store-buttons";
-import { AnalyticsConsentBanner } from "@/components/analytics-consent-banner";
+import { initAnalytics } from "@/lib/analytics";
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -72,20 +72,16 @@ function AppShell() {
         <Footer />
       </div>
       <Toaster richColors position="top-right" />
-      {/* Renders nothing unless analytics is actually configured AND this
-          visitor still owes a decision — so it stays invisible while the
-          Mixpanel token is unset. It is mounted now so that enabling analytics
-          later cannot ship without a consent gate. */}
-      <AnalyticsConsentBanner />
     </>
   );
 }
 
 function RootComponent() {
-  /* No initAnalytics() call here on purpose: <AnalyticsConsentBanner /> owns
-   * that entry point. Calling it directly would start Mixpanel for a non-EEA
-   * visitor whose consent is still "unknown" — mayInitialize() allows that —
-   * before the banner has offered them the choice. */
+  // Client only. initAnalytics() does nothing for EEA/UK or opted-out visitors.
+  useEffect(() => {
+    initAnalytics();
+  }, []);
+
   return (
     <html lang="en">
       <head>

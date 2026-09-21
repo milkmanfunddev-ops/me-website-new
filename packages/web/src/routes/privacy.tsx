@@ -3,6 +3,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { sanityClient } from "@/lib/sanity";
 import { PortableText } from "@/components/portable-text";
 import { ViewportFade } from "@/components/viewport-fade";
+import { AnalyticsOptOut } from "@/components/analytics-opt-out";
 import { formatDate } from "@/lib/utils";
 import type { PortableTextValue } from "@/lib/sanity-types";
 
@@ -41,6 +42,9 @@ function PrivacyPage() {
       <div className="mx-auto max-w-3xl px-4 py-20 text-center">
         <h1 className="font-heading text-2xl font-bold">Privacy Policy</h1>
         <p className="mt-4 text-muted-foreground">Content coming soon.</p>
+        <div className="text-left">
+          <AnalyticsOptOut />
+        </div>
       </div>
     );
   }
@@ -62,6 +66,7 @@ function PrivacyPage() {
           <PortableText value={doc.body} />
         </div>
       </ViewportFade>
+      <AnalyticsOptOut />
     </div>
   );
 }
