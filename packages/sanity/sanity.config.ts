@@ -1,5 +1,9 @@
 import { defineConfig } from "sanity";
-import { type StructureBuilder, structureTool } from "sanity/structure";
+import {
+  type StructureBuilder,
+  type StructureResolverContext,
+  structureTool,
+} from "sanity/structure";
 import { visionTool } from "@sanity/vision";
 import { codeInput } from "@sanity/code-input";
 import { colorInput } from "@sanity/color-input";
@@ -65,7 +69,7 @@ function blogPostViews(S: StructureBuilder) {
 /*  Desk structure                                                     */
 /* ------------------------------------------------------------------ */
 
-function structure(S: StructureBuilder, context: { documentStore: unknown; schema: unknown }) {
+function structure(S: StructureBuilder, context: StructureResolverContext) {
   return S.list()
     .title("Content")
     .items([
@@ -234,7 +238,8 @@ export default defineConfig({
     iconPicker(),
     markdownSchema(),
     vercelDeployTool(),
-    taxonomyManager(),
+    // Typed `Options | undefined` rather than optional, so pass it explicitly.
+    taxonomyManager(undefined),
   ],
 
   document: {

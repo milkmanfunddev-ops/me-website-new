@@ -184,10 +184,8 @@ export const blogPost = defineType({
         layout: "radio",
       },
       initialValue: "draft",
-      validation: (rule) =>
-        rule
-          .required()
-          .valid(["draft", "in_review", "published", "archived"]),
+      // Sanity already limits a field with `options.list` to the listed values.
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "publishedAt",
