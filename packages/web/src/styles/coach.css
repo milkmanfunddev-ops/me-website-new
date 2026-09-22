@@ -1,0 +1,1307 @@
+/* Scoped to /coach. Uses the site's existing typefaces and brand tokens. */
+.coach-page {
+  background: var(--cream);
+  color: var(--blackberry);
+}
+.coach-page * {
+  box-sizing: border-box;
+}
+.coach-container {
+  width: min(1200px, calc(100% - 96px));
+  margin-inline: auto;
+}
+.coach-section {
+  padding-block: 100px;
+}
+.coach-page h1,
+.coach-page h2,
+.coach-page h3 {
+  font-family: var(--font-heading);
+}
+.coach-page h2 {
+  font-size: clamp(34px, 3.8vw, 49px);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+}
+.coach-page h2 em {
+  font-weight: inherit;
+}
+.coach-page h3 {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.coach-page p {
+  line-height: 1.65;
+}
+.coach-lead {
+  margin-top: 24px;
+  color: var(--text-light-secondary);
+  font-size: 19px;
+  max-width: 490px;
+}
+.coach-caption {
+  font-size: 13px;
+  color: var(--text-light-secondary);
+}
+.coach-page a,
+.coach-page summary {
+  -webkit-tap-highlight-color: transparent;
+}
+.coach-page a:focus-visible,
+.coach-page summary:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 6px;
+}
+.coach-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+  min-height: 54px;
+  padding: 15px 25px;
+  border-radius: 999px;
+  color: var(--blackberry);
+  background: var(--orange);
+  font-size: 15px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition:
+    background 0.2s,
+    transform 0.2s;
+}
+.coach-button:hover {
+  background: var(--orange-light);
+  transform: translateY(-2px);
+}
+.coach-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  text-underline-offset: 5px;
+}
+.coach-text-link:hover {
+  text-decoration: underline;
+}
+.coach-hero {
+  position: relative;
+  overflow: hidden;
+  color: var(--cream);
+  background: var(--blackberry);
+}
+.coach-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 35px;
+  min-height: 710px;
+  padding-block: 55px 45px;
+}
+.coach-hero-copy {
+  position: relative;
+  z-index: 2;
+}
+.coach-hero-grid > * {
+  min-width: 0;
+}
+.coach-hero h1 {
+  font-size: clamp(54px, 5.6vw, 78px);
+  font-weight: 800;
+  line-height: 1.015;
+  letter-spacing: -0.04em;
+  max-width: 600px;
+}
+.coach-hero h1 em {
+  display: block;
+  color: var(--orange);
+  font-weight: 800;
+}
+.coach-hero-description {
+  margin-top: 27px;
+  font-size: 24px;
+  line-height: 1.35 !important;
+}
+.coach-hero-body {
+  max-width: 435px;
+  margin-top: 16px;
+  color: color-mix(in oklch, var(--cream) 74%, transparent);
+  font-size: 16px;
+}
+.coach-hero-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 23px;
+  margin-top: 31px;
+}
+.coach-hero-product {
+  position: relative;
+  height: 590px;
+  isolation: isolate;
+}
+.coach-orbit {
+  position: absolute;
+  border: 1px solid color-mix(in oklch, var(--cream) 12%, transparent);
+  width: 540px;
+  height: 540px;
+  top: 20px;
+  left: 20px;
+  border-radius: 50%;
+  z-index: -1;
+}
+.coach-orbit-two {
+  width: 430px;
+  height: 430px;
+  top: 80px;
+  left: 75px;
+  background: color-mix(in oklch, var(--orange) 7%, transparent);
+  border-color: color-mix(in oklch, var(--orange) 20%, transparent);
+}
+.coach-phone {
+  position: relative;
+  width: 245px;
+  overflow: hidden;
+  border: 6px solid var(--blackberry-dark);
+  border-radius: 37px;
+  background: var(--blackberry-dark);
+  box-shadow:
+    0 0 0 1px color-mix(in oklch, var(--cream) 28%, transparent),
+    0 25px 50px -18px
+      color-mix(in oklch, var(--blackberry-dark) 65%, transparent);
+}
+.coach-phone img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 552 / 1200;
+  object-fit: cover;
+}
+.coach-phone-speaker {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 29%;
+  height: 15px;
+  background: var(--blackberry-dark);
+  border-radius: 20px;
+}
+.coach-hero-phone-back {
+  position: absolute;
+  top: 52px;
+  left: 0;
+  width: 246px;
+  transform: rotate(-8deg);
+}
+.coach-hero-phone-front {
+  position: absolute;
+  top: 88px;
+  right: 0;
+  width: 249px;
+  transform: rotate(7deg);
+}
+.coach-product-note {
+  position: absolute;
+  z-index: 2;
+  left: 24px;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-radius: 14px;
+  background: var(--cream);
+  color: var(--blackberry);
+  box-shadow: 0 10px 35px
+    color-mix(in oklch, var(--blackberry-dark) 30%, transparent);
+  transform: rotate(-3deg);
+}
+.coach-product-note > span {
+  display: grid;
+  place-items: center;
+  height: 38px;
+  width: 38px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--orange) 20%, var(--cream));
+}
+.coach-product-note strong {
+  font-size: 13px;
+}
+.coach-product-note p {
+  color: var(--text-light-secondary);
+  font-size: 12px;
+  margin-top: 2px;
+}
+.coach-hero-bottom {
+  padding-block: 22px;
+  border-top: 1px solid color-mix(in oklch, var(--cream) 15%, transparent);
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  color: color-mix(in oklch, var(--cream) 65%, transparent);
+  font-size: 12px;
+}
+.coach-hero-bottom > span:last-child {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: var(--cream);
+}
+.coach-hero-bottom i {
+  height: 3px;
+  width: 3px;
+  border-radius: 50%;
+  background: var(--orange);
+}
+.coach-integrations {
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklch, white 45%, var(--cream));
+}
+.coach-integrations-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 35px;
+  padding-block: 30px;
+}
+.coach-integrations p {
+  font-size: 13px;
+  color: var(--text-light-secondary);
+  line-height: 1.5;
+}
+.coach-integrations strong {
+  color: var(--blackberry);
+  font-weight: 500;
+}
+.coach-science-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 100px;
+  align-items: center;
+}
+.coach-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+}
+.coach-feature + .coach-feature {
+  margin-top: 28px;
+}
+.coach-feature-icon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 43px;
+  height: 43px;
+  border-radius: 13px;
+  background: color-mix(in oklch, var(--orange) 13%, var(--cream));
+}
+.coach-feature h3 {
+  font-size: 21px;
+}
+.coach-feature p {
+  color: var(--text-light-secondary);
+  font-size: 15px;
+  margin-top: 7px;
+}
+.coach-workflow {
+  background: color-mix(in oklch, var(--cream-dark) 60%, var(--cream));
+}
+#how-it-works,
+#coach-call {
+  scroll-margin-top: 85px;
+}
+.coach-section-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 50px;
+}
+.coach-section-intro > .coach-lead {
+  max-width: 360px;
+  margin-top: 0;
+  font-size: 17px;
+}
+.coach-steps {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 30px;
+  padding: 0;
+  margin-top: 55px;
+}
+.coach-steps li {
+  border-top: 1px solid color-mix(in oklch, var(--blackberry) 20%, transparent);
+  padding-top: 20px;
+}
+.coach-step-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+.coach-step-top span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-light-secondary);
+}
+.coach-step-top svg {
+  color: var(--blackberry);
+}
+.coach-steps h3 {
+  font-size: 22px;
+}
+.coach-steps p {
+  margin-top: 12px;
+  color: var(--text-light-secondary);
+  font-size: 15px;
+}
+.coach-athlete-feature {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 75px;
+  align-items: center;
+  margin-top: 90px;
+}
+.coach-athlete-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 545px;
+  padding-top: 65px;
+  overflow: hidden;
+  border-radius: 160px 160px 20px 20px;
+  background: color-mix(in oklch, var(--orange) 22%, var(--cream));
+}
+.coach-athlete-visual .coach-phone {
+  width: 270px;
+  transform: rotate(-5deg);
+}
+.coach-plan-caption {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  bottom: 35px;
+  left: 24px;
+  padding: 17px 22px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px color-mix(in oklch, var(--blackberry) 12%, transparent);
+  font-size: 14px;
+  transform: rotate(3deg);
+}
+.coach-plan-caption svg {
+  color: var(--blackberry);
+}
+.coach-athlete-copy > p {
+  margin-top: 20px;
+  color: var(--text-light-secondary);
+}
+.coach-check-list {
+  padding: 0;
+  margin-top: 27px;
+  list-style: none;
+}
+.coach-check-list li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-top: 14px;
+  font-size: 15px;
+}
+.coach-check-list svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.coach-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 65px;
+  align-items: center;
+  margin-top: 55px;
+}
+.coach-report-figure {
+  min-width: 0;
+}
+.coach-report-window {
+  overflow: hidden;
+  border-radius: 15px;
+  color: var(--cream);
+  background: var(--blackberry);
+  box-shadow: 0 24px 50px -25px
+    color-mix(in oklch, var(--blackberry) 45%, transparent);
+  border: 1px solid color-mix(in oklch, var(--blackberry) 25%, transparent);
+}
+.coach-window-bar {
+  padding: 15px 16px;
+  background: var(--blackberry-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: color-mix(in oklch, var(--cream) 75%, transparent);
+  gap: 8px;
+}
+.coach-window-dots {
+  display: flex;
+  gap: 5px;
+}
+.coach-window-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--cream) 40%, transparent);
+}
+.coach-report-body {
+  padding: 27px 23px 0;
+}
+.coach-report-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+.coach-report-heading h3 {
+  font-size: 27px;
+}
+.coach-report-period {
+  background: color-mix(in oklch, var(--electrolyte) 13%, transparent);
+  color: var(--electrolyte);
+  padding: 7px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  white-space: nowrap;
+}
+.coach-report-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 11px;
+  margin-top: 28px;
+}
+.coach-report-table thead {
+  color: color-mix(in oklch, var(--cream) 68%, transparent);
+  font-size: 10px;
+}
+.coach-report-table th {
+  font-weight: 400;
+}
+.coach-report-table thead th {
+  padding-bottom: 12px;
+}
+.coach-report-table tbody tr {
+  border-top: 1px solid color-mix(in oklch, var(--cream) 12%, transparent);
+}
+.coach-report-table td,
+.coach-report-table tbody th {
+  padding: 18px 8px 18px 0;
+}
+.coach-report-table tbody th {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.coach-athlete-avatar {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--cream) 12%, transparent);
+  color: var(--cream);
+  font-size: 9px;
+}
+.coach-adherence-track {
+  display: block;
+  width: 65px;
+  height: 3px;
+  background: color-mix(in oklch, var(--cream) 20%, transparent);
+  border-radius: 4px;
+  margin-top: 6px;
+}
+.coach-adherence-track i {
+  display: block;
+  height: 3px;
+  background: var(--electrolyte);
+  border-radius: 4px;
+}
+.coach-report-foot {
+  border-top: 1px solid color-mix(in oklch, var(--cream) 15%, transparent);
+  padding-block: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: color-mix(in oklch, var(--cream) 75%, transparent);
+}
+.coach-report-foot svg:last-child {
+  margin-left: auto;
+}
+
+.coach-cost {
+  border-top: 1px solid var(--border);
+}
+.coach-cost-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 100px;
+  align-items: center;
+}
+.coach-science-note {
+  margin-top: 16px;
+  max-width: 490px;
+  color: var(--text-light-secondary);
+}
+.coach-pricing-card {
+  padding: 35px;
+  background: color-mix(in oklch, white 45%, var(--cream));
+  border: 1px solid var(--border);
+  border-radius: 18px;
+}
+.coach-pricing-card h3 {
+  font-size: 30px;
+}
+.coach-pricing-card > p {
+  margin-top: 14px;
+  color: var(--text-light-secondary);
+}
+.coach-pricing-foot {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  font-size: 14px;
+}
+.coach-pricing-foot svg {
+  flex-shrink: 0;
+}
+.coach-pricing-foot + .coach-pricing-foot {
+  margin-top: 16px;
+  padding-top: 16px;
+}
+.coach-founding {
+  padding-block: 45px;
+  background: color-mix(in oklch, var(--orange) 15%, var(--cream));
+}
+.coach-founding-inner {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+.coach-founding-mark {
+  flex-shrink: 0;
+}
+.coach-founding-mark img {
+  border-radius: 24px;
+}
+.coach-founding h2 {
+  font-size: 32px;
+}
+.coach-founding p {
+  margin-top: 13px;
+  max-width: 730px;
+  font-size: 15px;
+  color: var(--text-light-secondary);
+}
+.coach-founding .coach-text-link {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+.coach-faq-grid {
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 100px;
+}
+.coach-faq .coach-lead {
+  max-width: 280px;
+  font-size: 17px;
+}
+.coach-faq-item {
+  border-bottom: 1px solid
+    color-mix(in oklch, var(--blackberry) 17%, transparent);
+}
+.coach-faq-item:first-child {
+  border-top: 1px solid color-mix(in oklch, var(--blackberry) 17%, transparent);
+}
+.coach-faq-item summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding-block: 22px;
+  cursor: pointer;
+  list-style: none;
+  font-size: 16px;
+  font-weight: 500;
+}
+.coach-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+.coach-faq-item summary svg {
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.coach-faq-item[open] summary svg {
+  transform: rotate(180deg);
+}
+.coach-faq-item p {
+  padding-bottom: 24px;
+  color: var(--text-light-secondary);
+  font-size: 15px;
+  max-width: 580px;
+}
+.coach-team {
+  padding-block: 40px 65px;
+}
+.coach-team-inner {
+  border-top: 1px solid var(--border);
+  padding-top: 38px;
+  display: grid;
+  grid-template-columns: 0.8fr 1.2fr;
+  gap: 100px;
+}
+.coach-team-location {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 13px;
+  align-self: start;
+  padding-top: 7px;
+}
+.coach-team h2 {
+  font-size: 27px;
+  letter-spacing: -0.02em;
+}
+.coach-team p {
+  margin-top: 16px;
+  font-size: 15px;
+  color: var(--text-light-secondary);
+}
+.coach-final {
+  padding-block: 75px;
+  background: var(--blackberry);
+  color: var(--cream);
+}
+.coach-final-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 70px;
+}
+.coach-final h2 {
+  font-size: clamp(42px, 4.7vw, 62px);
+}
+.coach-final h2 em {
+  color: var(--orange);
+}
+.coach-final p {
+  margin-top: 22px;
+  color: color-mix(in oklch, var(--cream) 75%, transparent);
+  max-width: 530px;
+  font-size: 17px;
+}
+.coach-final-action {
+  flex-shrink: 0;
+  text-align: center;
+}
+.coach-final-action .coach-button {
+  min-width: 285px;
+}
+.coach-final-action p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px !important;
+  margin-top: 18px !important;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .coach-hero-copy {
+    animation: coach-enter 0.65s ease-out both;
+  }
+  .coach-hero-product {
+    animation: coach-enter 0.85s 0.1s ease-out both;
+  }
+  @keyframes coach-enter {
+    from {
+      opacity: 0;
+      translate: 0 16px;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
+}
+@media (min-width: 1400px) {
+  .coach-hero-phone-back {
+    left: 24px;
+    width: 257px;
+  }
+  .coach-hero-phone-front {
+    right: 20px;
+    width: 257px;
+  }
+}
+@media (max-width: 1100px) {
+  .coach-container {
+    width: calc(100% - 64px);
+  }
+  .coach-hero-grid {
+    gap: 20px;
+    min-height: 680px;
+  }
+  .coach-hero h1 {
+    font-size: 61px;
+  }
+  .coach-hero-product {
+    height: 535px;
+  }
+  .coach-hero-phone-back {
+    width: 220px;
+    left: 0;
+  }
+  .coach-hero-phone-front {
+    width: 220px;
+    top: 90px;
+    right: -8px;
+  }
+  .coach-product-note {
+    left: 0;
+    bottom: -8px;
+  }
+  .coach-science-grid,
+  .coach-cost-grid,
+  .coach-faq-grid,
+  .coach-team-inner {
+    gap: 50px;
+  }
+  .coach-dashboard-grid {
+    gap: 35px;
+    grid-template-columns: 1.2fr 1fr;
+  }
+  .coach-athlete-feature {
+    gap: 45px;
+  }
+  .coach-steps {
+    gap: 22px;
+  }
+  .coach-steps h3 {
+    font-size: 20px;
+  }
+}
+@media (max-width: 800px) {
+  .coach-container {
+    width: calc(100% - 48px);
+  }
+  .coach-section {
+    padding-block: 70px;
+  }
+  .coach-hero-grid {
+    grid-template-columns: minmax(0, 1fr);
+    padding-top: 46px;
+    gap: 36px;
+  }
+  .coach-hero h1 {
+    font-size: 68px;
+    max-width: 570px;
+  }
+  .coach-hero-body {
+    max-width: 480px;
+  }
+  .coach-hero-product {
+    width: 500px;
+    max-width: 100%;
+    margin-inline: auto;
+    height: 560px;
+  }
+  .coach-hero-phone-back {
+    width: 238px;
+    left: 25px;
+  }
+  .coach-hero-phone-front {
+    width: 238px;
+    right: 25px;
+  }
+  .coach-hero-bottom {
+    font-size: 10px;
+  }
+  .coach-integrations-inner {
+    flex-direction: column;
+    gap: 22px;
+    padding-block: 25px;
+    text-align: center;
+  }
+  .coach-integrations p br {
+    display: none;
+  }
+  .coach-integrations p strong {
+    margin-left: 4px;
+  }
+  .coach-science-grid {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+  .coach-science-details {
+    max-width: 570px;
+  }
+  .coach-section-intro {
+    display: block;
+  }
+  .coach-section-intro > .coach-lead {
+    margin-top: 22px;
+    max-width: 490px;
+  }
+  .coach-steps {
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    margin-top: 35px;
+  }
+  .coach-athlete-feature {
+    margin-top: 65px;
+    gap: 32px;
+  }
+  .coach-athlete-visual {
+    height: 480px;
+    border-radius: 100px 100px 20px 20px;
+  }
+  .coach-athlete-visual .coach-phone {
+    width: 225px;
+  }
+  .coach-plan-caption {
+    left: 10px;
+    padding: 12px;
+    font-size: 12px;
+  }
+  .coach-athlete-copy h2 {
+    font-size: 32px;
+  }
+  .coach-dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: 38px;
+  }
+  .coach-report-figure {
+    max-width: 610px;
+  }
+  .coach-dashboard-features {
+    max-width: 580px;
+  }
+  .coach-cost-grid {
+    gap: 30px;
+  }
+  .coach-pricing-card {
+    padding: 25px;
+  }
+  .coach-founding-mark {
+    display: none;
+  }
+  .coach-faq-grid {
+    grid-template-columns: 0.65fr 1fr;
+    gap: 35px;
+  }
+  .coach-team-inner {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .coach-final-inner {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 30px;
+  }
+}
+@media (max-width: 540px) {
+  .coach-container {
+    width: calc(100% - 40px);
+  }
+  .coach-section {
+    padding-block: 58px;
+  }
+  .coach-hero-grid {
+    padding-top: 36px;
+    padding-bottom: 30px;
+    gap: 32px;
+  }
+  .coach-hero h1 {
+    font-size: clamp(44px, 12.6vw, 65px);
+    line-height: 1.04;
+  }
+  .coach-hero-description {
+    font-size: 20px;
+    margin-top: 23px;
+  }
+  .coach-hero-body {
+    font-size: 15px;
+    margin-top: 13px;
+  }
+  .coach-hero-actions {
+    gap: 18px;
+    margin-top: 24px;
+  }
+  .coach-hero-actions .coach-text-link {
+    font-size: 13px;
+  }
+  .coach-hero-product {
+    height: 443px;
+  }
+  .coach-hero-phone-back {
+    width: 185px;
+    left: 4px;
+    top: 50px;
+  }
+  .coach-hero-phone-front {
+    width: 185px;
+    right: 3px;
+    top: 74px;
+  }
+  .coach-product-note {
+    bottom: -10px;
+    left: 10px;
+    padding: 12px 15px;
+    gap: 10px;
+  }
+  .coach-product-note strong {
+    font-size: 11px;
+  }
+  .coach-product-note p {
+    font-size: 10px;
+  }
+  .coach-product-note > span {
+    width: 30px;
+    height: 30px;
+  }
+  .coach-orbit-one {
+    width: 380px;
+    height: 380px;
+    left: -10px;
+  }
+  .coach-orbit-two {
+    width: 300px;
+    height: 300px;
+    left: 25px;
+    top: 60px;
+  }
+  .coach-hero-bottom {
+    align-items: center;
+    flex-direction: column;
+    gap: 10px;
+    padding-block: 20px;
+  }
+  .coach-lead {
+    font-size: 17px;
+    margin-top: 20px;
+  }
+  .coach-science-grid {
+    gap: 32px;
+  }
+  .coach-feature {
+    gap: 13px;
+  }
+  .coach-feature h3 {
+    font-size: 20px;
+  }
+  .coach-feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
+  .coach-feature p {
+    font-size: 14px;
+  }
+  .coach-steps {
+    gap: 25px 21px;
+  }
+  .coach-step-top {
+    margin-bottom: 16px;
+  }
+  .coach-steps h3 {
+    font-size: 21px;
+  }
+  .coach-steps p {
+    font-size: 14px;
+  }
+  .coach-athlete-feature {
+    grid-template-columns: 1fr;
+    gap: 33px;
+  }
+  .coach-athlete-visual {
+    height: 455px;
+    padding-top: 54px;
+    border-radius: 140px 140px 18px 18px;
+  }
+  .coach-athlete-visual .coach-phone {
+    width: 250px;
+  }
+  .coach-plan-caption {
+    left: 12px;
+    bottom: 22px;
+    padding: 15px 20px;
+  }
+  .coach-athlete-copy h2 {
+    font-size: 36px;
+  }
+  .coach-report-body {
+    padding: 20px 13px 0;
+  }
+  .coach-report-heading h3 {
+    font-size: 24px;
+  }
+  .coach-report-table {
+    font-size: 10px;
+  }
+  .coach-report-table thead {
+    font-size: 9px;
+  }
+  .coach-report-table tbody th {
+    gap: 5px;
+  }
+  .coach-athlete-avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 8px;
+  }
+  .coach-adherence-track {
+    width: 48px;
+  }
+  .coach-report-table td,
+  .coach-report-table tbody th {
+    padding-block: 16px;
+    padding-right: 5px;
+  }
+  .coach-cost-grid,
+  .coach-faq-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  .coach-pricing-card h3 {
+    font-size: 28px;
+  }
+  .coach-founding-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .coach-founding .coach-text-link {
+    margin-left: 0;
+  }
+  .coach-founding h2 {
+    font-size: 30px;
+  }
+  .coach-faq h2 br {
+    display: none;
+  }
+  .coach-faq .coach-lead {
+    max-width: none;
+  }
+  .coach-faq-item summary {
+    font-size: 15px;
+    padding-block: 20px;
+  }
+  .coach-team {
+    padding-block: 0 50px;
+  }
+  .coach-team h2 {
+    font-size: 27px;
+  }
+  .coach-final {
+    padding-block: 55px;
+  }
+  .coach-final-action {
+    text-align: left;
+    width: 100%;
+  }
+  .coach-final-action .coach-button {
+    min-width: 0;
+    width: 100%;
+  }
+  .coach-final-action p {
+    font-size: 10px !important;
+    justify-content: center;
+  }
+}
+@media (max-width: 360px) {
+  .coach-hero-phone-back,
+  .coach-hero-phone-front {
+    width: 166px;
+  }
+  .coach-hero-product {
+    height: 410px;
+  }
+  .coach-athlete-avatar {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coach-page *,
+  .coach-page *::before,
+  .coach-page *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The integrations strip includes both planned and completed-workout sources. */
+.coach-integrations-inner {
+  gap: 24px;
+}
+.coach-integrations-inner > p {
+  flex: 0 0 185px;
+}
+.coach-marquee {
+  min-width: 0;
+  flex: 1;
+  overflow: hidden;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 5%,
+    black 95%,
+    transparent
+  );
+}
+.coach-marquee-track {
+  display: flex;
+  width: max-content;
+}
+.coach-integration-group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+}
+.coach-integration-group li {
+  width: 205px;
+  padding-inline: 28px;
+  display: grid;
+  place-items: center;
+}
+.coach-integration-group img {
+  max-width: 100%;
+  width: 170px;
+  height: 32px;
+  object-fit: contain;
+}
+.coach-integration-wordmark {
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: -0.045em;
+}
+.coach-marquee:hover .coach-marquee-track {
+  animation-play-state: paused;
+}
+.coach-testimonials {
+  background: color-mix(in oklch, var(--orange) 12%, var(--cream));
+  margin-bottom: 65px;
+}
+.coach-testimonials-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 38px;
+}
+.coach-testimonials-heading > p {
+  color: var(--text-light-secondary);
+  font-size: 13px;
+}
+.coach-quote-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.coach-quote {
+  margin: 0;
+  padding: 30px;
+  border-radius: 18px;
+  background: var(--cream);
+  display: flex;
+  flex-direction: column;
+}
+.coach-quote:first-child {
+  background: var(--blackberry);
+  color: var(--cream);
+}
+.coach-quote-mark {
+  font-family: var(--font-heading);
+  font-size: 80px;
+  line-height: 0.8;
+  color: var(--orange);
+}
+.coach-quote blockquote {
+  font-family: var(--font-heading);
+  font-size: 24px;
+  line-height: 1.45;
+  margin-top: 20px;
+  margin-bottom: 32px;
+}
+.coach-quote figcaption {
+  border-top: 1px solid color-mix(in oklch, currentColor 20%, transparent);
+  padding-top: 20px;
+  margin-top: auto;
+  font-size: 14px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .coach-marquee-track {
+    animation: coach-integration-scroll 28s linear infinite;
+  }
+  @keyframes coach-integration-scroll {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+}
+@media (max-width: 800px) {
+  .coach-integrations-inner {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 18px;
+  }
+  .coach-integrations-inner > p {
+    flex: 1 0 100%;
+  }
+  .coach-testimonials-heading {
+    display: block;
+  }
+  .coach-testimonials-heading > p {
+    margin-top: 16px;
+  }
+  .coach-quote-grid {
+    grid-template-columns: 1fr;
+  }
+  .coach-quote {
+    padding: 28px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .coach-marquee {
+    mask-image: none;
+  }
+  .coach-marquee-track {
+    width: 100%;
+  }
+  .coach-integration-group {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 22px 0;
+  }
+  .coach-integration-group li {
+    width: 165px;
+    padding-inline: 16px;
+  }
+  .coach-integration-group[aria-hidden="true"] {
+    display: none;
+  }
+}

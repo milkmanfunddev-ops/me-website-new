@@ -8,8 +8,11 @@ const SECTIONS = [
   "hero",
   "credential",
   "how-it-works",
+  "dashboard",
   "cost",
   "founding-coach",
+  "faq",
+  "testimonials",
   "who-we-are",
   "final-cta",
 ];
@@ -21,7 +24,9 @@ async function openMenuIfMobile(page: Page) {
   // A click that lands before hydration does nothing, so retry until it opens.
   await expect(async () => {
     await page.locator("header button").last().click();
-    await expect(page.locator("header nav:visible")).toBeVisible({ timeout: 1000 });
+    await expect(page.locator("header nav:visible")).toBeVisible({
+      timeout: 1000,
+    });
   }).toPass();
 }
 
@@ -41,17 +46,21 @@ test.describe("/coach", () => {
     );
   });
 
-  test("renders the seven sections in order", async ({ page }) => {
+  test("renders the coach sections in order", async ({ page }) => {
     const names = await page
       .locator("[data-coach-section]")
-      .evaluateAll((els) => els.map((el) => el.getAttribute("data-coach-section")));
+      .evaluateAll((els) =>
+        els.map((el) => el.getAttribute("data-coach-section")),
+      );
     expect(names).toEqual(SECTIONS);
   });
 
-  test("the testimonial placeholder is not shown to visitors", async ({
+  test("local sample testimonials are clearly marked for review", async ({
     page,
   }) => {
-    await expect(page.locator('[data-coach-section="testimonials"]')).toHaveCount(0);
+    const testimonials = page.locator('[data-coach-section="testimonials"]');
+    await expect(testimonials.getByText("Sample quotes for layout review")).toBeVisible();
+    await expect(testimonials.locator("blockquote")).toHaveCount(3);
   });
 
   test("both demo buttons point at the booking URL and open a new tab", async ({
@@ -65,9 +74,11 @@ test.describe("/coach", () => {
     }
 
     // Stop the click at the network so the test never loads Google.
-    await page.context().route("https://calendar.app.google/**", (route) =>
-      route.fulfill({ body: "booking page" }),
-    );
+    await page
+      .context()
+      .route("https://calendar.app.google/**", (route) =>
+        route.fulfill({ body: "booking page" }),
+      );
     const [popup] = await Promise.all([
       page.waitForEvent("popup"),
       buttons.first().click(),
@@ -103,6 +114,11 @@ test.describe("/coach", () => {
       () => document.documentElement.scrollWidth - window.innerWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
+    // The hero clips decorative artwork, so page overflow alone cannot catch
+    // a grid column that clips the headline and booking links on mobile.
+    const heroCopy = await page.locator(".coach-hero-copy").boundingBox();
+    expect(heroCopy).not.toBeNull();
+    expect(heroCopy!.x + heroCopy!.width).toBeLessThanOrEqual(390);
   });
 });
 

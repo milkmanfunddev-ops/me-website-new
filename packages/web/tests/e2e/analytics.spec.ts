@@ -88,10 +88,14 @@ test.describe("a US visitor", () => {
 
     // Scroll down in steps, then back up, as a reader would.
     for (const section of await page.locator("[data-coach-section]").all()) {
-      await section.evaluate((el) => el.scrollIntoView({ block: "center" }));
+      // Finish each scroll before reading the next section. Smooth scrolling
+      // can be interrupted on the longer coach page before the target appears.
+      await section.evaluate((el) =>
+        el.scrollIntoView({ block: "center", behavior: "instant" }),
+      );
       await page.waitForTimeout(150);
     }
-    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
 
     const sections = await page
       .locator("[data-coach-section]")
