@@ -125,12 +125,6 @@
   font-size: 24px;
   line-height: 1.35 !important;
 }
-.coach-hero-body {
-  max-width: 435px;
-  margin-top: 16px;
-  color: color-mix(in oklch, var(--cream) 74%, transparent);
-  font-size: 16px;
-}
 .coach-hero-actions {
   display: flex;
   align-items: center;
@@ -142,24 +136,6 @@
   position: relative;
   height: 590px;
   isolation: isolate;
-}
-.coach-orbit {
-  position: absolute;
-  border: 1px solid color-mix(in oklch, var(--cream) 12%, transparent);
-  width: 540px;
-  height: 540px;
-  top: 20px;
-  left: 20px;
-  border-radius: 50%;
-  z-index: -1;
-}
-.coach-orbit-two {
-  width: 430px;
-  height: 430px;
-  top: 80px;
-  left: 75px;
-  background: color-mix(in oklch, var(--orange) 7%, transparent);
-  border-color: color-mix(in oklch, var(--orange) 20%, transparent);
 }
 .coach-phone {
   position: relative;
@@ -203,38 +179,6 @@
   right: 0;
   width: 249px;
   transform: rotate(7deg);
-}
-.coach-product-note {
-  position: absolute;
-  z-index: 2;
-  left: 24px;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 16px 20px;
-  border-radius: 14px;
-  background: var(--cream);
-  color: var(--blackberry);
-  box-shadow: 0 10px 35px
-    color-mix(in oklch, var(--blackberry-dark) 30%, transparent);
-  transform: rotate(-3deg);
-}
-.coach-product-note > span {
-  display: grid;
-  place-items: center;
-  height: 38px;
-  width: 38px;
-  border-radius: 50%;
-  background: color-mix(in oklch, var(--orange) 20%, var(--cream));
-}
-.coach-product-note strong {
-  font-size: 13px;
-}
-.coach-product-note p {
-  color: var(--text-light-secondary);
-  font-size: 12px;
-  margin-top: 2px;
 }
 .coach-hero-bottom {
   padding-block: 22px;
@@ -326,40 +270,6 @@
   margin-top: 0;
   font-size: 17px;
 }
-.coach-steps {
-  list-style: none;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 30px;
-  padding: 0;
-  margin-top: 55px;
-}
-.coach-steps li {
-  border-top: 1px solid color-mix(in oklch, var(--blackberry) 20%, transparent);
-  padding-top: 20px;
-}
-.coach-step-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 25px;
-}
-.coach-step-top span {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  color: var(--text-light-secondary);
-}
-.coach-step-top svg {
-  color: var(--blackberry);
-}
-.coach-steps h3 {
-  font-size: 22px;
-}
-.coach-steps p {
-  margin-top: 12px;
-  color: var(--text-light-secondary);
-  font-size: 15px;
-}
 .coach-athlete-feature {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -381,24 +291,6 @@
 .coach-athlete-visual .coach-phone {
   width: 270px;
   transform: rotate(-5deg);
-}
-.coach-plan-caption {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  bottom: 35px;
-  left: 24px;
-  padding: 17px 22px;
-  background: var(--cream);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  box-shadow: 0 8px 24px color-mix(in oklch, var(--blackberry) 12%, transparent);
-  font-size: 14px;
-  transform: rotate(3deg);
-}
-.coach-plan-caption svg {
-  color: var(--blackberry);
 }
 .coach-athlete-copy > p {
   margin-top: 20px;
@@ -725,24 +617,6 @@
   font-size: 11px !important;
   margin-top: 18px !important;
 }
-@media (prefers-reduced-motion: no-preference) {
-  .coach-hero-copy {
-    animation: coach-enter 0.65s ease-out both;
-  }
-  .coach-hero-product {
-    animation: coach-enter 0.85s 0.1s ease-out both;
-  }
-  @keyframes coach-enter {
-    from {
-      opacity: 0;
-      translate: 0 16px;
-    }
-    to {
-      opacity: 1;
-      translate: 0 0;
-    }
-  }
-}
 @media (min-width: 1400px) {
   .coach-hero-phone-back {
     left: 24px;
@@ -776,10 +650,6 @@
     top: 90px;
     right: -8px;
   }
-  .coach-product-note {
-    left: 0;
-    bottom: -8px;
-  }
   .coach-science-grid,
   .coach-cost-grid,
   .coach-faq-grid,
@@ -792,12 +662,6 @@
   }
   .coach-athlete-feature {
     gap: 45px;
-  }
-  .coach-steps {
-    gap: 22px;
-  }
-  .coach-steps h3 {
-    font-size: 20px;
   }
 }
 @media (max-width: 800px) {
@@ -815,9 +679,6 @@
   .coach-hero h1 {
     font-size: 68px;
     max-width: 570px;
-  }
-  .coach-hero-body {
-    max-width: 480px;
   }
   .coach-hero-product {
     width: 500px;
@@ -862,11 +723,6 @@
     margin-top: 22px;
     max-width: 490px;
   }
-  .coach-steps {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-    margin-top: 35px;
-  }
   .coach-athlete-feature {
     margin-top: 65px;
     gap: 32px;
@@ -877,11 +733,6 @@
   }
   .coach-athlete-visual .coach-phone {
     width: 225px;
-  }
-  .coach-plan-caption {
-    left: 10px;
-    padding: 12px;
-    font-size: 12px;
   }
   .coach-athlete-copy h2 {
     font-size: 32px;
@@ -939,10 +790,6 @@
     font-size: 20px;
     margin-top: 23px;
   }
-  .coach-hero-body {
-    font-size: 15px;
-    margin-top: 13px;
-  }
   .coach-hero-actions {
     gap: 18px;
     margin-top: 24px;
@@ -962,33 +809,6 @@
     width: 185px;
     right: 3px;
     top: 74px;
-  }
-  .coach-product-note {
-    bottom: -10px;
-    left: 10px;
-    padding: 12px 15px;
-    gap: 10px;
-  }
-  .coach-product-note strong {
-    font-size: 11px;
-  }
-  .coach-product-note p {
-    font-size: 10px;
-  }
-  .coach-product-note > span {
-    width: 30px;
-    height: 30px;
-  }
-  .coach-orbit-one {
-    width: 380px;
-    height: 380px;
-    left: -10px;
-  }
-  .coach-orbit-two {
-    width: 300px;
-    height: 300px;
-    left: 25px;
-    top: 60px;
   }
   .coach-hero-bottom {
     align-items: center;
@@ -1017,18 +837,6 @@
   .coach-feature p {
     font-size: 14px;
   }
-  .coach-steps {
-    gap: 25px 21px;
-  }
-  .coach-step-top {
-    margin-bottom: 16px;
-  }
-  .coach-steps h3 {
-    font-size: 21px;
-  }
-  .coach-steps p {
-    font-size: 14px;
-  }
   .coach-athlete-feature {
     grid-template-columns: 1fr;
     gap: 33px;
@@ -1040,11 +848,6 @@
   }
   .coach-athlete-visual .coach-phone {
     width: 250px;
-  }
-  .coach-plan-caption {
-    left: 12px;
-    bottom: 22px;
-    padding: 15px 20px;
   }
   .coach-athlete-copy h2 {
     font-size: 36px;
@@ -1303,5 +1106,427 @@
   }
   .coach-integration-group[aria-hidden="true"] {
     display: none;
+  }
+}
+
+/* Hero phones: motion wrappers fill the product box so the phones keep their
+   absolute positions and CSS rotations. */
+.coach-hero-phone-slot {
+  position: absolute;
+  inset: 0;
+}
+
+/* How it works: step list beside an animated scene. */
+.coach-walkthrough {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 60px;
+  align-items: center;
+  margin-top: 55px;
+}
+.coach-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+.coach-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto auto 1fr;
+  gap: 16px;
+  align-items: start;
+  width: 100%;
+  padding: 20px 22px;
+  overflow: hidden;
+  text-align: left;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    background 0.3s,
+    border-color 0.3s,
+    box-shadow 0.3s;
+}
+.coach-step:hover {
+  background: color-mix(in oklch, white 30%, transparent);
+}
+.coach-step[data-active="true"] {
+  background: var(--cream);
+  border-color: var(--border);
+  box-shadow: 0 12px 30px -18px
+    color-mix(in oklch, var(--blackberry) 35%, transparent);
+}
+.coach-step:focus-visible {
+  outline: 3px solid var(--orange);
+  outline-offset: 3px;
+}
+.coach-step-number {
+  padding-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-light-secondary);
+}
+.coach-step-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: color-mix(in oklch, var(--blackberry) 7%, transparent);
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+.coach-step[data-active="true"] .coach-step-icon {
+  background: var(--orange);
+  color: var(--blackberry);
+}
+.coach-step-text strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 20px;
+  line-height: 1.25;
+}
+.coach-step-text > span {
+  display: block;
+  margin-top: 6px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-light-secondary);
+}
+.coach-step-progress {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: var(--orange);
+  transform-origin: left;
+}
+.coach-step-stage {
+  position: relative;
+  height: 560px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--blackberry);
+}
+.coach-step-visual {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 40px;
+}
+.coach-scene {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+}
+.coach-scene-card {
+  padding: 24px;
+  border-radius: 18px;
+  background: var(--cream);
+  color: var(--blackberry);
+  box-shadow: 0 25px 50px -20px
+    color-mix(in oklch, var(--blackberry-dark) 70%, transparent);
+}
+.coach-scene-card > strong,
+.coach-week-head strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 22px;
+  line-height: 1.2;
+}
+.coach-scene-label {
+  display: block;
+  margin-bottom: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-light-secondary);
+}
+.coach-scene-hint {
+  display: block;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-light-secondary);
+}
+.coach-code {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.coach-code i {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 56px;
+  border-radius: 10px;
+  background: color-mix(in oklch, var(--orange) 16%, var(--cream));
+  border: 1px solid color-mix(in oklch, var(--orange) 45%, transparent);
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+}
+.coach-pair-phone {
+  width: 78%;
+  margin: -14px 0 0 auto;
+  position: relative;
+  transform: rotate(-2deg);
+}
+.coach-pair-phone strong {
+  font-size: 18px;
+}
+.coach-pair-connected {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--electrolyte, #2dd4bf) 22%, var(--cream));
+  font-size: 13px;
+  font-weight: 600;
+}
+.coach-week-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.coach-week-head .coach-scene-label {
+  margin: 0;
+}
+.coach-mini-report .coach-week-head {
+  margin-bottom: 18px;
+}
+.coach-week-row {
+  display: grid;
+  grid-template-columns: 48px 1fr auto;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid var(--border);
+  font-size: 15px;
+}
+.coach-week-day {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  padding-top: 2px;
+  color: var(--text-light-secondary);
+}
+.coach-week-detail {
+  font-weight: 600;
+}
+.coach-scene-plan {
+  display: flex;
+  justify-content: center;
+}
+.coach-scene-plan .coach-phone {
+  width: 230px;
+  transform: rotate(-3deg);
+}
+.coach-plan-chips {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  translate: 0 -50%;
+  display: grid;
+  gap: 12px;
+}
+.coach-plan-chip {
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--cream);
+  color: var(--blackberry);
+  font-size: 14px;
+  font-weight: 700;
+  box-shadow: 0 12px 25px -12px
+    color-mix(in oklch, var(--blackberry-dark) 70%, transparent);
+}
+.coach-plan-chip:nth-child(2) {
+  background: var(--orange);
+  margin-left: -24px;
+}
+.coach-scene-dark {
+  background: var(--blackberry-dark);
+  color: var(--cream);
+  box-shadow: 0 0 0 1px color-mix(in oklch, var(--cream) 14%, transparent);
+}
+.coach-scene-dark .coach-scene-label {
+  color: color-mix(in oklch, var(--cream) 60%, transparent);
+}
+.coach-mini-bars {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+  height: 175px;
+  margin-top: 12px;
+}
+.coach-mini-bars > div {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+.coach-mini-bars span {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(
+    to top,
+    var(--orange),
+    color-mix(in oklch, var(--orange) 55%, var(--cream))
+  );
+  transform-origin: bottom;
+}
+.coach-mini-bars i {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-style: normal;
+  color: color-mix(in oklch, var(--cream) 60%, transparent);
+}
+.coach-mini-stats {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid color-mix(in oklch, var(--cream) 15%, transparent);
+  font-size: 13px;
+  color: color-mix(in oklch, var(--cream) 70%, transparent);
+}
+.coach-mini-stats strong {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 24px;
+  color: var(--cream);
+}
+
+/* Features in development. */
+.coach-coming {
+  background: color-mix(in oklch, var(--cream-dark) 60%, var(--cream));
+}
+.coach-coming-grid {
+  list-style: none;
+  padding: 0;
+  margin: 55px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.coach-coming-card {
+  position: relative;
+  padding: 30px;
+  border-radius: 20px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  transition:
+    transform 0.3s,
+    box-shadow 0.3s;
+}
+.coach-coming-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -24px
+    color-mix(in oklch, var(--blackberry) 40%, transparent);
+}
+.coach-coming-card h3 {
+  margin-top: 20px;
+}
+.coach-coming-card p {
+  margin-top: 10px;
+  color: var(--text-light-secondary);
+  font-size: 15px;
+}
+.coach-coming-badge {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: color-mix(in oklch, var(--orange) 16%, var(--cream));
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1100px) {
+  .coach-walkthrough {
+    gap: 36px;
+  }
+  .coach-step-stage {
+    height: 520px;
+  }
+}
+@media (max-width: 800px) {
+  .coach-walkthrough {
+    grid-template-columns: 1fr;
+    margin-top: 35px;
+  }
+  .coach-step-stage {
+    order: -1;
+    height: 460px;
+  }
+  .coach-steps {
+    gap: 4px;
+  }
+  .coach-step:not([data-active="true"]) .coach-step-text > span {
+    display: none;
+  }
+  .coach-step:not([data-active="true"]) {
+    padding-block: 12px;
+  }
+  .coach-coming-grid {
+    grid-template-columns: 1fr;
+    margin-top: 35px;
+  }
+}
+@media (max-width: 540px) {
+  .coach-step {
+    grid-template-columns: auto 1fr;
+    padding: 16px;
+  }
+  .coach-step-number {
+    display: none;
+  }
+  .coach-step-text strong {
+    font-size: 18px;
+  }
+  .coach-step-text > span {
+    font-size: 14px;
+  }
+  .coach-step-stage {
+    height: 420px;
+    border-radius: 22px;
+  }
+  .coach-step-visual {
+    padding: 22px;
+  }
+  .coach-code i {
+    width: 38px;
+    height: 48px;
+    font-size: 20px;
+  }
+  .coach-scene-plan .coach-phone {
+    width: 190px;
+  }
+  .coach-plan-chip {
+    padding: 8px 14px;
+    font-size: 12px;
+  }
+  .coach-coming-card {
+    padding: 26px;
+  }
+  .coach-coming-badge {
+    top: 26px;
+    right: 26px;
   }
 }

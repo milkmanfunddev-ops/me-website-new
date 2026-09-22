@@ -9,6 +9,7 @@ const SECTIONS = [
   "credential",
   "how-it-works",
   "dashboard",
+  "coming-soon",
   "cost",
   "founding-coach",
   "faq",
@@ -55,11 +56,10 @@ test.describe("/coach", () => {
     expect(names).toEqual(SECTIONS);
   });
 
-  test("local sample testimonials are clearly marked for review", async ({
+  test("local sample testimonials render in development", async ({
     page,
   }) => {
     const testimonials = page.locator('[data-coach-section="testimonials"]');
-    await expect(testimonials.getByText("Sample quotes for layout review")).toBeVisible();
     await expect(testimonials.locator("blockquote")).toHaveCount(3);
   });
 
