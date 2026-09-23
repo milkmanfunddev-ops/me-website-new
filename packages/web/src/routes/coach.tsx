@@ -13,18 +13,15 @@ import {
   ArrowDown,
   ArrowRight,
   BarChart3,
-  BookOpen,
   CalendarDays,
   Check,
   ChefHat,
   ChevronDown,
-  FlaskConical,
   KeyRound,
+  ListChecks,
   MapPin,
   MessageCircle,
-  NotebookPen,
-  Monitor,
-  Target,
+  ShoppingCart,
   Utensils,
   Wheat,
   type LucideIcon,
@@ -39,7 +36,7 @@ export const Route = createFileRoute("/coach")({
       { title: `For Coaches | ${APP_NAME}` },
       {
         name: "description",
-        content: `${APP_NAME} turns your athletes' training into daily fueling targets and practical fueling plans. Review fuel logs and adherence in your coach dashboard. Book a 30-minute demo.`,
+        content: `${APP_NAME} plans your athletes' fueling from the training you write, then shows you what they actually ate. Review fuel logs and adherence in your coach dashboard. Book a 30-minute demo.`,
       },
     ],
     links: [{ rel: "stylesheet", href: coachCss }],
@@ -47,58 +44,77 @@ export const Route = createFileRoute("/coach")({
   component: CoachPage,
 });
 
-type StepVisual = "pair" | "training" | "plan" | "report";
-
+// Every step shows a real app screenshot. No illustrations, no invented athletes.
 const STEPS: Array<{
   icon: LucideIcon;
   title: string;
   body: string;
-  visual: StepVisual;
+  screenshot: { src: string; alt: string };
 }> = [
   {
     icon: KeyRound,
     title: "Connect your athletes",
-    visual: "pair",
     body: "Send each athlete a pairing code from your coach dashboard. They enter it in the app to connect with you.",
+    screenshot: {
+      src: "/images/coach/coach-connection.png",
+      alt: "The Coach Connection screen in the Mealvana app, where an athlete enters their coach's pairing code",
+    },
   },
   {
     icon: CalendarDays,
     title: "Bring in their training",
-    visual: "training",
-    body: "Import planned workouts from a connected training platform, or add workouts yourself in the coach dashboard.",
+    body: "Import planned workouts from a connected training platform, or add them yourself in the coach dashboard. Each one shows up in the athlete's app.",
+    screenshot: {
+      src: "/images/coach/athlete-plan.png",
+      alt: "A planned 12-mile run in the Mealvana app with its date, time and pace",
+    },
   },
   {
     icon: Utensils,
-    title: "Give them a fueling plan",
-    visual: "plan",
-    body: "Each athlete gets daily targets and can generate a plan for what to eat and drink around their workout.",
+    title: "Mealvana plans their fueling",
+    body: "Each workout becomes daily targets and a plan for what to eat and drink before, during and after it. The athlete generates it in the app. You don't write it.",
+    screenshot: {
+      src: "/images/coach/fueling-detail.png",
+      alt: "The run's fueling plan in the Mealvana app, with a pre-workout snack, a top-off and during-run targets",
+    },
   },
   {
     icon: BarChart3,
-    title: "See how they fuel",
-    visual: "report",
-    body: "Review completed workouts, fuel logs and adherence from your coach dashboard on the web.",
+    title: "See what they actually ate",
+    body: "After each workout the athlete logs what they took in and how it felt. You review fuel logs and adherence in your coach dashboard.",
+    screenshot: {
+      src: "/images/screenshots/feedback.png",
+      alt: "The Log Workout Fuel screen in the Mealvana app, with the foods consumed, a rating and how the carbs felt",
+    },
   },
 ];
 
-const COMING_SOON: Array<{ icon: LucideIcon; title: string; body: string }> =
-  [
-    {
-      icon: Wheat,
-      title: "Carb loading",
-      body: "Race-week carb loading plans, sized to each athlete's body weight and race distance.",
-    },
-    {
-      icon: ChefHat,
-      title: "Meal planning",
-      body: "Full days of meals built around the training week and fitted to each athlete's diet.",
-    },
-    {
-      icon: NotebookPen,
-      title: "Food logging",
-      body: "Athletes log meals through the day next to their workouts, with daily totals against their targets.",
-    },
-  ];
+// Status as of 2026-09-23: carb loading shipped in 1.17. Meal planning,
+// shopping lists and Kroger are built and on the dev backend, not yet in the
+// production app (../mealvana_endurance/docs/implement_mealplanning/README.md,
+// docs/kroger/README.md).
+const BEYOND: Array<{ icon: LucideIcon; title: string; body: string }> = [
+  {
+    icon: Wheat,
+    title: "Carb loading",
+    body: "Race-week carb loading plans sized to the athlete's body weight and race distance, with a daily target and food picks for each meal.",
+  },
+  {
+    icon: ChefHat,
+    title: "Meal planning",
+    body: "Days of meals built around the training week and fitted to the athlete's diet, so the fueling targets turn into actual food.",
+  },
+  {
+    icon: ListChecks,
+    title: "Shopping lists",
+    body: "Every plan ends in a shopping list grouped by aisle, with what they already have checked off.",
+  },
+  {
+    icon: ShoppingCart,
+    title: "Kroger ordering",
+    body: "One tap sends the list to a Kroger cart, matched to their local store.",
+  },
+];
 
 const FAQS = [
   {
@@ -117,14 +133,24 @@ const FAQS = [
       "Change the week and their daily targets move with it. For an updated workout fueling plan, the athlete uses Regenerate Plan in the app.",
   },
   {
+    question: "Do I have to give my athletes a fueling plan?",
+    answer:
+      "No. Mealvana builds the plan from the workout, and the athlete generates it in the app. Your side is the training and the conversation. The coach dashboard shows you what they logged so you can talk about it at your next check-in.",
+  },
+  {
     question: "What do my athletes pay?",
     answer:
-      "Athletes subscribe separately. Founding member pricing runs from October 1 through November 30, 2026, at half the regular price. It is available with or without a coach, and athletes keep that price while they stay subscribed.",
+      "Athletes subscribe on their own, at $24.99 a month or $199.99 a year after a 7-day free trial. Founding member pricing runs from October 1 through November 30, 2026, at half that: $12.49 a month or $99.99 a year. It is available with or without a coach, and athletes keep the founding price while they stay subscribed.",
   },
   {
     question: "How does my coach account stay free?",
     answer:
       "Coach accounts are free to start. They stay free while five or more of your paired athletes are active on Mealvana. Active means they have used the app in the last 14 days. We can walk through the details on your coach call.",
+  },
+  {
+    question: "What is the founding coach program?",
+    answer:
+      "A small first group of coaches who bring Mealvana to their athletes this fall and tell us what to fix. Founding coaches get a share of the revenue from the athletes they bring in. Ask about it on your call.",
   },
   {
     question: "What happens on the coach call?",
@@ -160,6 +186,20 @@ const COACH_TESTIMONIALS = import.meta.env.DEV
   : [];
 
 const EASE_OUT = [0.22, 1, 0.36, 1] as const;
+
+// Same photos the About page shows, from the Sanity teamMember documents.
+const FOUNDERS = [
+  {
+    name: "Xuan Huang",
+    role: "Founder",
+    src: "https://cdn.sanity.io/images/sigrvh1t/production/c3b589f1815df3f8901b73ccd8addb1293e5c9f8-2024x2094.jpg?w=176&h=176&fit=crop&crop=focalpoint&auto=format",
+  },
+  {
+    name: "Lee Martin",
+    role: "CTO",
+    src: "https://cdn.sanity.io/images/sigrvh1t/production/2eb89fa258bb8b49318f23f88e721f621bed16d0-2024x2732.jpg?w=176&h=176&fit=crop&crop=focalpoint&auto=format",
+  },
+];
 
 // Fades and lifts its children in the first time they scroll into view.
 function Reveal({
@@ -246,166 +286,22 @@ function StepWalkthrough() {
       <div className="coach-step-stage" id="coach-step-stage">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
-            key={STEPS[active].visual}
+            key={STEPS[active].screenshot.src}
             className="coach-step-visual"
             initial={{ opacity: 0, y: 24, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -16, scale: 0.98 }}
             transition={{ duration: 0.45, ease: EASE_OUT }}
           >
-            <StepScene visual={STEPS[active].visual} />
+            <Phone
+              src={STEPS[active].screenshot.src}
+              alt={STEPS[active].screenshot.alt}
+            />
           </motion.div>
         </AnimatePresence>
       </div>
     </div>
   );
-}
-
-// Staggered entrance for the pieces inside a step scene.
-function Pop({
-  children,
-  className,
-  delay = 0,
-}: {
-  children: ReactNode;
-  className?: string;
-  delay?: number;
-}) {
-  return (
-    <motion.div
-      className={className}
-      initial={{ opacity: 0, y: 14 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.45, delay, ease: EASE_OUT }}
-    >
-      {children}
-    </motion.div>
-  );
-}
-
-// Illustrations of shipped flows. Codes, workouts and numbers are fictional.
-function StepScene({ visual }: { visual: StepVisual }) {
-  switch (visual) {
-    case "pair":
-      return (
-        <div className="coach-scene coach-scene-pair">
-          <Pop className="coach-scene-card coach-pair-code">
-            <span className="coach-scene-label">Coach dashboard</span>
-            <strong>Invite an athlete</strong>
-            <span className="coach-code" aria-label="Example pairing code">
-              {"K7Q2M9".split("").map((char, i) => (
-                <motion.i
-                  key={i}
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.25 + i * 0.07 }}
-                >
-                  {char}
-                </motion.i>
-              ))}
-            </span>
-            <span className="coach-scene-hint">
-              Share this code with your athlete
-            </span>
-          </Pop>
-          <Pop className="coach-scene-card coach-pair-phone" delay={0.8}>
-            <span className="coach-scene-label">In the app</span>
-            <strong>Enter your coach's code</strong>
-            <span className="coach-pair-connected">
-              <Check size={16} aria-hidden="true" /> Connected to your coach
-            </span>
-          </Pop>
-        </div>
-      );
-    case "training":
-      return (
-        <div className="coach-scene">
-          <div className="coach-scene-card coach-week">
-            <div className="coach-week-head">
-              <strong>This week</strong>
-              <span className="coach-scene-label">
-                Synced from TrainingPeaks
-              </span>
-            </div>
-            {[
-              ["Tue", "Intervals", "6 × 800 m"],
-              ["Wed", "Easy run", "5 mi"],
-              ["Thu", "Tempo run", "6 mi"],
-              ["Sat", "Long run", "12 mi"],
-              ["Sun", "Recovery ride", "45 min"],
-            ].map(([day, name, detail], i) => (
-              <Pop className="coach-week-row" delay={0.15 + i * 0.1} key={day}>
-                <span className="coach-week-day">{day}</span>
-                <span>{name}</span>
-                <span className="coach-week-detail">{detail}</span>
-              </Pop>
-            ))}
-          </div>
-        </div>
-      );
-    case "plan":
-      return (
-        <div className="coach-scene coach-scene-plan">
-          <Pop>
-            <Phone
-              src="/images/screenshots/by-hour.png"
-              alt="A Mealvana during-run plan broken down by hour, with carbohydrate, fluid and sodium targets"
-            />
-          </Pop>
-          <div className="coach-plan-chips" aria-hidden="true">
-            {["Before", "During", "After"].map((label, i) => (
-              <Pop className="coach-plan-chip" delay={0.35 + i * 0.15} key={label}>
-                {label}
-              </Pop>
-            ))}
-          </div>
-        </div>
-      );
-    case "report":
-      return (
-        <div className="coach-scene">
-          <div className="coach-scene-card coach-scene-dark coach-mini-report">
-            <div className="coach-week-head">
-              <strong>Athlete 01</strong>
-              <span className="coach-scene-label">This week</span>
-            </div>
-            <span className="coach-scene-label">
-              Fueling adherence by workout
-            </span>
-            <div className="coach-mini-bars" aria-hidden="true">
-              {[
-                ["Tue", 94],
-                ["Wed", 80],
-                ["Thu", 88],
-                ["Sat", 97],
-                ["Sun", 72],
-              ].map(([day, value], i) => (
-                <div key={day as string}>
-                  <motion.span
-                    initial={{ scaleY: 0 }}
-                    animate={{ scaleY: 1 }}
-                    style={{ height: `${(value as number) * 1.5}px` }}
-                    transition={{ delay: 0.2 + i * 0.08, duration: 0.6, ease: EASE_OUT }}
-                  />
-                  <i>{day}</i>
-                </div>
-              ))}
-            </div>
-            <div className="coach-mini-stats">
-              <span>
-                <strong>5/5</strong> completed
-              </span>
-              <span>
-                <strong>5/5</strong> fuel logs
-              </span>
-              <span>
-                <strong>86%</strong> adherence
-              </span>
-            </div>
-          </div>
-        </div>
-      );
-  }
 }
 
 function CoachCallButton({ placement }: { placement: "hero" | "final" }) {
@@ -530,97 +426,6 @@ function Feature({
   );
 }
 
-// An editorial illustration of shipped report fields, not a screenshot or real
-// athlete data. Rows use generic athlete identifiers.
-function ReportIllustration() {
-  return (
-    <figure className="coach-report-figure">
-      <div className="coach-report-window">
-        <div className="coach-window-bar">
-          <span className="coach-window-dots" aria-hidden="true">
-            <i />
-            <i />
-            <i />
-          </span>
-          <span>Mealvana / Coach dashboard</span>
-          <Monitor size={14} aria-hidden="true" />
-        </div>
-        <div className="coach-report-body">
-          <div className="coach-report-heading">
-            <div>
-              <h3>Athlete reports</h3>
-            </div>
-            <span className="coach-report-period">This week</span>
-          </div>
-          <div className="coach-report-table-wrap">
-            <table className="coach-report-table">
-              <caption className="sr-only">
-                Illustrative report with fictional athlete data
-              </caption>
-              <thead>
-                <tr>
-                  <th scope="col">Athlete</th>
-                  <th scope="col">Completed</th>
-                  <th scope="col">Fuel logs</th>
-                  <th scope="col">Adherence</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  {
-                    id: "01",
-                    completed: "4/5",
-                    logs: "4/4",
-                    adherence: "92%",
-                    width: "92%",
-                  },
-                  {
-                    id: "02",
-                    completed: "3/4",
-                    logs: "2/3",
-                    adherence: "76%",
-                    width: "76%",
-                  },
-                  {
-                    id: "03",
-                    completed: "5/5",
-                    logs: "5/5",
-                    adherence: "88%",
-                    width: "88%",
-                  },
-                ].map((athlete) => (
-                  <tr key={athlete.id}>
-                    <th scope="row">
-                      <span className="coach-athlete-avatar">{athlete.id}</span>
-                      <span>Athlete {athlete.id}</span>
-                    </th>
-                    <td>{athlete.completed}</td>
-                    <td>{athlete.logs}</td>
-                    <td>
-                      <span>{athlete.adherence}</span>
-                      <span
-                        className="coach-adherence-track"
-                        aria-hidden="true"
-                      >
-                        <i style={{ width: athlete.width }} />
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="coach-report-foot">
-            <CalendarDays size={16} aria-hidden="true" />
-            <span>Weekly and custom date ranges</span>
-            <ArrowRight size={16} aria-hidden="true" />
-          </div>
-        </div>
-      </div>
-    </figure>
-  );
-}
-
 function useSectionViews() {
   useEffect(() => {
     const seen = new Set<string>();
@@ -663,9 +468,9 @@ function CoachPage() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.2, ease: EASE_OUT }}
               >
-                You write the training.
+                You handle the training.
                 <br />
-                Give them a plan to fuel it.
+                Mealvana does the rest.
               </motion.p>
               <motion.div
                 className="coach-hero-actions"
@@ -726,38 +531,24 @@ function CoachPage() {
           data-coach-section="credential"
           className="coach-section coach-science"
         >
-          <div className="coach-container coach-science-grid">
-            <Reveal>
-              <h2>
-                You're not a dietitian.
-                <br />
-                <em>You don't have to be.</em>
-              </h2>
-              <p className="coach-lead">
-                You write the training. Mealvana reads each workout and turns it
-                into daily fueling targets and a plan for what to eat and drink
-                before, during and after it.
-              </p>
-              <p className="coach-science-note">
-                You see how they fuel from your coach dashboard, and you support
-                them within your role as a coach.
-              </p>
-            </Reveal>
-            <Reveal className="coach-science-details" delay={0.15}>
-              <Feature icon={FlaskConical} title="Grounded in nutrition research">
-                Our models draw on peer-reviewed research and the ISSN and ACSM
-                position stands.
-              </Feature>
-              <Feature icon={Check} title="Validated by experts">
-                Our fueling models are reviewed by nutrition scientists, including
-                Dr. Rachel Mitchell, our nutrition science advisor, who holds a
-                PhD in nutrition science.
-              </Feature>
-              <Feature icon={BookOpen} title="The reasoning is there to read">
-                Athletes can explore the research behind their targets in the app.
-              </Feature>
-            </Reveal>
-          </div>
+          <Reveal className="coach-container coach-science-inner">
+            <h2>
+              You're not a dietitian.
+              <br />
+              <em>You don't have to be.</em>
+            </h2>
+            <p className="coach-lead">
+              Mealvana reads each workout you write and turns it into daily
+              fueling targets and a plan for what to eat and drink around it. The
+              models draw on peer-reviewed research and the ISSN and ACSM position
+              stands, validated by Dr. Rachel Mitchell, our nutrition science
+              advisor.
+            </p>
+            <p className="coach-science-note">
+              You see how they fuel from your coach dashboard, and you support
+              them within your role as a coach.
+            </p>
+          </Reveal>
         </section>
 
         <section
@@ -782,44 +573,6 @@ function CoachPage() {
             <Reveal delay={0.1}>
               <StepWalkthrough />
             </Reveal>
-            <div className="coach-athlete-feature">
-              <Reveal className="coach-athlete-visual">
-                <Phone
-                  src="/images/coach/fueling-detail.png"
-                  alt="A Mealvana fueling plan with food suggestions, timing, carbohydrate, fluid and sodium targets"
-                />
-              </Reveal>
-              <Reveal className="coach-athlete-copy" delay={0.15}>
-                <h2>
-                  Make fueling part
-                  <br />
-                  of the training.
-                </h2>
-                <p className="coach-lead">
-                  A target is useful. Knowing what to eat and when makes it
-                  practical.
-                </p>
-                <p>
-                  Mealvana helps athletes turn their workout into a fueling plan,
-                  with food suggestions and targets for before, during and after
-                  the session.
-                </p>
-                <ul className="coach-check-list">
-                  <li>
-                    <Check aria-hidden="true" /> Daily targets that move with the
-                    training week
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" /> Workout plans with food and drink
-                    suggestions
-                  </li>
-                  <li>
-                    <Check aria-hidden="true" /> Carbohydrate, fluid and sodium
-                    targets
-                  </li>
-                </ul>
-              </Reveal>
-            </div>
           </div>
         </section>
 
@@ -831,32 +584,37 @@ function CoachPage() {
             <Reveal className="coach-section-intro">
               <div>
                 <h2>
-                  See the fueling.
+                  See what they ate.
                   <br />
                   <em>Have a better conversation.</em>
                 </h2>
               </div>
               <p className="coach-lead">
-                Bring their fuel logs into your next check-in. See what they
-                completed, what they logged and how it compares with the plan.
+                You don't have to hand anyone a diet. Bring their fuel logs into
+                your next check-in and see what they completed, what they logged
+                and how it compared with the plan.
               </p>
             </Reveal>
             <div className="coach-dashboard-grid">
-              <Reveal>
-                <ReportIllustration />
+              <Reveal className="coach-dashboard-visual">
+                <Phone
+                  src="/images/screenshots/feedback.png"
+                  alt="A fuel log in the Mealvana app: the foods and drinks the athlete took in, a star rating and how the carbs felt"
+                />
               </Reveal>
               <Reveal className="coach-dashboard-features" delay={0.15}>
                 <Feature icon={BarChart3} title="Review your roster">
-                  See completed workouts, fuel logs, adherence and the next event.
-                  Open an athlete's report for more detail.
+                  One table for the week: workouts completed, fuel logs filed,
+                  adherence, last completed and next event. Click any athlete for
+                  their full report.
                 </Feature>
-                <Feature icon={Target} title="Set targets for the athlete">
-                  Adjust pre, during and post-workout fueling targets from your
-                  dashboard.
+                <Feature icon={Utensils} title="Read each fuel log">
+                  What they took in, how the carbs felt and any notes they left,
+                  next to what the plan called for.
                 </Feature>
                 <Feature icon={MessageCircle} title="Keep the conversation going">
                   Message each athlete in the app, with their training and fueling
-                  available to review.
+                  in front of you.
                 </Feature>
               </Reveal>
             </div>
@@ -864,111 +622,89 @@ function CoachPage() {
         </section>
 
         <section
-          data-coach-section="coming-soon"
-          className="coach-section coach-coming"
+          data-coach-section="beyond"
+          className="coach-section coach-beyond"
         >
           <div className="coach-container">
             <Reveal className="coach-section-intro">
               <div>
                 <h2>
-                  More for your athletes.
+                  The rest of the week.
                   <br />
-                  <em>On the way.</em>
+                  <em>Handled too.</em>
                 </h2>
               </div>
               <p className="coach-lead">
-                We're building out the rest of an athlete's fueling, beyond the
-                workout. Founding coaches help shape what ships.
+                Fueling doesn't stop when the workout does. Carb loading is in
+                the app today. Meal planning, shopping lists and Kroger ordering
+                ship next.
               </p>
             </Reveal>
-            <ul className="coach-coming-grid">
-              {COMING_SOON.map((feature, index) => (
-                <motion.li
-                  key={feature.title}
-                  className="coach-coming-card"
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-80px" }}
-                  transition={{ duration: 0.6, delay: index * 0.12, ease: EASE_OUT }}
-                >
-                  <span className="coach-coming-badge">In development</span>
-                  <span className="coach-feature-icon">
-                    <feature.icon size={21} aria-hidden="true" />
-                  </span>
-                  <h3>{feature.title}</h3>
-                  <p>{feature.body}</p>
-                </motion.li>
-              ))}
-            </ul>
+            <div className="coach-beyond-grid">
+              <Reveal className="coach-beyond-visual">
+                <Phone
+                  src="/images/coach/carb-loading.png"
+                  alt="A carb loading day in the Mealvana app, with a daily carbohydrate target and breakfast picks"
+                  className="coach-beyond-phone-back"
+                />
+                <Phone
+                  src="/images/coach/shopping-list.png"
+                  alt="A shopping list in the Mealvana app, grouped by aisle, with a Shop with Kroger button"
+                  className="coach-beyond-phone-front"
+                />
+              </Reveal>
+              <Reveal className="coach-beyond-features" delay={0.15}>
+                {BEYOND.map((feature) => (
+                  <Feature
+                    key={feature.title}
+                    icon={feature.icon}
+                    title={feature.title}
+                  >
+                    {feature.body}
+                  </Feature>
+                ))}
+              </Reveal>
+            </div>
           </div>
         </section>
 
+        {/* Prices: ../mealvana_endurance/docs/revenuecat-spec-for-lee.md.
+            Details (annual, trial, active definition) live in the FAQ. */}
         <section data-coach-section="cost" className="coach-section coach-cost">
-          <div className="coach-container coach-cost-grid">
-            <Reveal>
-              <h2>
-                Free to start.
-                <br />
-                <em>Built for your roster.</em>
-              </h2>
-              <p className="coach-lead">
-                Coach accounts stay free while five or more of your athletes are
-                active on Mealvana.
-              </p>
-              <ul className="coach-check-list">
-                <li>
-                  <Check aria-hidden="true" /> A web dashboard for your whole
-                  roster
-                </li>
-                <li>
-                  <Check aria-hidden="true" /> Pairing codes to connect each
-                  athlete
-                </li>
-                <li>
-                  <Check aria-hidden="true" /> Fueling reports, target controls
-                  and in-app messaging
-                </li>
-              </ul>
-            </Reveal>
-            <Reveal className="coach-pricing-card" delay={0.15}>
-              <h3>Founding member pricing</h3>
-              <p>
-                Athletes who subscribe between October 1 and November 30, 2026 get
-                half the regular price.
-              </p>
-              <div className="coach-pricing-foot">
-                <Check size={19} aria-hidden="true" />
-                <strong>They keep it while they stay subscribed.</strong>
-              </div>
-              <div className="coach-pricing-foot">
-                <Check size={19} aria-hidden="true" />
-                <span>
-                  Athletes subscribe on their own, so there's nothing for you to
-                  pay on their behalf.
-                </span>
+          <div className="coach-container">
+            <Reveal className="coach-section-intro">
+              <div>
+                <h2>
+                  Free for coaches.
+                  <br />
+                  <em>Athletes pay for the app.</em>
+                </h2>
               </div>
             </Reveal>
+            <div className="coach-cost-grid">
+              <Reveal className="coach-pricing-card">
+                <span className="coach-pricing-kicker">Your coach account</span>
+                <h3>Free</h3>
+                <p>
+                  Stays free while five or more of your athletes are active in
+                  the app.
+                </p>
+              </Reveal>
+              <Reveal
+                className="coach-pricing-card coach-pricing-card-athlete"
+                delay={0.15}
+              >
+                <span className="coach-pricing-kicker">Your athletes</span>
+                <h3>
+                  $12.49<small>/month</small>
+                </h3>
+                <p>
+                  Founding member price through November 30, 2026. Half the
+                  regular $24.99, locked in while they stay subscribed.
+                </p>
+              </Reveal>
+            </div>
           </div>
-        </section>
-
-        <section data-coach-section="founding-coach" className="coach-founding">
-          <Reveal className="coach-container coach-founding-inner">
-            <div className="coach-founding-mark" aria-hidden="true">
-              <img src="/appicon.png" alt="" width={72} height={72} />
-            </div>
-            <div>
-              <h2>Help shape what comes next.</h2>
-              <p>
-                We're bringing together a small group of coaches to help us
-                improve Mealvana with their athletes. The founding coach program
-                includes revenue share. Bring your feedback and ask about the
-                program on your call.
-              </p>
-            </div>
-            <a href="#coach-call" className="coach-text-link">
-              Let's talk <ArrowRight size={18} aria-hidden="true" />
-            </a>
-          </Reveal>
         </section>
 
         <section data-coach-section="faq" className="coach-section coach-faq">
@@ -1033,6 +769,23 @@ function CoachPage() {
                 own race fueling. We built Mealvana to help athletes make a plan
                 they can use. It's live on the App Store and Google Play.
               </p>
+              <ul className="coach-founders">
+                {FOUNDERS.map((founder) => (
+                  <li key={founder.name}>
+                    <img
+                      src={founder.src}
+                      alt={founder.name}
+                      width={88}
+                      height={88}
+                      loading="lazy"
+                    />
+                    <span>
+                      <strong>{founder.name}</strong>
+                      <span>{founder.role}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
             </div>
           </Reveal>
         </section>

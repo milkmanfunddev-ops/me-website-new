@@ -221,11 +221,11 @@
   color: var(--blackberry);
   font-weight: 500;
 }
-.coach-science-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 100px;
-  align-items: center;
+.coach-science-inner {
+  max-width: 760px;
+}
+.coach-science-inner .coach-lead {
+  max-width: none;
 }
 .coach-feature {
   display: flex;
@@ -270,32 +270,6 @@
   margin-top: 0;
   font-size: 17px;
 }
-.coach-athlete-feature {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 75px;
-  align-items: center;
-  margin-top: 90px;
-}
-.coach-athlete-visual {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  height: 545px;
-  padding-top: 65px;
-  overflow: hidden;
-  border-radius: 160px 160px 20px 20px;
-  background: color-mix(in oklch, var(--orange) 22%, var(--cream));
-}
-.coach-athlete-visual .coach-phone {
-  width: 270px;
-  transform: rotate(-5deg);
-}
-.coach-athlete-copy > p {
-  margin-top: 20px;
-  color: var(--text-light-secondary);
-}
 .coach-check-list {
   padding: 0;
   margin-top: 27px;
@@ -316,138 +290,20 @@
 }
 .coach-dashboard-grid {
   display: grid;
-  grid-template-columns: 1.3fr 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 65px;
   align-items: center;
   margin-top: 55px;
 }
-.coach-report-figure {
-  min-width: 0;
-}
-.coach-report-window {
-  overflow: hidden;
-  border-radius: 15px;
-  color: var(--cream);
-  background: var(--blackberry);
-  box-shadow: 0 24px 50px -25px
-    color-mix(in oklch, var(--blackberry) 45%, transparent);
-  border: 1px solid color-mix(in oklch, var(--blackberry) 25%, transparent);
-}
-.coach-window-bar {
-  padding: 15px 16px;
-  background: var(--blackberry-dark);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-size: 10px;
-  color: color-mix(in oklch, var(--cream) 75%, transparent);
-  gap: 8px;
-}
-.coach-window-dots {
-  display: flex;
-  gap: 5px;
-}
-.coach-window-dots i {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: color-mix(in oklch, var(--cream) 40%, transparent);
-}
-.coach-report-body {
-  padding: 27px 23px 0;
-}
-.coach-report-heading {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
-.coach-report-heading h3 {
-  font-size: 27px;
-}
-.coach-report-period {
-  background: color-mix(in oklch, var(--electrolyte) 13%, transparent);
-  color: var(--electrolyte);
-  padding: 7px 10px;
-  border-radius: 6px;
-  font-size: 10px;
-  white-space: nowrap;
-}
-.coach-report-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 11px;
-  margin-top: 28px;
-}
-.coach-report-table thead {
-  color: color-mix(in oklch, var(--cream) 68%, transparent);
-  font-size: 10px;
-}
-.coach-report-table th {
-  font-weight: 400;
-}
-.coach-report-table thead th {
-  padding-bottom: 12px;
-}
-.coach-report-table tbody tr {
-  border-top: 1px solid color-mix(in oklch, var(--cream) 12%, transparent);
-}
-.coach-report-table td,
-.coach-report-table tbody th {
-  padding: 18px 8px 18px 0;
-}
-.coach-report-table tbody th {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-}
-.coach-athlete-avatar {
-  display: grid;
-  place-items: center;
-  width: 27px;
-  height: 27px;
-  border-radius: 50%;
-  background: color-mix(in oklch, var(--cream) 12%, transparent);
-  color: var(--cream);
-  font-size: 9px;
-}
-.coach-adherence-track {
-  display: block;
-  width: 65px;
-  height: 3px;
-  background: color-mix(in oklch, var(--cream) 20%, transparent);
-  border-radius: 4px;
-  margin-top: 6px;
-}
-.coach-adherence-track i {
-  display: block;
-  height: 3px;
-  background: var(--electrolyte);
-  border-radius: 4px;
-}
-.coach-report-foot {
-  border-top: 1px solid color-mix(in oklch, var(--cream) 15%, transparent);
-  padding-block: 18px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 10px;
-  color: color-mix(in oklch, var(--cream) 75%, transparent);
-}
-.coach-report-foot svg:last-child {
-  margin-left: auto;
-}
-
 .coach-cost {
   border-top: 1px solid var(--border);
 }
 .coach-cost-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 100px;
-  align-items: center;
+  gap: 24px;
+  align-items: stretch;
+  margin-top: 55px;
 }
 .coach-science-note {
   margin-top: 16px;
@@ -460,55 +316,40 @@
   border: 1px solid var(--border);
   border-radius: 18px;
 }
+.coach-pricing-card-athlete {
+  background: var(--blackberry);
+  color: var(--cream);
+  border-color: transparent;
+}
+.coach-pricing-kicker {
+  display: block;
+  margin-bottom: 14px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-light-secondary);
+}
+.coach-pricing-card-athlete .coach-pricing-kicker,
+.coach-pricing-card-athlete > p {
+  color: color-mix(in oklch, var(--cream) 70%, transparent);
+}
 .coach-pricing-card h3 {
-  font-size: 30px;
+  font-size: 44px;
+  line-height: 1;
+}
+.coach-pricing-card h3 small {
+  font-size: 18px;
+  font-family: var(--font-body, inherit);
+  font-weight: 400;
+  margin-left: 4px;
+}
+.coach-pricing-card .coach-check-list {
+  margin-top: 22px;
 }
 .coach-pricing-card > p {
   margin-top: 14px;
   color: var(--text-light-secondary);
-}
-.coach-pricing-foot {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  gap: 10px;
-  font-size: 14px;
-}
-.coach-pricing-foot svg {
-  flex-shrink: 0;
-}
-.coach-pricing-foot + .coach-pricing-foot {
-  margin-top: 16px;
-  padding-top: 16px;
-}
-.coach-founding {
-  padding-block: 45px;
-  background: color-mix(in oklch, var(--orange) 15%, var(--cream));
-}
-.coach-founding-inner {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-}
-.coach-founding-mark {
-  flex-shrink: 0;
-}
-.coach-founding-mark img {
-  border-radius: 24px;
-}
-.coach-founding h2 {
-  font-size: 32px;
-}
-.coach-founding p {
-  margin-top: 13px;
-  max-width: 730px;
-  font-size: 15px;
-  color: var(--text-light-secondary);
-}
-.coach-founding .coach-text-link {
-  flex-shrink: 0;
-  margin-left: auto;
 }
 .coach-faq-grid {
   display: grid;
@@ -587,9 +428,10 @@
 }
 .coach-final-inner {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  gap: 70px;
+  text-align: center;
+  gap: 40px;
 }
 .coach-final h2 {
   font-size: clamp(42px, 4.7vw, 62px);
@@ -598,7 +440,7 @@
   color: var(--orange);
 }
 .coach-final p {
-  margin-top: 22px;
+  margin: 22px auto 0;
   color: color-mix(in oklch, var(--cream) 75%, transparent);
   max-width: 530px;
   font-size: 17px;
@@ -608,7 +450,9 @@
   text-align: center;
 }
 .coach-final-action .coach-button {
-  min-width: 285px;
+  min-width: 320px;
+  padding: 22px 40px;
+  font-size: 19px;
 }
 .coach-final-action p {
   display: flex;
@@ -617,6 +461,78 @@
   font-size: 11px !important;
   margin-top: 18px !important;
 }
+
+/* The rest of the week: carb loading, meal planning, shopping, Kroger. */
+.coach-beyond {
+  background: color-mix(in oklch, var(--cream-dark) 60%, var(--cream));
+}
+.coach-beyond-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 65px;
+  align-items: center;
+  margin-top: 55px;
+}
+.coach-beyond-visual {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 560px;
+  padding-top: 50px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: color-mix(in oklch, var(--orange) 22%, var(--cream));
+}
+.coach-beyond-visual .coach-phone {
+  width: 240px;
+  flex-shrink: 0;
+}
+.coach-beyond-phone-back {
+  transform: translateX(28px) rotate(-6deg);
+  margin-top: 24px;
+  opacity: 0.92;
+}
+.coach-beyond-phone-front {
+  transform: translateX(-28px) rotate(4deg);
+  z-index: 1;
+}
+.coach-beyond-features .coach-feature + .coach-feature {
+  margin-top: 22px;
+}
+
+.coach-founders {
+  list-style: none;
+  padding: 0;
+  margin: 26px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px 40px;
+}
+.coach-founders li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.coach-founders img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.coach-founders li > span {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+.coach-founders strong {
+  font-size: 15px;
+}
+.coach-founders li > span > span {
+  color: var(--text-light-secondary);
+}
+
 @media (min-width: 1400px) {
   .coach-hero-phone-back {
     left: 24px;
@@ -650,7 +566,6 @@
     top: 90px;
     right: -8px;
   }
-  .coach-science-grid,
   .coach-cost-grid,
   .coach-faq-grid,
   .coach-team-inner {
@@ -659,9 +574,6 @@
   .coach-dashboard-grid {
     gap: 35px;
     grid-template-columns: 1.2fr 1fr;
-  }
-  .coach-athlete-feature {
-    gap: 45px;
   }
 }
 @media (max-width: 800px) {
@@ -709,13 +621,6 @@
   .coach-integrations p strong {
     margin-left: 4px;
   }
-  .coach-science-grid {
-    grid-template-columns: 1fr;
-    gap: 38px;
-  }
-  .coach-science-details {
-    max-width: 570px;
-  }
   .coach-section-intro {
     display: block;
   }
@@ -723,26 +628,13 @@
     margin-top: 22px;
     max-width: 490px;
   }
-  .coach-athlete-feature {
-    margin-top: 65px;
-    gap: 32px;
-  }
-  .coach-athlete-visual {
-    height: 480px;
-    border-radius: 100px 100px 20px 20px;
-  }
-  .coach-athlete-visual .coach-phone {
-    width: 225px;
-  }
-  .coach-athlete-copy h2 {
-    font-size: 32px;
-  }
-  .coach-dashboard-grid {
+  .coach-dashboard-grid,
+  .coach-beyond-grid {
     grid-template-columns: 1fr;
     gap: 38px;
   }
-  .coach-report-figure {
-    max-width: 610px;
+  .coach-beyond-visual {
+    height: 500px;
   }
   .coach-dashboard-features {
     max-width: 580px;
@@ -752,9 +644,6 @@
   }
   .coach-pricing-card {
     padding: 25px;
-  }
-  .coach-founding-mark {
-    display: none;
   }
   .coach-faq-grid {
     grid-template-columns: 0.65fr 1fr;
@@ -820,9 +709,6 @@
     font-size: 17px;
     margin-top: 20px;
   }
-  .coach-science-grid {
-    gap: 32px;
-  }
   .coach-feature {
     gap: 13px;
   }
@@ -837,49 +723,6 @@
   .coach-feature p {
     font-size: 14px;
   }
-  .coach-athlete-feature {
-    grid-template-columns: 1fr;
-    gap: 33px;
-  }
-  .coach-athlete-visual {
-    height: 455px;
-    padding-top: 54px;
-    border-radius: 140px 140px 18px 18px;
-  }
-  .coach-athlete-visual .coach-phone {
-    width: 250px;
-  }
-  .coach-athlete-copy h2 {
-    font-size: 36px;
-  }
-  .coach-report-body {
-    padding: 20px 13px 0;
-  }
-  .coach-report-heading h3 {
-    font-size: 24px;
-  }
-  .coach-report-table {
-    font-size: 10px;
-  }
-  .coach-report-table thead {
-    font-size: 9px;
-  }
-  .coach-report-table tbody th {
-    gap: 5px;
-  }
-  .coach-athlete-avatar {
-    width: 22px;
-    height: 22px;
-    font-size: 8px;
-  }
-  .coach-adherence-track {
-    width: 48px;
-  }
-  .coach-report-table td,
-  .coach-report-table tbody th {
-    padding-block: 16px;
-    padding-right: 5px;
-  }
   .coach-cost-grid,
   .coach-faq-grid {
     grid-template-columns: 1fr;
@@ -887,17 +730,6 @@
   }
   .coach-pricing-card h3 {
     font-size: 28px;
-  }
-  .coach-founding-inner {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-  }
-  .coach-founding .coach-text-link {
-    margin-left: 0;
-  }
-  .coach-founding h2 {
-    font-size: 30px;
   }
   .coach-faq h2 br {
     display: none;
@@ -919,8 +751,14 @@
     padding-block: 55px;
   }
   .coach-final-action {
-    text-align: left;
     width: 100%;
+  }
+  .coach-beyond-visual {
+    height: 440px;
+    padding-top: 36px;
+  }
+  .coach-beyond-visual .coach-phone {
+    width: 200px;
   }
   .coach-final-action .coach-button {
     min-width: 0;
@@ -938,9 +776,6 @@
   }
   .coach-hero-product {
     height: 410px;
-  }
-  .coach-athlete-avatar {
-    display: none;
   }
 }
 @media (prefers-reduced-motion: reduce) {
@@ -1216,247 +1051,31 @@
 .coach-step-visual {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  padding: 40px;
-}
-.coach-scene {
-  position: relative;
-  width: 100%;
-  max-width: 420px;
-}
-.coach-scene-card {
-  padding: 24px;
-  border-radius: 18px;
-  background: var(--cream);
-  color: var(--blackberry);
-  box-shadow: 0 25px 50px -20px
-    color-mix(in oklch, var(--blackberry-dark) 70%, transparent);
-}
-.coach-scene-card > strong,
-.coach-week-head strong {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: 22px;
-  line-height: 1.2;
-}
-.coach-scene-label {
-  display: block;
-  margin-bottom: 6px;
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--text-light-secondary);
-}
-.coach-scene-hint {
-  display: block;
-  margin-top: 14px;
-  font-size: 13px;
-  color: var(--text-light-secondary);
-}
-.coach-code {
-  display: flex;
-  gap: 8px;
-  margin-top: 18px;
-}
-.coach-code i {
-  display: grid;
-  place-items: center;
-  width: 46px;
-  height: 56px;
-  border-radius: 10px;
-  background: color-mix(in oklch, var(--orange) 16%, var(--cream));
-  border: 1px solid color-mix(in oklch, var(--orange) 45%, transparent);
-  font-family: var(--font-mono);
-  font-size: 24px;
-  font-style: normal;
-  font-weight: 700;
-}
-.coach-pair-phone {
-  width: 78%;
-  margin: -14px 0 0 auto;
-  position: relative;
-  transform: rotate(-2deg);
-}
-.coach-pair-phone strong {
-  font-size: 18px;
-}
-.coach-pair-connected {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 14px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: color-mix(in oklch, var(--electrolyte, #2dd4bf) 22%, var(--cream));
-  font-size: 13px;
-  font-weight: 600;
-}
-.coach-week-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 12px;
-  margin-bottom: 14px;
-}
-.coach-week-head .coach-scene-label {
-  margin: 0;
-}
-.coach-mini-report .coach-week-head {
-  margin-bottom: 18px;
-}
-.coach-week-row {
-  display: grid;
-  grid-template-columns: 48px 1fr auto;
-  gap: 12px;
-  padding: 13px 0;
-  border-top: 1px solid var(--border);
-  font-size: 15px;
-}
-.coach-week-day {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  padding-top: 2px;
-  color: var(--text-light-secondary);
-}
-.coach-week-detail {
-  font-weight: 600;
-}
-.coach-scene-plan {
   display: flex;
   justify-content: center;
+  align-items: flex-start;
+  padding: 44px 40px 0;
 }
-.coach-scene-plan .coach-phone {
-  width: 230px;
-  transform: rotate(-3deg);
-}
-.coach-plan-chips {
-  position: absolute;
-  right: 0;
-  top: 50%;
-  translate: 0 -50%;
-  display: grid;
-  gap: 12px;
-}
-.coach-plan-chip {
-  padding: 10px 18px;
-  border-radius: 999px;
-  background: var(--cream);
-  color: var(--blackberry);
-  font-size: 14px;
-  font-weight: 700;
-  box-shadow: 0 12px 25px -12px
-    color-mix(in oklch, var(--blackberry-dark) 70%, transparent);
-}
-.coach-plan-chip:nth-child(2) {
-  background: var(--orange);
-  margin-left: -24px;
-}
-.coach-scene-dark {
-  background: var(--blackberry-dark);
-  color: var(--cream);
-  box-shadow: 0 0 0 1px color-mix(in oklch, var(--cream) 14%, transparent);
-}
-.coach-scene-dark .coach-scene-label {
-  color: color-mix(in oklch, var(--cream) 60%, transparent);
-}
-.coach-mini-bars {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 14px;
-  height: 175px;
-  margin-top: 12px;
-}
-.coach-mini-bars > div {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-}
-.coach-mini-bars span {
-  display: block;
-  width: 100%;
+.coach-step-visual .coach-phone {
+  width: 250px;
   flex-shrink: 0;
-  border-radius: 8px 8px 3px 3px;
-  background: linear-gradient(
-    to top,
-    var(--orange),
-    color-mix(in oklch, var(--orange) 55%, var(--cream))
-  );
-  transform-origin: bottom;
 }
-.coach-mini-bars i {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-style: normal;
-  color: color-mix(in oklch, var(--cream) 60%, transparent);
-}
-.coach-mini-stats {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 22px;
-  padding-top: 18px;
-  border-top: 1px solid color-mix(in oklch, var(--cream) 15%, transparent);
-  font-size: 13px;
-  color: color-mix(in oklch, var(--cream) 70%, transparent);
-}
-.coach-mini-stats strong {
-  display: block;
-  font-family: var(--font-heading);
-  font-size: 24px;
-  color: var(--cream);
-}
-
-/* Features in development. */
-.coach-coming {
-  background: color-mix(in oklch, var(--cream-dark) 60%, var(--cream));
-}
-.coach-coming-grid {
-  list-style: none;
-  padding: 0;
-  margin: 55px 0 0;
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 24px;
-}
-.coach-coming-card {
+.coach-dashboard-visual {
   position: relative;
-  padding: 30px;
-  border-radius: 20px;
-  background: var(--cream);
-  border: 1px solid var(--border);
-  transition:
-    transform 0.3s,
-    box-shadow 0.3s;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 545px;
+  padding-top: 65px;
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--blackberry);
 }
-.coach-coming-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 40px -24px
-    color-mix(in oklch, var(--blackberry) 40%, transparent);
+.coach-dashboard-visual .coach-phone {
+  width: 270px;
+  transform: rotate(3deg);
 }
-.coach-coming-card h3 {
-  margin-top: 20px;
-}
-.coach-coming-card p {
-  margin-top: 10px;
-  color: var(--text-light-secondary);
-  font-size: 15px;
-}
-.coach-coming-badge {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  background: color-mix(in oklch, var(--orange) 16%, var(--cream));
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
+/* Features in development. */
 
 @media (max-width: 1100px) {
   .coach-walkthrough {
@@ -1484,10 +1103,6 @@
   .coach-step:not([data-active="true"]) {
     padding-block: 12px;
   }
-  .coach-coming-grid {
-    grid-template-columns: 1fr;
-    margin-top: 35px;
-  }
 }
 @media (max-width: 540px) {
   .coach-step {
@@ -1509,24 +1124,5 @@
   }
   .coach-step-visual {
     padding: 22px;
-  }
-  .coach-code i {
-    width: 38px;
-    height: 48px;
-    font-size: 20px;
-  }
-  .coach-scene-plan .coach-phone {
-    width: 190px;
-  }
-  .coach-plan-chip {
-    padding: 8px 14px;
-    font-size: 12px;
-  }
-  .coach-coming-card {
-    padding: 26px;
-  }
-  .coach-coming-badge {
-    top: 26px;
-    right: 26px;
   }
 }
